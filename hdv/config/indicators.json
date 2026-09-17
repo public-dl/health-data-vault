@@ -1,0 +1,644 @@
+[
+  {
+    "column": "B",
+    "indicator_id": "recipients",
+    "label_cells": [
+      "B4"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "C",
+    "indicator_id": "metabo_noncase",
+    "label_cells": [
+      "C3",
+      "C4"
+    ],
+    "unit": "人",
+    "comparability_status": "compatible",
+    "intervals": {
+      "2021_2022": "compatible",
+      "2022_2023": "compatible"
+    },
+    "reason": "Reported category counts only; definitions section 5.2"
+  },
+  {
+    "column": "D",
+    "indicator_id": "metabo_preliminary",
+    "label_cells": [
+      "C3",
+      "D4"
+    ],
+    "unit": "人",
+    "comparability_status": "compatible",
+    "intervals": {
+      "2021_2022": "compatible",
+      "2022_2023": "compatible"
+    },
+    "reason": "Reported category counts only; definitions section 5.2"
+  },
+  {
+    "column": "E",
+    "indicator_id": "metabo_case",
+    "label_cells": [
+      "C3",
+      "E4"
+    ],
+    "unit": "人",
+    "comparability_status": "compatible",
+    "intervals": {
+      "2021_2022": "compatible",
+      "2022_2023": "compatible"
+    },
+    "reason": "Reported category counts only; definitions section 5.2"
+  },
+  {
+    "column": "F",
+    "indicator_id": "metabo_indeterminate",
+    "label_cells": [
+      "C3",
+      "F4"
+    ],
+    "unit": "人",
+    "comparability_status": "compatible",
+    "intervals": {
+      "2021_2022": "compatible",
+      "2022_2023": "compatible"
+    },
+    "reason": "Reported category counts only; definitions section 5.2"
+  },
+  {
+    "column": "G",
+    "indicator_id": "metabo_total",
+    "label_cells": [
+      "C3",
+      "G4"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "H",
+    "indicator_id": "physician_normal",
+    "label_cells": [
+      "H3",
+      "H4"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "I",
+    "indicator_id": "physician_guidance",
+    "label_cells": [
+      "H3",
+      "I4"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "J",
+    "indicator_id": "physician_referral",
+    "label_cells": [
+      "H3",
+      "J4"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "K",
+    "indicator_id": "physician_total",
+    "label_cells": [
+      "H3",
+      "K4"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "L",
+    "indicator_id": "guidance_active",
+    "label_cells": [
+      "L3",
+      "L4",
+      "L5"
+    ],
+    "unit": "人",
+    "comparability_status": "compatible",
+    "intervals": {
+      "2021_2022": "compatible",
+      "2022_2023": "compatible"
+    },
+    "reason": "Reported category counts only; definitions section 5.2"
+  },
+  {
+    "column": "M",
+    "indicator_id": "guidance_motivational",
+    "label_cells": [
+      "L3",
+      "M4",
+      "M5"
+    ],
+    "unit": "人",
+    "comparability_status": "compatible",
+    "intervals": {
+      "2021_2022": "compatible",
+      "2022_2023": "compatible"
+    },
+    "reason": "Reported category counts only; definitions section 5.2"
+  },
+  {
+    "column": "N",
+    "indicator_id": "guidance_none",
+    "label_cells": [
+      "L3",
+      "N4"
+    ],
+    "unit": "人",
+    "comparability_status": "compatible",
+    "intervals": {
+      "2021_2022": "compatible",
+      "2022_2023": "compatible"
+    },
+    "reason": "Reported category counts only; definitions section 5.2"
+  },
+  {
+    "column": "O",
+    "indicator_id": "guidance_indeterminate",
+    "label_cells": [
+      "L3",
+      "O4"
+    ],
+    "unit": "人",
+    "comparability_status": "compatible",
+    "intervals": {
+      "2021_2022": "compatible",
+      "2022_2023": "compatible"
+    },
+    "reason": "Reported category counts only; definitions section 5.2"
+  },
+  {
+    "column": "P",
+    "indicator_id": "bp_guidance",
+    "label_cells": [
+      "P3",
+      "P4",
+      "P5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "Q",
+    "indicator_id": "bp_referral",
+    "label_cells": [
+      "P3",
+      "P4",
+      "Q5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "R",
+    "indicator_id": "lipid_people",
+    "label_cells": [
+      "P3",
+      "R4",
+      "R5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "S",
+    "indicator_id": "triglycerides",
+    "label_cells": [
+      "P3",
+      "R4",
+      "S5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "T",
+    "indicator_id": "hdl",
+    "label_cells": [
+      "P3",
+      "R4",
+      "T5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "U",
+    "indicator_id": "ldl",
+    "label_cells": [
+      "P3",
+      "R4",
+      "U5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "V",
+    "indicator_id": "total_cholesterol",
+    "label_cells": [
+      "P3",
+      "R4",
+      "V5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "W",
+    "indicator_id": "liver",
+    "label_cells": [
+      "W3",
+      "W4"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "X",
+    "indicator_id": "glucose_people",
+    "label_cells": [
+      "W3",
+      "X4",
+      "X5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "Y",
+    "indicator_id": "urine_glucose",
+    "label_cells": [
+      "W3",
+      "X4",
+      "Y5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "Z",
+    "indicator_id": "fasting_glucose",
+    "label_cells": [
+      "W3",
+      "X4",
+      "Z5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AA",
+    "indicator_id": "random_glucose",
+    "label_cells": [
+      "W3",
+      "X4",
+      "AA5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AB",
+    "indicator_id": "hba1c",
+    "label_cells": [
+      "W3",
+      "X4",
+      "AB5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AC",
+    "indicator_id": "renal_urinary_people",
+    "label_cells": [
+      "W3",
+      "AC4",
+      "AC5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AD",
+    "indicator_id": "urine_protein",
+    "label_cells": [
+      "W3",
+      "AC4",
+      "AD5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AE",
+    "indicator_id": "urine_blood",
+    "label_cells": [
+      "W3",
+      "AC4",
+      "AE5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AF",
+    "indicator_id": "creatinine",
+    "label_cells": [
+      "W3",
+      "AC4",
+      "AF5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AG",
+    "indicator_id": "anemia",
+    "label_cells": [
+      "AG3",
+      "AG4",
+      "AG5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AH",
+    "indicator_id": "ecg",
+    "label_cells": [
+      "AG3",
+      "AG4",
+      "AH5"
+    ],
+    "unit": "人",
+    "comparability_status": "incompatible",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "incompatible"
+    },
+    "reason": "ECG criteria changed R4 to R5; no cross-year comparison"
+  },
+  {
+    "column": "AI",
+    "indicator_id": "fundus",
+    "label_cells": [
+      "AG3",
+      "AG4",
+      "AI5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AJ",
+    "indicator_id": "anemia_tests",
+    "label_cells": [
+      "AG3",
+      "AJ4",
+      "AJ5"
+    ],
+    "unit": "件",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AK",
+    "indicator_id": "ecg_tests",
+    "label_cells": [
+      "AG3",
+      "AJ4",
+      "AK5"
+    ],
+    "unit": "件",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AL",
+    "indicator_id": "fundus_tests",
+    "label_cells": [
+      "AG3",
+      "AJ4",
+      "AL5"
+    ],
+    "unit": "件",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AM",
+    "indicator_id": "uric_acid",
+    "label_cells": [
+      "AM3",
+      "AM4",
+      "AM5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AN",
+    "indicator_id": "total_protein",
+    "label_cells": [
+      "AM3",
+      "AM4",
+      "AN5"
+    ],
+    "unit": "人",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AO",
+    "indicator_id": "uric_acid_tests",
+    "label_cells": [
+      "AM3",
+      "AO4",
+      "AO5"
+    ],
+    "unit": "件",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  },
+  {
+    "column": "AP",
+    "indicator_id": "total_protein_tests",
+    "label_cells": [
+      "AM3",
+      "AO4",
+      "AP5"
+    ],
+    "unit": "件",
+    "comparability_status": "pending",
+    "intervals": {
+      "2021_2022": "pending",
+      "2022_2023": "pending"
+    },
+    "reason": "Definitions section 5.2 unresolved; unlisted totals/test counts default to pending"
+  }
+]

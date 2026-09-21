@@ -1,0 +1,82 @@
+{
+  "current_version": "2026-09-v1",
+  "versions": {
+    "2026-09-v1": {
+      "semantic_key": "reported_guidance_or_higher",
+      "source_parent": "判定区分（保健指導以上を再掲）",
+      "full_template": "{indicatorLabel}：保健指導以上として再掲された人数",
+      "short_template": "{shortLabel}：保健指導以上",
+      "real_people_template": "{themeLabel}：保健指導以上として再掲された実人員",
+      "real_people_short_template": "{themeLabel}：保健指導以上の実人員",
+      "common_note": "本データは、原表の「判定区分（保健指導以上を再掲）」に掲載された人数です。",
+      "section_note_template": "{sourceSection}欄に掲載された人数です。",
+      "real_people_note": "「実人員」の具体的な重複排除・集計条件までは原資料から確定していません。",
+      "rate_note": "割合は同年度・同地域の特定健診受診者数を分母として算出しています。",
+      "noncomposition_note": "各項目は排他的な構成ではなく、合計・残差を生成しません。",
+      "count_only_note": "この項目は人数のみを表示します。",
+      "hba1c_note": "HbA1cの割合は報告人数の割合であり、HbA1c検査値ではありません。",
+      "liver_note": "AST・ALT・γ-GT別の人数は原表には掲載されていません。"
+    }
+  },
+  "indicators": {
+    "lipid_people": {
+      "source_label": "実人員",
+      "themeLabel": "脂質代謝",
+      "sourceSection": "脂質代謝",
+      "real_people": true
+    },
+    "triglycerides": {
+      "source_label": "中性脂肪",
+      "shortLabel": "中性脂肪",
+      "sourceSection": "脂質代謝"
+    },
+    "hdl": {
+      "source_label": "HDLコレステロール",
+      "shortLabel": "HDL",
+      "sourceSection": "脂質代謝"
+    },
+    "ldl": {
+      "source_label": "LDLコレステロール",
+      "shortLabel": "LDL",
+      "sourceSection": "脂質代謝"
+    },
+    "total_cholesterol": {
+      "source_label": "総コレステロール",
+      "shortLabel": "総コレステロール",
+      "sourceSection": "脂質代謝"
+    },
+    "glucose_people": {
+      "source_label": "実人員",
+      "themeLabel": "糖代謝",
+      "sourceSection": "糖代謝異常",
+      "real_people": true
+    },
+    "urine_glucose": {
+      "source_label": "尿糖",
+      "shortLabel": "尿糖",
+      "sourceSection": "糖代謝異常"
+    },
+    "fasting_glucose": {
+      "source_label": "空腹時血糖",
+      "shortLabel": "空腹時血糖",
+      "sourceSection": "糖代謝異常"
+    },
+    "random_glucose": {
+      "source_label": "随時血糖",
+      "shortLabel": "随時血糖",
+      "sourceSection": "糖代謝異常"
+    },
+    "hba1c": {
+      "source_label": "HbA1c",
+      "shortLabel": "HbA1c",
+      "sourceSection": "糖代謝異常",
+      "hba1c": true
+    },
+    "liver": {
+      "source_label": "肝機能",
+      "shortLabel": "肝機能",
+      "sourceSection": "肝機能",
+      "liver": true
+    }
+  }
+}

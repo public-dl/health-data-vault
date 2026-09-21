@@ -7,3 +7,12 @@ __pycache__/
 build/
 dist/
 .coverage
+web/node_modules/
+web/dist/
+web/public/public-data/
+.env
+.env.*
+!.env.example
+.netlify/
+web/.netlify/
+/ダウンロード.png

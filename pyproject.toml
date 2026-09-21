@@ -9,6 +9,9 @@ description = "Traceable Niigata public health data ingestion"
 requires-python = ">=3.11"
 dependencies = ["openpyxl>=3.1,<4"]
 
+[project.optional-dependencies]
+geography = ["pyshp>=3.0,<4", "shapely>=2.1,<3"]
+
 [project.scripts]
 hdv = "hdv.__main__:main"
 
@@ -16,4 +19,4 @@ hdv = "hdv.__main__:main"
 include = ["hdv*"]
 
 [tool.setuptools.package-data]
-hdv = ["config/*.json"]
+hdv = ["config/*.json", "public_config/*.json"]

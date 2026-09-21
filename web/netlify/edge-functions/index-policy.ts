@@ -1,0 +1,2 @@
+declare const Netlify:{env:{get:(name:string)=>string|undefined}};
+export default async (request:Request, context:{next:()=>Promise<Response>})=>{const response=await context.next();const url=new URL(request.url);const origin=Netlify.env.get('PUBLIC_SITE_URL')?.replace(/\/$/,'');if(!origin||url.origin!==origin||url.searchParams.has('review')||url.searchParams.has('exportReview')||url.pathname.startsWith('/review/'))response.headers.set('X-Robots-Tag','noindex, nofollow');return response;};

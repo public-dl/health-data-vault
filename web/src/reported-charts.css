@@ -1,0 +1,16 @@
+.reported-chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:20px 0}.reported-chart-grid>*{min-width:0}
+.reported-chart-card .panel-heading{flex-wrap:wrap;gap:10px}.reported-chart-card .panel-heading h3{font-size:17px}.reported-chart-body{padding:18px;min-width:0}.reported-chart-svg{display:block;width:100%;min-width:520px;color:#24486c}.reported-chart-svg text{fill:#24486c;font-size:14px;font-family:inherit;stroke:none}.reported-chart-svg [tabindex]:focus-visible{outline:2px solid #24486c;outline-offset:4px}
+.chart-axis-description,.chart-note,.chart-pending{font-size:12px;line-height:1.7;color:#405e7a}.chart-pending{border-top:1px solid #dce6ef;padding-top:10px}.chart-series-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}.chart-series-legend i{display:inline-block;width:25px;border-top:2px solid;vertical-align:middle;margin-right:5px}
+.chart-values{width:100%;border-collapse:collapse;min-width:400px;font-size:13px}.chart-values th,.chart-values td{padding:8px;border-bottom:1px solid #e1eaf2;text-align:center;color:#24486c}.chart-values th{background:#f3f8fc}.chart-values td{font-weight:600}.chart-values tbody th{text-align:left}
+.chart-guide{border:1px solid #dce6ef;border-radius:10px;padding:12px 16px;background:#f3f8fc;font-size:13px}.chart-guide summary{cursor:pointer;font-weight:600}.chart-guide p{line-height:1.8}
+.chart-distribution-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:25px 0 12px}.chart-distribution-heading label{font-size:13px}.chart-distribution-heading select{max-width:100%;padding:8px;color:#24486c;border:1px solid #c9d9e8;border-radius:6px}
+.distribution-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:12px;background:#f3f8fc;border-radius:8px}.distribution-stats dt{font-size:12px}.distribution-stats dd{font-size:17px;font-weight:600;margin:6px 0 0;color:#24486c}.distribution-references{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:13px}
+@media(max-width:900px){.reported-chart-grid{grid-template-columns:1fr}.reported-chart-body{padding:12px}.distribution-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.reported-chart-card .chart-values td{font-size:14px;font-weight:600}
+
+.reported-chart-svg.distribution-figure{max-width:900px;min-width:700px;margin-inline:auto}.distribution-figure text{font-size:16px}.distribution-references b{font-weight:500}
+
+.distribution-figure .distribution-reference-label{stroke:white}
+
+/* Distribution reference roles denote selection, not medical categories. */
+.reported-chart-card{--distribution-municipality:#528cbd;--distribution-selected:#1f9d9a;--distribution-county:#24486c}

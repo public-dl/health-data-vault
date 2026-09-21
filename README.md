@@ -1,6 +1,8 @@
 # Health Data Vault v0.1
 
-新潟県「特定健康診査等結果報告」のR3・R4・R5実績（2021・2022・2023年度）を、公式年度ページから取得し、出典付きのJSON Linesへ変換・検証するPythonのデータ基盤です。Web UI、APIサーバー、GitHub Actionsは含みません。
+新潟県「特定健康診査等結果報告」のR3・R4・R5実績（2021・2022・2023年度）を、公式年度ページから取得し、出典付きのJSON Linesへ変換・検証するPythonのデータ基盤です。第1弾Web UI、公開候補生成・検証・明示的な承認の機構を追加しました。外部サイトへのデプロイ、GitHub Actions、NDB UIは含みません。
+
+Webの最小手順は下記「第1弾Web UI」を参照してください。通常表示は承認済みreleaseだけを読みます。今回生成した候補は未承認で、ローカル確認用の専用URLでのみ表示します。
 
 仕様は [AGENTS.md](AGENTS.md)、[データ目録](docs/data_inventory.md)、[判定定義調査](docs/tokuteikenshin_definitions.md)。年度は西暦開始年で保持し、掲載年度2022・2023・2024と実績年度2021・2022・2023を分離します。
 
@@ -64,7 +66,7 @@ series = comparable_series([
 print([(r["observation_fiscal_year"], r["value"]) for r in series])
 ```
 
-`comparable_series` はpending・incompatible・未検証・重複年度・混在した地域／指標を拒否します。全市町村と県計・保健所計を足す処理は提供していません。自治体別地図に使う場合は `geography_level="municipality"` だけを選んでください。自治体コード・境界データの対応付けは未実装です。
+`comparable_series` はpending・incompatible・未検証・重複年度・混在した地域／指標を拒否します。全市町村と県計・保健所計を足す処理は提供していません。自治体別地図に使う場合は `geography_level="municipality"` だけを選んでください。自治体コード・境界データの対応付けは、第1弾Web UI用の公開データ生成時に検証します。
 
 ## 原本・比較・集計の方針
 
@@ -96,3 +98,97 @@ data/                Git管理外の原本・履歴・生成物
 ```
 
 スキーマと制約は [データモデル](docs/data_model.md)、今回の実行結果は [v0.1実行報告](docs/v0_1_execution.md) を参照してください。構造契約や判定辞書の変更は、公式資料・調査文書の更新とレビューを伴う必要があります。新しい原本から期待値を毎回生成して検証を通す運用は禁止です。
+
+## 第1弾Web UI
+
+### 初回準備
+
+Python環境は上の手順で準備します。地図変換を行う環境では `pip install -e ".[geography]"` で追加依存を導入してください。フロントエンドはNode.js 22以上、pnpm 11を使用します。lockfileを保持します。
+
+```powershell
+.venv\Scripts\python -m pip install -e ".[geography]"
+cd web
+pnpm install --frozen-lockfile
+pnpm build
+pnpm test
+cd ..
+```
+
+地図原本・生成物もGit管理外の `data/` に保存します。公式ページの実リンクを確認して2023年1月1日版を取得し、新潟市の区を市に統合します。以下は境界を再生成する場合の手順です。既に `data/geography/niigata.json` があれば、同じ候補の再確認時には再取得不要です。
+
+```powershell
+.venv\Scripts\python -m hdv.geography data/geography/raw data/geography/niigata.json --fetch --transport powershell
+```
+
+### 公開候補を生成してローカルで確認
+
+入力runを明示してください。下記は今回の既存検証済みrunです。ビルド時には原本から再検証し、元のprocessedファイルは更新しません。
+
+```powershell
+.venv\Scripts\python -m hdv.publisher build --run-id 44595cc6bf204cffa81c485d72f91019
+# 出力された64桁のrelease IDを指定
+.venv\Scripts\python -m hdv.publisher validate --release-id <release-id>
+.venv\Scripts\python -m hdv.serve --review-release <release-id> --port 4174
+```
+
+`http://127.0.0.1:4174/?review=1` を開きます。これは未承認候補のローカル確認専用です。`current.json` は作成・変更しません。公開モードへ自動フォールバックすることもありません。サーバーは127.0.0.1限定、配信対象は `web/dist` と明示したデータだけです。リポジトリルートを `http.server` で公開しないでください。
+
+初期表示は「受診者に占める割合（%）」で、「報告人数（人）」へ切り替えられます。原本人数を置き換えず、同じ地域・年度の受診者数を分母とした派生割合を保持します。現在の候補はメタボ判定4区分・保健指導レベル4区分、県計＋30市町村、2021～2023年度の744レコードです。初期表示は県計、自治体選択で上下の比較表示に切り替わります。表コピー、CSV、図表のPNG・画像コピー、出典モーダルに対応します。Clipboard APIが拒否・非対応の場合はエラーを表示し、PNG/CSV保存を使えます。
+
+### 人間による承認と承認済み版の配信
+
+**今回この承認操作は実施していません。** 候補・警告・説明文・統計および地理データの再利用条件を確認した担当者が実行する手順です。承認者名は監査記録用であり、CLI自体に認証・電子署名機能はありません。承認権限は実行環境のアクセス制御で分離してください。
+
+```powershell
+.venv\Scripts\python -m hdv.publisher approve --release-id <release-id> --confirm-hash <同じrelease-id> --reviewer "確認者名" --data-rights-reviewed --map-rights-reviewed
+.venv\Scripts\python -m hdv.serve --port 4174
+```
+
+承認済みモードは `http://127.0.0.1:4174/`。原本・設定・候補の再検証後にのみ公開参照先を原子的に切り替えます。ブラウザーも承認状態とSHA-256を確認します。以前の承認済み版へ戻す場合も、その版を明示して再承認します。設定変更後の古い候補を再承認するには、その候補の入力・設定を再現できる環境が必要です。
+
+静的配信ファイルを用意する場合は、承認後に `python -m hdv.publisher export` を実行してから `web` で再ビルドします。出力先 `web/public/public-data/` はGit除外済み。ホスティングへ配布する操作は別途承認された作業として行います。ブラウザーは `processed/latest.json` を参照しません。
+
+### 指標の拡張と監視
+
+公開指標は `hdv/public_config/indicators.json` で管理します。UIに8指標の固定リストはありません。追加する指標は、先に元の定義辞書でcompatibleとなり、対応する原本・構造・比較区間・単位の検証を通過している必要があります。公開設定だけを書き換えてpendingを昇格させることはできません。
+
+```powershell
+# 登録済み年度ページと、そこから発見した年度ページを確認・取得
+.venv\Scripts\python -m hdv.monitor --transport powershell
+# 既知の構造契約で検証できるデータだけを処理し、公開「候補」まで作成
+.venv\Scripts\python -m hdv.monitor --transport powershell --process-known
+```
+
+監視元の公式一覧ページは `--index-page <公式URL>` で追加できます。新年度・未登録のファイルは契約と定義のレビュー待ちとなります。未登録の年度を自動でcompatibleにせず、現在の公開版は維持します。年度一覧のリンク形式やファイル名の変更にも対応確認が必要です。スケジューラーへの登録・通知連携・外部公開の自動実行はまだ行っていません。
+
+詳細は [公開データモデル](docs/public_data_model.md)、[公開手順と制約](docs/publication_workflow.md)、[第1弾実行報告](docs/web_v1_execution.md) を参照してください。
+
+割合の監査・定義・比較判定は [受診者構成割合の監査](docs/recipient_percentage_audit.md) を参照してください。公開候補は744人数レコード、744派生割合、93分母レコードです。元の分母人数のpendingを変更せず、割合専用にR3→R4→R5の比較判定を管理します。分母0・欠損・区分合計不一致・母集団不一致は候補生成／公開検証を停止します。
+
+## 全区分表示（public-3、ローカル確認）
+
+メタボ判定・保健指導レベルの「全区分」を表示項目から選択できます。グループ設定は `hdv/public_config/groups.json`。既存人数・派生割合を維持し、原本再検証を経てグループ構成の検証証跡を付けます。
+
+```powershell
+.venv\Scripts\python -m hdv.publisher build --run-id 44595cc6bf204cffa81c485d72f91019
+.venv\Scripts\python -m hdv.publisher validate --release-id f66a35326c7f394b31ef7a8e4fb46bdbddbd28701583248afd9d8edfda19ac17
+cd web
+pnpm build
+cd ..
+.venv\Scripts\python -m hdv.serve --review-release f66a35326c7f394b31ef7a8e4fb46bdbddbd28701583248afd9d8edfda19ac17 --port 4176
+```
+
+確認URLは `http://127.0.0.1:4176/?review=1`。上のIDは現在の候補です。設定・入力が変わった場合はbuildが返したIDを使用してください。公開承認は行いません。詳しくは [全区分表示](docs/group_views.md) と [実行報告](docs/web_v1_execution.md) を参照してください。
+
+## 医師の判断・公表数表（site-1、未承認候補）
+
+医師の判断は単年度表示のみ許可し、年度間比較はpendingのままです。既存public-3の比較条件を緩和せず、別契約annual-1と原表表示用published_tablesを追加しています。
+
+```powershell
+.venv\Scripts\python.exe -X utf8 -m hdv.site_release build --analysis-release f66a35326c7f394b31ef7a8e4fb46bdbddbd28701583248afd9d8edfda19ac17
+.venv\Scripts\python.exe -X utf8 -m hdv.site_release validate --release-id 881d1548fa002e532440e90b67454e731cbadd33a51a6985b0fc2d15088be937
+# webでpnpm buildを実行後、リポジトリ直下から起動
+.venv\Scripts\python.exe -X utf8 -m hdv.serve --site-review-release 881d1548fa002e532440e90b67454e731cbadd33a51a6985b0fc2d15088be937 --port 4178
+```
+
+入力・設定が変わる場合はbuildが返す候補IDを使用してください。確認URLは `http://127.0.0.1:4178/?review=1`、公表数表は `/tables?year=2023&review=1`、制度説明は `/learn?review=1`。候補生成は公開承認・現在版切替を行いません。[設計と公式根拠](docs/annual_publication_design.md)、[検証結果・変更ファイル](docs/annual_publication_execution.md)を参照してください。

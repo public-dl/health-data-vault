@@ -1,0 +1,36 @@
+{
+  "status": "approved",
+  "release_id": "8e1fe8695fc86b4358bb695ce0a1c3ccfccdb9f5c0f5ecc45098a6d5fb915827",
+  "data_sha256": "8e1fe8695fc86b4358bb695ce0a1c3ccfccdb9f5c0f5ecc45098a6d5fb915827",
+  "reviewer": "岸克也",
+  "approved_at": "2026-09-21T07:29:13.828795+00:00",
+  "validation": {
+    "reported_records": 1209,
+    "errors": 0,
+    "status": "passed",
+    "analysis": {
+      "status": "passed",
+      "errors": 0,
+      "issues": [],
+      "records": 744,
+      "groups": 2,
+      "compositions": 186,
+      "indicators": 8,
+      "geographies": 31,
+      "derived_rates": 744,
+      "denominators": 93,
+      "warnings": [
+        "入力全体には72件の検証警告があります。公開候補の選択条件とは別に確認してください。",
+        "2023年1月1日時点の参考境界を全年度で使用。年度ごとの境界変化は未検証。地区別統計ではありません。",
+        "割合は当該報告の受診者に占める構成割合です。判定不能を分母に含みます。年齢・性別構成を調整した割合や疾病有病率ではありません。"
+      ]
+    },
+    "annual_groups": 93,
+    "annual_records": 279,
+    "annual_comparability": "pending",
+    "tables": 3,
+    "table_cells": 6762
+  },
+  "data_rights_reviewed": true,
+  "map_rights_reviewed": true
+}

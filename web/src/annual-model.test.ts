@@ -1,0 +1,17 @@
+import {it,expect} from 'vitest';
+import {annualComposition,annualTableText} from './annual-model';
+import {composition} from './group-model';
+import {displayData,connect,type Payload,type IndicatorGroup,type PublishedTable} from './model';
+import {contentSections} from './content-navigation';
+import {sourceTableText,visualizationLink,tableLink} from './source-table';
+function fixture(){
+ const group={group_id:'doctor_judgment',definition_version:'v1',categories:['normal','guidance','referral'].map(id=>({category_id:id,indicator_id:id}))} as IndicatorGroup;
+ const records=[0,20,80].map((value,i)=>({record_id:'r'+i,indicator_id:group.categories[i].indicator_id,geography_code:'15',observation_fiscal_year:2023,value,unit:'人',annual_display_allowed:true,comparability_status:'pending',comparison_allowed:false,validation_status:'passed',derived_rate:{value,numerator_value:value,denominator_value:100,numerator_record_id:'r'+i,denominator_record_id:'d',annual_display_allowed:true,comparability_status:'pending',comparison_allowed:false,validation_status:'passed',unit:'%'}}));
+ const data={schema_version:'annual-1',records,indicators:[],composition_validation:[{group_id:'doctor_judgment',definition_version:'v1',geography_code:'15',observation_fiscal_year:2023,validation_status:'passed',difference:0,denominator_value:100,denominator_record_id:'d',category_record_ids:['r0','r1','r2']}]} as unknown as Payload;
+ return {data,group};
+}
+it('allows audited annual zero and percentages without enabling existing comparison',()=>{const {data,group}=fixture();for(const d of [data,displayData(data,'rate')]){expect(annualComposition(d,group,'15',2023)?.rows[0].value).toBe(0);expect(composition(d,group,'15',2023)).toBeNull();expect(connect(d.records[0],{...d.records[0],observation_fiscal_year:2024})).toBe(false);}});
+it('fails closed for invalid annual proofs, promotion, missing data and rate tampering',()=>{for(const mutate of [(d:Payload)=>d.records.pop(),(d:Payload)=>d.records.push(d.records[0]),(d:Payload)=>{d.records[0].comparison_allowed=true},(d:Payload)=>{d.records[0].derived_rate!.value=99},(d:Payload)=>{d.composition_validation![0].denominator_value=0}]){const {data,group}=fixture();mutate(data);expect(annualComposition(data,group,'15',2023)).toBeNull();}});
+it('annual navigation excludes temporal graph',()=>expect(contentSections(true,false).map(s=>s.id)).toEqual(['overview','map','table']));
+it('annual table copy identifies every category and preserves pending',()=>{const {data,group}=fixture();group.name='医師の判断';group.categories.forEach((c,i)=>c.label=['異常認めず','保健指導','受診勧奨'][i]);const text=annualTableText(data.records,group);expect(text.split('\n')).toHaveLength(4);for(const label of ['異常認めず','保健指導','受診勧奨'])expect(text).toContain('医師の判断：'+label);expect(text.match(/pending/g)).toHaveLength(3);});
+it('deep links preserve exact source year/cell and only mapped indicators',()=>{const table={source:{observation_fiscal_year:2022},rows:[{cells:[{display_text:'-'}]}]} as PublishedTable;const cell={coordinate:'H6',visualization:{region:'15',indicator_id:'physician_normal'}} as any;expect(visualizationLink(table,cell,true)).toContain('year=2022&region=15&indicator=physician_normal&review=1');expect(visualizationLink(table,{...cell,visualization:null},true)).toBeNull();expect(tableLink({observation_fiscal_year:2022,source_cell:'H6'} as any,true)).toBe('/tables?year=2022&cell=H6&review=1');expect(sourceTableText(table,',')).toBe('"\'-"');});

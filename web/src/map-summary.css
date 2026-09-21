@@ -1,0 +1,22 @@
+.map-card{container-type:inline-size}
+.map-card>.map-card-heading{display:grid;grid-template-columns:minmax(180px,1fr) minmax(360px,1.5fr) auto;gap:20px;align-items:center;background:#fff}
+.comparison-panels.side .map-card>.map-card-heading{height:auto}
+.map-card-heading .map-region-title{font-size:clamp(23px,2.2cqi,30px);line-height:1.35;overflow-wrap:anywhere}
+.map-summary{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;min-width:0}
+.map-summary span{display:block;font-size:12px;font-weight:600;color:#34516e;line-height:1.5}
+.map-summary strong{display:block;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.35}
+.map-summary-primary strong{font-size:38px;font-weight:700}
+.map-summary-counts{border-left:1px solid #e4ecf3;padding-left:20px}
+.map-summary-counts strong{font-size:22px;font-weight:600;color:#193f67}
+.map-card-heading>.actions{flex-direction:column;align-items:stretch}
+@container(max-width:850px){.map-card>.map-card-heading{grid-template-columns:minmax(0,1fr) auto;gap:12px}.map-card-heading>.map-summary{grid-column:1/-1;grid-row:2}.map-summary-primary strong{font-size:32px}.map-summary-counts strong{font-size:21px}.map-card-heading>.actions{grid-column:2;grid-row:1}.map-card-heading .map-region-title{font-size:23px}}
+@container(max-width:400px){.map-card>.map-card-heading{padding:14px;gap:10px}.map-summary{gap:10px}.map-summary-counts{padding-left:10px}.map-summary-primary strong{font-size:28px}.map-summary-counts strong{font-size:17px}.map-summary span{font-size:11px}.map-card-heading .map-region-title{font-size:21px}.map-card-heading>.actions button{padding:6px 8px;font-size:11px}}
+
+/* Shared heading typography; the SVG viewport and all map geometry stay intact. */
+.map-card{--map-heading-size:clamp(23px,2.2cqi,30px);--map-heading-color:#12325b}
+.map-card .map-region-title,.map-card .map-inner-title{font-size:var(--map-heading-size);font-weight:650;color:var(--map-heading-color);line-height:1.35}
+.map-inner-title{margin:0;padding:12px 18px 0;background:#f3f8fe;overflow-wrap:anywhere}
+.map-viewport{position:relative}
+.map-shell .map-export-title{display:none}
+@container(max-width:850px){.map-card{--map-heading-size:23px}}
+@container(max-width:400px){.map-card{--map-heading-size:21px}.map-inner-title{padding:10px 12px 0}}

@@ -1,0 +1,162 @@
+[
+  {
+    "group_id": "metabo",
+    "name": "メタボ判定",
+    "definition_version": "niigata-metabo-partition-r3-r5-v1",
+    "audit_reference": "docs/recipient_percentage_audit.md",
+    "composition_rule": "exclusive_exhaustive_partition",
+    "denominator_indicator_id": "recipients",
+    "observation_years": [
+      2021,
+      2022,
+      2023
+    ],
+    "required_category_ids": [
+      "case",
+      "preliminary",
+      "noncase",
+      "indeterminate"
+    ],
+    "allowed_views": [
+      "map_overview",
+      "map_compare",
+      "table",
+      "composition",
+      "category_trend"
+    ],
+    "categories": [
+      {
+        "category_id": "case",
+        "label": "基準該当",
+        "order": 0,
+        "indicator_id": "metabo_case",
+        "color": "#245d9c",
+        "rate_map_breaks": [
+          15,
+          20,
+          25,
+          30
+        ]
+      },
+      {
+        "category_id": "preliminary",
+        "label": "予備群",
+        "order": 1,
+        "indicator_id": "metabo_preliminary",
+        "color": "#b17622",
+        "rate_map_breaks": [
+          8,
+          10,
+          12,
+          15
+        ]
+      },
+      {
+        "category_id": "noncase",
+        "label": "非該当",
+        "order": 2,
+        "indicator_id": "metabo_noncase",
+        "color": "#54867c",
+        "rate_map_breaks": [
+          50,
+          60,
+          70,
+          80
+        ]
+      },
+      {
+        "category_id": "indeterminate",
+        "label": "判定不能",
+        "order": 3,
+        "indicator_id": "metabo_indeterminate",
+        "color": "#777e8b",
+        "rate_map_breaks": [
+          0.1,
+          0.5,
+          1,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "group_id": "guidance",
+    "name": "保健指導レベル",
+    "definition_version": "niigata-guidance-partition-r3-r5-v1",
+    "audit_reference": "docs/recipient_percentage_audit.md",
+    "composition_rule": "exclusive_exhaustive_partition",
+    "denominator_indicator_id": "recipients",
+    "observation_years": [
+      2021,
+      2022,
+      2023
+    ],
+    "required_category_ids": [
+      "active",
+      "motivational",
+      "none",
+      "indeterminate"
+    ],
+    "allowed_views": [
+      "map_overview",
+      "map_compare",
+      "table",
+      "composition",
+      "category_trend"
+    ],
+    "categories": [
+      {
+        "category_id": "active",
+        "label": "積極的支援",
+        "order": 0,
+        "indicator_id": "guidance_active",
+        "color": "#245d9c",
+        "rate_map_breaks": [
+          2,
+          4,
+          6,
+          10
+        ]
+      },
+      {
+        "category_id": "motivational",
+        "label": "動機付け支援",
+        "order": 1,
+        "indicator_id": "guidance_motivational",
+        "color": "#b17622",
+        "rate_map_breaks": [
+          8,
+          10,
+          12,
+          15
+        ]
+      },
+      {
+        "category_id": "none",
+        "label": "なし",
+        "order": 2,
+        "indicator_id": "guidance_none",
+        "color": "#54867c",
+        "rate_map_breaks": [
+          70,
+          80,
+          85,
+          90
+        ]
+      },
+      {
+        "category_id": "indeterminate",
+        "label": "判定不能",
+        "order": 3,
+        "indicator_id": "guidance_indeterminate",
+        "color": "#777e8b",
+        "rate_map_breaks": [
+          0.1,
+          0.5,
+          1,
+          2
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "release_id": "8e1fe8695fc86b4358bb695ce0a1c3ccfccdb9f5c0f5ecc45098a6d5fb915827",
+  "reviewer": "岸克也",
+  "recorded_at": "2026-09-21T07:29:07.179474+00:00",
+  "statistical_reuse_decision": "reviewer_approved",
+  "official_license_verified": false,
+  "cc_by_verified": false,
+  "map_rights_reviewed": true,
+  "rationale": [
+    "行政が一般公開している市町村別の数値データを利用する",
+    "利用の中心は事実・数値であり、原資料の創作的なレイアウトや文章そのものを転載するものではない",
+    "出典、年度、原資料URLを明示する",
+    "HDVが計算した割合・地図・表・グラフは加工・派生表示であることを明示する",
+    "公開元が作成した可視化であるかのような表示はしない",
+    "原資料に存在しない値を推測して追加しない",
+    "現時点で当該統計ページ上に二次利用を禁止する明示的な条件は確認していない"
+  ],
+  "legacy_boolean_interpretation": "data_rights_reviewed=true records this named reviewer decision, not verification of an official license or CC BY."
+}

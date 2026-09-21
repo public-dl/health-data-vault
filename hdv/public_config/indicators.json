@@ -1,0 +1,282 @@
+[
+  {
+    "indicator_id": "metabo_case",
+    "name": "メタボ判定：基準該当",
+    "group": "メタボ判定",
+    "description": "報告された医師判定の基準該当者数。疾病有病者数ではありません。",
+    "rate": {
+      "label": "受診者に占める割合（%）",
+      "denominator_indicator_id": "recipients",
+      "components": [
+        "metabo_case",
+        "metabo_preliminary",
+        "metabo_noncase",
+        "metabo_indeterminate"
+      ],
+      "population_scope": "新潟県内市町村国保40～74歳・国保連費用決済データから把握した健診受診者（法定報告とは異なる）",
+      "observation_years": [
+        2021,
+        2022,
+        2023
+      ],
+      "comparability_status": "compatible",
+      "intervals": {
+        "2021_2022": "compatible",
+        "2022_2023": "compatible"
+      },
+      "definition_version": "niigata-recipient-composition-r3-r5-v1",
+      "audit_reference": "docs/recipient_percentage_audit.md",
+      "map_breaks": [
+        5,
+        10,
+        20,
+        40
+      ]
+    }
+  },
+  {
+    "indicator_id": "metabo_preliminary",
+    "name": "メタボ判定：予備群",
+    "group": "メタボ判定",
+    "description": "報告された医師判定の予備群人数。",
+    "rate": {
+      "label": "受診者に占める割合（%）",
+      "denominator_indicator_id": "recipients",
+      "components": [
+        "metabo_case",
+        "metabo_preliminary",
+        "metabo_noncase",
+        "metabo_indeterminate"
+      ],
+      "population_scope": "新潟県内市町村国保40～74歳・国保連費用決済データから把握した健診受診者（法定報告とは異なる）",
+      "observation_years": [
+        2021,
+        2022,
+        2023
+      ],
+      "comparability_status": "compatible",
+      "intervals": {
+        "2021_2022": "compatible",
+        "2022_2023": "compatible"
+      },
+      "definition_version": "niigata-recipient-composition-r3-r5-v1",
+      "audit_reference": "docs/recipient_percentage_audit.md",
+      "map_breaks": [
+        5,
+        10,
+        20,
+        40
+      ]
+    }
+  },
+  {
+    "indicator_id": "metabo_noncase",
+    "name": "メタボ判定：非該当",
+    "group": "メタボ判定",
+    "description": "報告された医師判定の非該当者数。",
+    "rate": {
+      "label": "受診者に占める割合（%）",
+      "denominator_indicator_id": "recipients",
+      "components": [
+        "metabo_case",
+        "metabo_preliminary",
+        "metabo_noncase",
+        "metabo_indeterminate"
+      ],
+      "population_scope": "新潟県内市町村国保40～74歳・国保連費用決済データから把握した健診受診者（法定報告とは異なる）",
+      "observation_years": [
+        2021,
+        2022,
+        2023
+      ],
+      "comparability_status": "compatible",
+      "intervals": {
+        "2021_2022": "compatible",
+        "2022_2023": "compatible"
+      },
+      "definition_version": "niigata-recipient-composition-r3-r5-v1",
+      "audit_reference": "docs/recipient_percentage_audit.md",
+      "map_breaks": [
+        5,
+        10,
+        20,
+        40
+      ]
+    }
+  },
+  {
+    "indicator_id": "metabo_indeterminate",
+    "name": "メタボ判定：判定不能",
+    "group": "メタボ判定",
+    "description": "判定不能と報告された人数。欠損値や数値0とは異なります。",
+    "rate": {
+      "label": "受診者に占める割合（%）",
+      "denominator_indicator_id": "recipients",
+      "components": [
+        "metabo_case",
+        "metabo_preliminary",
+        "metabo_noncase",
+        "metabo_indeterminate"
+      ],
+      "population_scope": "新潟県内市町村国保40～74歳・国保連費用決済データから把握した健診受診者（法定報告とは異なる）",
+      "observation_years": [
+        2021,
+        2022,
+        2023
+      ],
+      "comparability_status": "compatible",
+      "intervals": {
+        "2021_2022": "compatible",
+        "2022_2023": "compatible"
+      },
+      "definition_version": "niigata-recipient-composition-r3-r5-v1",
+      "audit_reference": "docs/recipient_percentage_audit.md",
+      "map_breaks": [
+        5,
+        10,
+        20,
+        40
+      ]
+    }
+  },
+  {
+    "indicator_id": "guidance_active",
+    "name": "保健指導レベル：積極的支援",
+    "group": "保健指導レベル",
+    "description": "積極的支援の対象選定レベルと判定された人数。指導の実施・終了人数ではありません。",
+    "rate": {
+      "label": "受診者に占める割合（%）",
+      "denominator_indicator_id": "recipients",
+      "components": [
+        "guidance_active",
+        "guidance_motivational",
+        "guidance_none",
+        "guidance_indeterminate"
+      ],
+      "population_scope": "新潟県内市町村国保40～74歳・国保連費用決済データから把握した健診受診者（法定報告とは異なる）",
+      "observation_years": [
+        2021,
+        2022,
+        2023
+      ],
+      "comparability_status": "compatible",
+      "intervals": {
+        "2021_2022": "compatible",
+        "2022_2023": "compatible"
+      },
+      "definition_version": "niigata-recipient-composition-r3-r5-v1",
+      "audit_reference": "docs/recipient_percentage_audit.md",
+      "map_breaks": [
+        5,
+        10,
+        20,
+        40
+      ]
+    }
+  },
+  {
+    "indicator_id": "guidance_motivational",
+    "name": "保健指導レベル：動機付け支援",
+    "group": "保健指導レベル",
+    "description": "動機付け支援の対象選定レベルと判定された人数。指導の実施・終了人数ではありません。",
+    "rate": {
+      "label": "受診者に占める割合（%）",
+      "denominator_indicator_id": "recipients",
+      "components": [
+        "guidance_active",
+        "guidance_motivational",
+        "guidance_none",
+        "guidance_indeterminate"
+      ],
+      "population_scope": "新潟県内市町村国保40～74歳・国保連費用決済データから把握した健診受診者（法定報告とは異なる）",
+      "observation_years": [
+        2021,
+        2022,
+        2023
+      ],
+      "comparability_status": "compatible",
+      "intervals": {
+        "2021_2022": "compatible",
+        "2022_2023": "compatible"
+      },
+      "definition_version": "niigata-recipient-composition-r3-r5-v1",
+      "audit_reference": "docs/recipient_percentage_audit.md",
+      "map_breaks": [
+        5,
+        10,
+        20,
+        40
+      ]
+    }
+  },
+  {
+    "indicator_id": "guidance_none",
+    "name": "保健指導レベル：なし",
+    "group": "保健指導レベル",
+    "description": "保健指導レベルなしと報告された人数。",
+    "rate": {
+      "label": "受診者に占める割合（%）",
+      "denominator_indicator_id": "recipients",
+      "components": [
+        "guidance_active",
+        "guidance_motivational",
+        "guidance_none",
+        "guidance_indeterminate"
+      ],
+      "population_scope": "新潟県内市町村国保40～74歳・国保連費用決済データから把握した健診受診者（法定報告とは異なる）",
+      "observation_years": [
+        2021,
+        2022,
+        2023
+      ],
+      "comparability_status": "compatible",
+      "intervals": {
+        "2021_2022": "compatible",
+        "2022_2023": "compatible"
+      },
+      "definition_version": "niigata-recipient-composition-r3-r5-v1",
+      "audit_reference": "docs/recipient_percentage_audit.md",
+      "map_breaks": [
+        5,
+        10,
+        20,
+        40
+      ]
+    }
+  },
+  {
+    "indicator_id": "guidance_indeterminate",
+    "name": "保健指導レベル：判定不能",
+    "group": "保健指導レベル",
+    "description": "保健指導レベルを判定できないと報告された人数。欠損値とは異なります。",
+    "rate": {
+      "label": "受診者に占める割合（%）",
+      "denominator_indicator_id": "recipients",
+      "components": [
+        "guidance_active",
+        "guidance_motivational",
+        "guidance_none",
+        "guidance_indeterminate"
+      ],
+      "population_scope": "新潟県内市町村国保40～74歳・国保連費用決済データから把握した健診受診者（法定報告とは異なる）",
+      "observation_years": [
+        2021,
+        2022,
+        2023
+      ],
+      "comparability_status": "compatible",
+      "intervals": {
+        "2021_2022": "compatible",
+        "2022_2023": "compatible"
+      },
+      "definition_version": "niigata-recipient-composition-r3-r5-v1",
+      "audit_reference": "docs/recipient_percentage_audit.md",
+      "map_breaks": [
+        5,
+        10,
+        20,
+        40
+      ]
+    }
+  }
+]

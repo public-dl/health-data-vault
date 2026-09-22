@@ -1,3 +1,4 @@
+import {appRoute} from './app-url';
 import {Contact} from './contact';
 import {PublicHeader,PublicFooter} from './public-shell';
 import './public.css';
@@ -89,6 +90,6 @@ function App({data,review,release,extensions}:{data:Payload;review:boolean;relea
     </main><PublicFooter review={review}/>
     <ExportReview enabled={review}/><div role="status" aria-live="polite" className={message?'toast':'sr-only'}>{message}</div>{source&&<SourceModal c={c} rows={source} onClose={()=>setSource(null)}/>}</>;
 }
-if(location.pathname.replace(/\/$/,'')==='/contact')createRoot(document.getElementById('root')!).render(<Contact/>);
-else if(location.pathname.replace(/\/$/,'')==='/learn'){const review=new URLSearchParams(location.search).has('review');createRoot(document.getElementById('root')!).render(<><PublicHeader review={review}/><Learn review={review}/><PublicFooter review={review}/></>);}
-else loadData().then(({payload,review,release,extensions})=>createRoot(document.getElementById('root')!).render(location.pathname.replace(/\/$/,'')==='/learn'?<><PublicHeader review={review}/><Learn review={review}/><PublicFooter review={review}/></>:location.pathname.replace(/\/$/,'')==='/tables'?(extensions?<><PublicHeader review={review}/><PublishedTables tables={extensions.published_tables} review={review} release={release}/><PublicFooter review={review}/></>:<main><h1>公表数表はこのreleaseに収録されていません</h1></main>):<App data={payload} review={review} release={release} extensions={extensions}/>)).catch(e=>createRoot(document.getElementById('root')!).render(<main className="load-error"><h1>公開データを確認できません</h1><p>{String(e.message)}</p><p>未検証・未承認のデータを代わりに表示することはありません。</p></main>));
+if(appRoute(location.pathname)==='/contact')createRoot(document.getElementById('root')!).render(<Contact/>);
+else if(appRoute(location.pathname)==='/learn'){const review=new URLSearchParams(location.search).has('review');createRoot(document.getElementById('root')!).render(<><PublicHeader review={review}/><Learn review={review}/><PublicFooter review={review}/></>);}
+else loadData().then(({payload,review,release,extensions})=>createRoot(document.getElementById('root')!).render(appRoute(location.pathname)==='/learn'?<><PublicHeader review={review}/><Learn review={review}/><PublicFooter review={review}/></>:appRoute(location.pathname)==='/tables'?(extensions?<><PublicHeader review={review}/><PublishedTables tables={extensions.published_tables} review={review} release={release}/><PublicFooter review={review}/></>:<main><h1>公表数表はこのreleaseに収録されていません</h1></main>):<App data={payload} review={review} release={release} extensions={extensions}/>)).catch(e=>createRoot(document.getElementById('root')!).render(<main className="load-error"><h1>公開データを確認できません</h1><p>{String(e.message)}</p><p>未検証・未承認のデータを代わりに表示することはありません。</p></main>));

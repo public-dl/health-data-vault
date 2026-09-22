@@ -1,3 +1,4 @@
+import {appUrl} from './app-url';
 import React from 'react';
 const sources={
  overview:{title:'厚生労働省「特定健診・特定保健指導について」',url:'https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000161103.html'},
@@ -17,4 +18,4 @@ export const learningSections:[string,string,(keyof typeof sources)[]][]=[
  ['特定保健指導の階層化','腹囲・BMI、検査結果、喫煙や服薬情報等から対象を選定し、年齢等も考慮して支援レベルを定めます。対象となる疾患の服薬中の人の扱いなど、メタボ判定とは異なる条件があります。原表の「なし」を「健康」と読み替えません。',['stratification']],
  ['同じ「保健指導」でも分類は別です','「医師の判断：保健指導」と「特定保健指導レベル」は同一分類ではありません。特定保健指導の対象外でも、必要に応じて生活習慣改善の支援等を検討することがあります。メタボ判定から医師の判断を経て特定保健指導へ進む、単一の判定経路を表しているわけではありません。',['roles','stratification']],
 ];
-export function Learn({review}:{review:boolean}) {return <main className="learn-page"><a href={'/'+(review?'?review=1':'')}>← 地域比較へ</a><h1>特定健診を知る</h1><p>検査の目安、医師の判断、支援レベルを区別して読むための説明です。</p><p className="annual-notice">制度の一般的な説明は令和6年度版を参照しています。2021～2023年度の値を最新基準で再判定するものではありません。過去の定義は各年度の新潟県ガイドラインと原資料に従います。</p>{learningSections.map(([title,text,refs])=><section key={title}><h2>{title}</h2><p>{text}</p><ul>{refs.map(ref=><li key={ref}><a href={sources[ref].url} target="_blank" rel="noreferrer">{sources[ref].title} ↗</a></li>)}</ul></section>)}<p>医師の判断の年度間比較はP1（服薬・判定と集計の対応）・P7（心電図基準変更の集計への反映）が未確認のためpendingです。単年度の人数合計一致は、年度間の同一定義を証明しません。</p><p>出典確認日：2026-09-20。各値の原典は図表の諸元・出典、または<a href={'/tables'+(review?'?review=1':'')}>公表数表</a>で確認できます。</p></main>;}
+export function Learn({review}:{review:boolean}) {return <main className="learn-page"><a href={appUrl('/')+(review?'?review=1':'')}>← 地域比較へ</a><h1>特定健診を知る</h1><p>検査の目安、医師の判断、支援レベルを区別して読むための説明です。</p><p className="annual-notice">制度の一般的な説明は令和6年度版を参照しています。2021～2023年度の値を最新基準で再判定するものではありません。過去の定義は各年度の新潟県ガイドラインと原資料に従います。</p>{learningSections.map(([title,text,refs])=><section key={title}><h2>{title}</h2><p>{text}</p><ul>{refs.map(ref=><li key={ref}><a href={sources[ref].url} target="_blank" rel="noreferrer">{sources[ref].title} ↗</a></li>)}</ul></section>)}<p>医師の判断の年度間比較はP1（服薬・判定と集計の対応）・P7（心電図基準変更の集計への反映）が未確認のためpendingです。単年度の人数合計一致は、年度間の同一定義を証明しません。</p><p>出典確認日：2026-09-20。各値の原典は図表の諸元・出典、または<a href={appUrl('/tables/')+(review?'?review=1':'')}>公表数表</a>で確認できます。</p></main>;}

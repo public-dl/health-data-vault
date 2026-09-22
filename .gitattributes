@@ -1,0 +1,2 @@
+# Approved release hashes cover exact bytes; never convert line endings.
+web/public/public-data/releases/*.json -text

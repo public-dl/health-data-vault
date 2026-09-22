@@ -44,6 +44,7 @@ jobs:
       - name: Build
         working-directory: web
         env:
+          PUBLIC_CONTACT_URL: https://health-data-vault.netlify.app/contact/
           CONTEXT: production
           PUBLIC_SITE_URL: https://public-dl.github.io/health-data-vault
         run: npm run build

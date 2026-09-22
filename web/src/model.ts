@@ -1,3 +1,4 @@
+import {appUrl} from './app-url';
 import type {MapScale} from './map-scale';
 import {presentationIndicator} from './visual-metadata';
 import type {FeatureCollection, Geometry} from 'geojson';
@@ -58,11 +59,9 @@ export function tableText(rows:Observation[],name:string):string {
   return ['地域\t指標\t実績年度\t値\t単位\t値状態\t出典\t報告人数\t受診者数\t計算式',...rows.map(r=>[r.geography_name,name,r.observation_fiscal_year,r.value ?? '',r.unit,r.value_state,r.source_url,(r.derivation??r.derived_rate)?.numerator_value??r.value,(r.derivation??r.derived_rate)?.denominator_value??r.denominator?.value,(r.derivation??r.derived_rate)?.formula].map(safeCell).join('\t'))].join('\n');
 }
 export async function loadData():Promise<{payload:Payload;review:boolean;release:string;extensions?:SiteExtension}> {
-  const sitePath = (path:string) =>
-    `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
 
   const get = async (path:string)=>{
-    const r=await fetch(sitePath(path),{cache:'no-store'});
+    const r=await fetch(appUrl(path),{cache:'no-store'});
     if(!r.ok)throw new Error('承認済み公開データがありません。ローカル確認は専用のプレビューURLを使用してください。');
     return r;
   };

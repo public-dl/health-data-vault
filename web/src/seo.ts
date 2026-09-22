@@ -4,6 +4,10 @@ export const pages={
  '/tables':{title:'公表数表｜新潟県の特定健診データ｜Health Data Vault',description:'新潟県の特定健康診査等結果報告を、年度別の公表数表で確認できます。原表の行列順、再掲、セルの原値と出典を保持しています。'},
  '/contact':{title:'お問い合わせ｜Health Data Vault',description:'Health Data Vaultのデータ、表示、掲載内容に関するご意見・お問い合わせを受け付けています。'}
 };
-export function productionOrigin(value:string){try{const u=new URL(value);return u.protocol==='https:'&&!/^(localhost|127\.|\[::1\])/.test(u.hostname)&&u.pathname==='/'&&!u.search&&!u.hash?u.origin:'';}catch{return '';}}
-export function indexable(origin:string,context:string,hostOrigin:string,search:string){return !!origin&&context==='production'&&hostOrigin===origin&&!new URLSearchParams(search).has('review')&&!new URLSearchParams(search).has('exportReview');}
+export function productionOrigin(value:string){try{const u=new URL(value);return u.protocol==='https:'&&!/^(localhost|127\.|\[::1\])/.test(u.hostname)&&!u.search&&!u.hash?u.href.replace(/\/+$/,''):'';}catch{return '';}}
+export function indexable(siteUrl:string,context:string,hostOrigin:string,search:string,pathname='/'){
+ const site=productionOrigin(siteUrl);if(!site)return false;
+ const u=new URL(site),base=u.pathname.replace(/\/+$/,'');
+ return context==='production'&&hostOrigin===u.origin&&(!base||pathname===base||pathname.startsWith(base+'/'))&&!new URLSearchParams(search).has('review')&&!new URLSearchParams(search).has('exportReview');
+}
 export function websiteSchema(origin:string){return {'@context':'https://schema.org','@type':'WebSite',name:'Health Data Vault',url:origin+'/',inLanguage:'ja',description:pages['/'].description};}

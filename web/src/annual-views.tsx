@@ -1,3 +1,4 @@
+import {appUrl} from './app-url';
 import {ExportSurface} from './export-surface';
 import {MapNotes} from './map-notes';
 import React,{useRef,useState} from 'react';
@@ -23,7 +24,7 @@ export function AnnualViews({c,onSelect}:{c:Context;onSelect:(code:string)=>void
  const valid=c.regions.every(code=>annualComposition(c.data,group,code,c.year));
  const categories=group.categories.filter(cat=>c.group||cat.indicator_id===c.indicator.indicator_id);
  if(!valid)return <p role="alert">単年度構成の検証が一致しないため、表示を停止しました。</p>;
- return <><p className="annual-notice">{annualNotice} 年度の選択は個別閲覧です。経年差・前年差・経年グラフは生成しません。<a href={'/learn'+(c.review?'?review=1':'')}>分類の違いを確認</a></p>{c.group&&<CompositionOverview c={c} group={group}/>}
+ return <><p className="annual-notice">{annualNotice} 年度の選択は個別閲覧です。経年差・前年差・経年グラフは生成しません。<a href={appUrl('/learn/')+(c.review?'?review=1':'')}>分類の違いを確認</a></p>{c.group&&<CompositionOverview c={c} group={group}/>}
  <section id="map"><div className="section-heading"><span className="number">{c.group?'02':'01'}</span><h2>地図で見る</h2><p>{c.year}年度・単年度表示</p></div><MapNotes measure={c.measure}/>{c.regions.length===2&&<LayoutToggle section="地図・単年度表" value={layout} onChange={setLayout}/>}{categories.map(cat=>{const context={...c,indicator:c.data.indicators.find(i=>i.indicator_id===cat.indicator_id)!};const scope='annual-map-'+cat.category_id;return <div key={cat.category_id} id={scope}><h3><CategoryIcon group={group} category={cat}/>{cat.label}</h3><ComparisonActions c={context} kind="map" layout={layout} mapScope={'#'+scope}/><div className={`comparison-panels ${c.regions.length>1?layout:'single'}`}>{c.regions.map(code=><MapPanel key={code} c={context} region={code} onSelect={onSelect} showNotes={false}/>)}</div><div className={`comparison-panels ${c.regions.length>1?layout:'single'}`}>{c.regions.map(code=><Insight key={code} c={context} code={code} map/>)}</div></div>;})}</section>
  <section id="table"><div className="section-heading"><span className="number">{c.group?'03':'02'}</span><h2>表で見る</h2><p>{c.year}年度のみ</p></div><div className={`comparison-panels ${c.regions.length>1?layout:'single'}`}>{c.regions.map(code=><AnnualTable key={code} c={c} group={group} code={code}/>)}</div></section></>;
 }

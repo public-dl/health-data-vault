@@ -4,26 +4,7 @@ import {
   writeFileSync,
   mkdirSync,
 } from 'node:fs';
-import { pages, websiteSchema } from './src/seo';
-
-function productionSiteUrl(value: string) {
-  try {
-    const u = new URL(value.trim());
-
-    if (
-      u.protocol !== 'https:' ||
-      /^(localhost|127\.|\[::1\])/.test(u.hostname) ||
-      u.search ||
-      u.hash
-    ) {
-      return '';
-    }
-
-    return u.href.replace(/\/+$/, '');
-  } catch {
-    return '';
-  }
-}
+import { pages, websiteSchema, productionOrigin as productionSiteUrl } from './src/seo';
 
 const siteUrl = productionSiteUrl(
   process.env.PUBLIC_SITE_URL ?? ''
@@ -55,7 +36,7 @@ function head(path: string) {
   const p = pages[path as keyof typeof pages];
 
   const url =
-    siteUrl + (path === '/' ? '/' : path);
+    siteUrl + (path === '/' ? '/' : path + '/');
 
   const runtimeRobotsGuard = `
 <script>
@@ -134,6 +115,8 @@ export default defineConfig({
   base: viteBase,
 
   define: {
+    __HDV_NETLIFY_FORMS__: JSON.stringify(process.env.NETLIFY === 'true'),
+    __HDV_CONTACT_URL__: JSON.stringify(process.env.PUBLIC_CONTACT_URL ?? ''),
     __HDV_ORIGIN__: JSON.stringify(siteUrl),
     __HDV_PRODUCTION__: JSON.stringify(production),
   },
@@ -200,7 +183,7 @@ ${
         .map(
           (p) =>
             `<url><loc>${siteUrl}${
-              p === '/' ? '/' : p
+              p === '/' ? '/' : p + '/'
             }</loc></url>`
         )
         .join('')

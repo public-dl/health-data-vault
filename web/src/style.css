@@ -164,11 +164,8 @@
 .hundred-two-column .hundred-recipient-heading{padding-left:var(--grid-start,0px)}
 .hundred-two-column .hundred-drawing:has(.hundred-recipient-heading){grid-template-rows:minmax(0,1fr)}
 
-/* Comparison uses the same denominator-only heading, in the existing SVG title space. */
-.hundred-comparison .hundred-visual-block{position:relative}
-.hundred-comparison .hundred-recipient-heading{position:absolute;top:0;left:0;padding-left:var(--grid-start,0px);margin:0;font-size:18px;font-weight:700;color:#193b69;line-height:1.4}
-.hundred-comparison .hundred-svg-local-title{display:none}
-.hundred-comparison .hundred-narrow .hundred-recipient-heading{position:static;margin-bottom:8px}
+/* Keep each comparison denominator in its card's normal document flow. */
+.hundred-comparison .hundred-recipient-heading{font-size:18px;font-weight:700;color:#193b69;line-height:1.4}
 @media(max-width:700px){.hundred-comparison .hundred-recipient-heading{font-size:16px}}
 
 

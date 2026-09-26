@@ -1,7 +1,7 @@
 import type {Indicator,IndicatorGroup} from './model';
 
 // Navigation metadata only: never grants publication or comparison permission.
-export type HealthTheme={id:string;order:number;label:string;description:string;icon:'people'|'heart'|'drop'|'cube'|'liver'|'more';groupIds:string[];indicatorIds:string[];status:'available'|'planned';independentComparison?:boolean};
+export type HealthTheme={id:string;order:number;accentColor:string;label:string;description:string;icon:'people'|'heart'|'drop'|'cube'|'liver'|'more';groupIds:string[];indicatorIds:string[];status:'available'|'planned';independentComparison?:boolean};
 // Visualization order only. Source-table columns and record IDs remain untouched.
 export const glucoseDisplayOrder=['glucose_people','urine_glucose','fasting_glucose','random_glucose','hba1c'];
 export const lipidDisplayOrder=['lipid_people','triglycerides','hdl','ldl','total_cholesterol'];
@@ -10,14 +10,14 @@ export function orderByIndicators<T extends {indicator_id:string}>(records:T[],i
  return [...records].sort((a,b)=>ids.indexOf(a.indicator_id)-ids.indexOf(b.indicator_id));
 }
 export const healthThemes:HealthTheme[]=[
- {id:'overall',order:1,label:'総合判定',description:'メタボ・医師の判断・保健指導',icon:'people',groupIds:['metabo','doctor_judgment','guidance'],indicatorIds:[],status:'available'},
- {id:'blood-pressure',order:2,label:'血圧',description:'受診勧奨・保健指導の報告人数',icon:'heart',groupIds:[],indicatorIds:bloodPressureDisplayOrder,status:'available',independentComparison:true},
- {id:'lipids',order:3,label:'脂質代謝',description:'実人員・中性脂肪・HDL・LDL・総コレステロール',icon:'drop',groupIds:[],indicatorIds:lipidDisplayOrder,status:'available',independentComparison:true},
- {id:'glucose',order:5,label:'糖代謝',description:'実人員・尿糖・血糖・HbA1c',icon:'cube',groupIds:[],indicatorIds:glucoseDisplayOrder,status:'available',independentComparison:true},
- {id:'liver',order:4,label:'肝機能',description:'原表の肝機能欄に掲載された人数',icon:'liver',groupIds:[],indicatorIds:['liver'],status:'available'},
- {id:'renal-urinary',order:6,label:'腎・尿路系',description:'実人員・尿蛋白・尿潜血・クレアチニン',icon:'drop',groupIds:[],indicatorIds:[],status:'planned'},
- {id:'detailed',order:7,label:'詳細な健診項目',description:'貧血検査・心電図検査・眼底検査',icon:'heart',groupIds:[],indicatorIds:[],status:'planned'},
- {id:'other',order:8,label:'その他の健診項目',description:'血清尿酸・血清総蛋白',icon:'more',groupIds:[],indicatorIds:[],status:'planned'},
+ {id:'overall',accentColor:'#626FD1',order:1,label:'総合判定',description:'メタボ・医師の判断・保健指導',icon:'people',groupIds:['metabo','doctor_judgment','guidance'],indicatorIds:[],status:'available'},
+ {id:'blood-pressure',accentColor:'#D9576B',order:2,label:'血圧',description:'保健指導・受診勧奨',icon:'heart',groupIds:[],indicatorIds:bloodPressureDisplayOrder,status:'available',independentComparison:true},
+ {id:'lipids',accentColor:'#A87516',order:3,label:'脂質代謝',description:'中性脂肪・HDL・LDL・総コレステロール',icon:'drop',groupIds:[],indicatorIds:lipidDisplayOrder,status:'available',independentComparison:true},
+ {id:'glucose',accentColor:'#258E84',order:5,label:'糖代謝',description:'尿糖・血糖・HbA1c',icon:'cube',groupIds:[],indicatorIds:glucoseDisplayOrder,status:'available',independentComparison:true},
+ {id:'liver',accentColor:'#A8674B',order:4,label:'肝機能',description:'肝機能',icon:'liver',groupIds:[],indicatorIds:['liver'],status:'available'},
+ {id:'renal-urinary',accentColor:'#287FC3',order:6,label:'腎・尿路系',description:'尿蛋白・尿潜血・クレアチニン',icon:'drop',groupIds:[],indicatorIds:[],status:'planned'},
+ {id:'detailed',accentColor:'#7B64C8',order:7,label:'詳細な健診項目',description:'貧血検査・心電図検査・眼底検査',icon:'heart',groupIds:[],indicatorIds:[],status:'planned'},
+ {id:'other',accentColor:'#667788',order:8,label:'その他の健診項目',description:'血清尿酸・血清総蛋白',icon:'more',groupIds:[],indicatorIds:[],status:'planned'},
 ].sort((a,b)=>a.order-b.order) as HealthTheme[];
 export type VisualizationType='composition'|'category_distribution'|'continuous';
 export const groupPresentation:Record<string,{visualizationType:VisualizationType;overviewLabel:string}>={

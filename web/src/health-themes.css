@@ -10,3 +10,12 @@
 .theme-options button>span{display:block;min-width:0;letter-spacing:normal}.theme-options small{font-weight:400}
 @media(max-width:1000px){.theme-options{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:560px){.theme-options{grid-template-columns:repeat(2,minmax(0,1fr))}.theme-heading{align-items:start;flex-direction:column;gap:3px}.theme-options button{padding:8px}.theme-options strong{font-size:13px}}
+
+/* Navigation identity only; data/category colors are independent. */
+.health-theme-menu .theme-options button{border-left:4px solid var(--theme-accent)}
+.health-theme-menu .theme-options button svg{color:var(--theme-accent)}
+.health-theme-menu .theme-options button[aria-pressed=true]{background:color-mix(in srgb,var(--theme-accent) 14%,white);border-color:var(--theme-accent);color:#153450;box-shadow:inset 3px 0 var(--theme-accent)}
+.analysis-sidebar .health-theme-menu .theme-current{background:var(--theme-trigger);border-color:color-mix(in srgb,var(--theme-accent) 65%,white);color:white}
+.analysis-sidebar .health-theme-menu .theme-options button svg{color:var(--theme-accent)}
+.analysis-sidebar .health-theme-menu .theme-options button[aria-pressed=true]{background:color-mix(in srgb,var(--theme-accent) 14%,white);border-color:var(--theme-accent);color:#153450;box-shadow:inset 3px 0 var(--theme-accent)}
+.analysis-sidebar .health-theme-menu .theme-options button[aria-pressed=true] svg{color:var(--theme-accent)}

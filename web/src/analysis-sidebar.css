@@ -1,0 +1,54 @@
+/* One set of existing controls; desktop changes placement, never state. */
+.sidebar-title,.condition-summary{display:none}
+.analysis-results,.analysis-intro,.analysis-sidebar{min-width:0}
+@media(min-width:1200px){
+ main.analysis-layout{max-width:none;margin-inline:0;width:100%;box-sizing:border-box;display:grid;grid-template-columns:310px minmax(0,1fr);grid-template-rows:auto 1fr;gap:0 24px;padding:20px 24px 20px 0;align-items:start}
+ .analysis-intro{grid-column:2;grid-row:1}.analysis-results{grid-column:2;grid-row:2}
+ .analysis-sidebar{grid-column:1;grid-row:1 / span 2;position:sticky;top:16px;max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:auto;scrollbar-width:thin;background:#153d6c;color:#fff;border-radius:0 14px 14px 0;padding:24px 20px;box-sizing:border-box}
+ .sidebar-title{display:block;font-size:20px;font-weight:700;margin:0 0 18px;color:#fff}
+ .analysis-sidebar .filters{display:flex;flex-direction:column;gap:16px;margin:0;padding:0;border:0;background:transparent;box-shadow:none;color:#fff}
+ .analysis-sidebar .health-theme-menu{width:100%;margin:0;padding:0;border:0;background:none}
+ .analysis-sidebar .theme-heading{margin:0 0 7px;padding:0}
+ .analysis-sidebar .theme-heading small,.analysis-sidebar .step-heading b,.analysis-sidebar .filter-icon,.analysis-sidebar label>small,.analysis-sidebar legend>small{display:none}
+ .analysis-sidebar .step-heading{color:#eef7ff;font-size:16px;line-height:1.6}
+ .analysis-sidebar .theme-options{display:flex;flex-direction:column;gap:5px}
+ .analysis-sidebar .theme-options button{min-height:44px;padding:9px 11px;display:flex;align-items:center;gap:11px;background:transparent;border:1px solid transparent;border-radius:6px;color:#fff;text-align:left}
+ .analysis-sidebar .theme-options button svg{width:20px;height:20px;flex:none;color:#b7d9f7}
+ .analysis-sidebar .theme-options button strong{font-size:16px;color:inherit;font-weight:600}
+ .analysis-sidebar .theme-options button small{display:none}
+ .analysis-sidebar .theme-options button[aria-pressed=true]{background:#d7edff;border-color:#9ad0ff;color:#12375d;box-shadow:inset 4px 0 #49adff}
+ .analysis-sidebar .theme-options button:disabled{opacity:1;color:#afc6dc;background:transparent}
+ .analysis-sidebar .theme-options button em{font-size:12px;background:#294c72;color:#e0ecf7;margin-left:6px}
+ .analysis-sidebar .filters>label{padding:0;border:0;display:flex;flex-direction:column;gap:5px;width:100%}
+ .analysis-sidebar .filters select{min-height:46px;font-size:15px;padding:11px 32px 11px 12px;min-width:0}
+ .analysis-sidebar .region-filter{padding:0;margin:0;min-width:0;width:100%}
+ .analysis-sidebar .region-selects{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+ .analysis-sidebar .region-selects label{display:flex;flex-direction:column;gap:5px;min-width:0}
+ .analysis-sidebar .region-selects .sr-only{position:static;width:auto;height:auto;clip:auto;overflow:visible;font-size:14px;color:#e3effa}
+ .analysis-sidebar .versus{display:none}
+ .analysis-sidebar .filters .clear{position:static;color:#e5f4ff;font-size:14px;padding:8px;background:none;border:1px solid #6b91b9;border-radius:5px}
+ .analysis-sidebar :focus-visible{outline:3px solid #a0dfff;outline-offset:2px}
+ .condition-summary{display:block;margin-top:20px;padding:14px;border:1px solid #6384a8;border-radius:10px;background:#214c7c;font-size:14px}
+ .condition-summary strong{color:#fff}.condition-summary dl{display:grid;grid-template-columns:48px minmax(0,1fr);gap:7px 10px;margin:8px 0 0;line-height:1.5}.condition-summary dt{color:#bcd5ed}.condition-summary dd{margin:0;overflow-wrap:anywhere;color:#fff}
+ .analysis-intro .hero{padding:16px 24px;grid-template-columns:1.4fr 1fr}.analysis-intro .hero h1{font-size:28px;line-height:1.4;margin:5px 0 8px}.analysis-intro .hero-art{height:170px}.analysis-intro .hero p{margin:5px 0;font-size:14px}
+ .analysis-results .content-nav-heading{display:none}.analysis-results .content-navigation{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 20px}.analysis-results .content-navigation a{padding:8px 12px;min-height:0;flex:1}.analysis-results .content-navigation svg,.analysis-results .nav-copy small{display:none}.analysis-results .nav-copy strong{font-size:12px}
+ body:has(.analysis-layout) .context-bar{display:none}
+}
+@media(min-width:1200px){
+ .analysis-layout .startup-status,.analysis-layout .section-placeholder,.analysis-layout .load-error{grid-column:2}
+ .analysis-sidebar .startup-controls{display:flex;flex-direction:column;gap:16px}
+ .analysis-sidebar .startup-controls label{color:#fff}
+}
+
+@media(min-width:1600px){main.analysis-layout{grid-template-columns:340px minmax(0,1fr);gap:0 28px}.analysis-sidebar{padding-inline:24px}}
+.analysis-sidebar .theme-options button[aria-pressed=true] svg{color:inherit}
+/* Disclosure only in the desktop analysis sidebar; mobile keeps its theme list. */
+.theme-current{display:none}
+@media(min-width:1200px){
+ .analysis-sidebar .health-theme-menu{position:sticky;top:0;z-index:5;background:#153d6c;padding:0 0 12px}
+ .analysis-sidebar .theme-heading{display:none}
+ .analysis-sidebar .theme-current{display:flex;width:100%;align-items:center;justify-content:space-between;text-align:left;background:#24598b;border:1px solid #8acbff;border-radius:8px;color:#fff;padding:12px 14px;font-size:13px;line-height:1.5;cursor:pointer}
+ .analysis-sidebar .theme-current strong{display:block;font-size:18px;font-weight:700;margin-top:2px;color:#fff}
+ .analysis-sidebar .health-theme-menu[data-open=false] .theme-options{display:none}
+ .analysis-sidebar .health-theme-menu[data-open=true] .theme-options{margin-top:8px;max-height:45dvh;overflow-y:auto}
+}

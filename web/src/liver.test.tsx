@@ -1,6 +1,7 @@
 import React from 'react';
 import {it,expect,vi,afterEach} from 'vitest';
-import {renderToStaticMarkup} from 'react-dom/server';
+import {renderToStaticMarkup,renderToReadableStream} from 'react-dom/server';
+async function renderReady(node:React.ReactNode){const stream=await renderToReadableStream(node);await stream.allReady;return new Response(stream).text();}
 import {healthThemes,themeChoices,resolveThemeSelection} from './health-themes';
 import {displayData,csv,type Payload} from './model';
 import {ReportedViews,reportedContext} from './reported-views';
@@ -30,16 +31,16 @@ function fixture(){
  const data=displayData(raw,'rate');
  return reportedContext({data,indicator:data.indicators[0],measure:'rate',year:2023,regions:['15','15202'],release:'test',review:true,notify:()=>{},source:()=>{}} as Context,true);
 }
-it('exposes liver alone without fabricated members or a redundant all-items set',()=>{
+it('exposes liver alone without fabricated members or a redundant all-items set',async()=>{
  const c=fixture(),theme=healthThemes.find(t=>t.id==='liver')!;
  expect(themeChoices(theme,[],c.data.indicators).ids).toEqual(['liver']);
  expect(resolveThemeSelection(null,'liver','fallback',[],c.data.indicators)).toEqual({themeId:'liver',indicatorId:'liver'});
  expect(themeChoices(theme,[],[]).ids).toEqual([]);
 });
-it('reuses all four export surfaces without composition or indicator-comparison charts',()=>{
+it('reuses all four export surfaces without composition or indicator-comparison charts',async()=>{
  vi.stubGlobal('window',{matchMedia:()=>({matches:false})});
  const c=fixture();
- const html=renderToStaticMarkup(<ReportedViews c={c} onYear={()=>{}} onSelect={()=>{}}/>);
+ const html=await renderReady(<ReportedViews c={c} onYear={()=>{}} onSelect={()=>{}}/>);
  for(const kind of ['summary-card','map-card','table-card','graph-card'])expect(html).toContain('data-export-surface="'+kind+'"');
  expect(html).toContain('28,783');expect(html).toContain('113,771');expect(html).toContain('25.3');
  expect(html).toContain('特定健診受診者数に</span><span class="metric-heading-line">占める割合（％）');
@@ -47,7 +48,7 @@ it('reuses all four export surfaces without composition or indicator-comparison 
  expect(html).not.toContain('指標間の比較');expect(html).not.toContain('100人ピクトグラム');
  expect(html).not.toContain('構成合計100%');
 });
-it('keeps the fixed distribution domain and excludes county from the 30-point statistics',()=>{
+it('keeps the fixed distribution domain and excludes county from the 30-point statistics',async()=>{
  const c=fixture(),rows=chartRecords(c.data.records,'liver');
  expect(c.indicator.map_scale).toEqual({mode:'continuous',min:18,max:32});
  for(const year of c.data.years){const d=municipalityDistribution(rows,year);expect(d.count).toBe(30);expect(d.total).toBe(30);}

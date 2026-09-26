@@ -3,8 +3,8 @@ import React,{useEffect,useLayoutEffect,useRef,useState} from 'react';
 import type {PublishedTable,Observation,TableCell} from './model';
 import {save} from './export';
 
-export function tableLink(r:Observation,review:boolean){const p=new URLSearchParams({year:String(r.observation_fiscal_year),cell:r.source_cell});if(review)p.set('review','1');return appUrl('/tables/')+'?'+p;}
-export function visualizationLink(table:PublishedTable,cell:TableCell,review:boolean){if(!cell.visualization)return null;const p=new URLSearchParams({year:String(table.source.observation_fiscal_year),region:cell.visualization.region,indicator:cell.visualization.indicator_id});if(review)p.set('review','1');return appUrl('/')+'?'+p+'#map';}
+import {tableLink,visualizationLink} from './source-links';
+export {tableLink,visualizationLink} from './source-links';
 const safe=(s:string)=>/^[=+@\-\t\r]/.test(s)?"'"+s:s;
 export function sourceTableText(table:PublishedTable,separator='\t') {return table.rows.map(row=>row.cells.map(c=>{const s=safe(c.display_text);return separator===','?'"'+s.replaceAll('"','""')+'"':s.replace(/[\t\r\n]+/g,' ');}).join(separator)).join('\r\n');}
 // Display-only grouping of header text and following empty cells. Raw cells remain intact.

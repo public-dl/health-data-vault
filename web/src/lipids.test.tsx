@@ -1,6 +1,7 @@
 import {it,expect,vi,afterEach} from 'vitest';
 import React from 'react';
-import {renderToStaticMarkup} from 'react-dom/server';
+import {renderToStaticMarkup,renderToReadableStream} from 'react-dom/server';
+async function renderReady(node:React.ReactNode){const stream=await renderToReadableStream(node);await stream.allReady;return new Response(stream).text();}
 import {healthThemes,themeChoices,lipidDisplayOrder,resolveThemeSelection} from './health-themes';
 import {displayData,csv,connect,type Payload} from './model';
 import {reportedContext,ReportedViews} from './reported-views';
@@ -9,7 +10,7 @@ import {MapPanel,type Context} from './panels';
 import {indicatorColorAliases} from './visual-metadata';
 afterEach(()=>vi.unstubAllGlobals());
 
-it('retains categorical map behavior when continuous metadata is absent',()=>{
+it('retains categorical map behavior when continuous metadata is absent',async()=>{
  vi.stubGlobal('window',{matchMedia:()=>({matches:false})});
  const breaksById:Record<string,number[]>={lipid_people:[60,65,70,75],triglycerides:[24,28,32,36],hdl:[4,5,6,8],ldl:[40,45,50,55],total_cholesterol:[25,30,35,40]};
  const c=fixture();
@@ -35,22 +36,22 @@ function fixture(){
  const displayed=displayData(data,'rate');
  return reportedContext({data:displayed,indicator:displayed.indicators[0],measure:'rate',year:2023,regions:['15','15202'],release:'test',review:true,notify:()=>{},source:()=>{}} as Context,true);
 }
-it('enables exactly the five audited items and a non-composition set, preserving indicator links',()=>{
+it('enables exactly the five audited items and a non-composition set, preserving indicator links',async()=>{
  const c=fixture(),theme=healthThemes.find(t=>t.id==='lipids')!;
  expect(themeChoices(theme,[],c.data.indicators).ids).toEqual(['set:lipids',...lipidDisplayOrder]);
  for(const id of lipidDisplayOrder)expect(resolveThemeSelection(null,id,'fallback',[],c.data.indicators)).toEqual({themeId:'lipids',indicatorId:id});
  expect(themeChoices(theme,[],c.data.indicators.slice(1)).sets).toHaveLength(0);
 });
-it('uses common surfaces and annual tables, never a composition or temporal graph',()=>{
+it('uses common surfaces and annual tables, never a composition or temporal graph',async()=>{
  vi.stubGlobal('window',{matchMedia:()=>({matches:false})});
- const c=fixture();const html=renderToStaticMarkup(<ReportedViews c={c} members={lipidDisplayOrder} onSelect={()=>{}} onYear={()=>{}}/>);
+ const c=fixture();const html=await renderReady(<ReportedViews c={c} members={lipidDisplayOrder} onSelect={()=>{}} onYear={()=>{}}/>);
  expect(html).toContain('掲載項目をひと目で見る');expect(html).toContain('脂質：全項目');
  expect(html.match(/<th scope="row">/g)).toHaveLength(10);
  expect(html).toContain('category-year-table');expect(html).toContain('data-export-surface="summary-card"');
  expect(html).not.toMatch(/hundred-svg|composition-total|構成合計100%|脂質：全区分/);
  expect(html).toContain('comparability: pending');expect(html.match(/data-chart="annual"/g)).toHaveLength(5);
 });
-it('retains rate origin in count and rate CSV, allows only same-year regional arithmetic',()=>{
+it('retains rate origin in count and rate CSV, allows only same-year regional arithmetic',async()=>{
  const c=fixture(),rows=c.data.records.filter(r=>r.indicator_id==='lipid_people');
  expect(regionalRateDifference(rows[0],rows[1])).toBe(10);
  expect(regionalRateDifference(rows[0],rows[2])).toBeNull();expect(connect(rows[0],rows[2])).toBe(false);

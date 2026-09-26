@@ -7,7 +7,7 @@ import type {Indicator,IndicatorGroup} from './model';
 const groups=['metabo','doctor_judgment','guidance'].map(group_id=>({group_id,name:group_id,categories:[{indicator_id:group_id+'_one'}]})) as IndicatorGroup[];
 const catalog=groups.map(g=>({indicator_id:g.categories[0].indicator_id})) as Indicator[];
 describe('health theme navigation',()=>{
- it('preserves every existing theme URL and blocks the three future themes',()=>{
+ it('preserves every existing theme URL and blocks the two future themes',()=>{
   const current=[...catalog,...['bp_referral','lipid_people','liver','glucose_people'].map(indicator_id=>({indicator_id} as Indicator))];
   for(const [theme,id] of [['overall','group:metabo'],['blood-pressure','bp_referral'],['lipids','lipid_people'],['liver','liver'],['glucose','glucose_people']]){
    expect(resolveThemeSelection(theme,id,'group:metabo',groups,current)).toEqual({themeId:theme,indicatorId:id});

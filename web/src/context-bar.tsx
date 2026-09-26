@@ -1,9 +1,9 @@
 import {contentSections} from './content-navigation';
 import React,{useEffect,useState} from 'react';
 
-export function ContextBar({item,unit,year,regions,hasOverview,hasGraph=true,overviewLabel}:{item:string;unit:string;year:number;regions:string[];hasOverview:boolean;hasGraph?:boolean;overviewLabel?:string}) {
+export function ContextBar({item,unit,year,regions,hasOverview,hasGraph=true,overviewLabel,sectionUnits}:{item:string;unit:string;year:number;regions:string[];hasOverview:boolean;hasGraph?:boolean;overviewLabel?:string;sectionUnits?:Record<string,string>}) {
  const sections=contentSections(hasOverview,hasGraph).map(s=>[s.id,s.number+' '+(s.id==='overview'&&overviewLabel?overviewLabel:s.label)]);
- const [visible,setVisible]=useState(false),[section,setSection]=useState('01 地図で見る');
+ const [visible,setVisible]=useState(false),[section,setSection]=useState('01 地図で見る'),[sectionId,setSectionId]=useState('overview');
  useEffect(()=>{
   const filters=document.getElementById('filters');
   if(!filters)return;
@@ -12,7 +12,7 @@ export function ContextBar({item,unit,year,regions,hasOverview,hasGraph=true,ove
    const available=sections.filter(([id])=>document.getElementById(id));
    let active=available[0];
    for(const entry of available){if(document.getElementById(entry[0])!.getBoundingClientRect().top<=115)active=entry;}
-   if(active)setSection(active[1]);
+   if(active){setSection(active[1]);setSectionId(active[0]);}
   };
   // Observe a narrow band at the reading edge, not every scroll event.
   let observer:IntersectionObserver;
@@ -32,7 +32,7 @@ export function ContextBar({item,unit,year,regions,hasOverview,hasGraph=true,ove
   panel?.querySelector<HTMLSelectElement>('select')?.focus({preventScroll:true});
  };
  return <aside className="context-bar" aria-label="現在の閲覧条件" hidden={!visible}>
-  <div className="context-summary"><strong className="context-section">{section}</strong><span className="context-item">{item}</span><span>{unit}</span><span>{year}年度</span><span className="context-regions">{regions.join(' vs ')}</span></div>
+  <div className="context-summary"><strong className="context-section">{section}</strong><span className="context-item">{item}</span><span>{sectionUnits?.[sectionId]??unit}</span><span>{year}年度</span><span className="context-regions">{regions.join(' vs ')}</span></div>
   <button onClick={change}>条件変更</button>
  </aside>;
 }

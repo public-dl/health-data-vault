@@ -1,6 +1,7 @@
 import {it,expect,vi,afterEach} from 'vitest';
 import React from 'react';
-import {renderToStaticMarkup} from 'react-dom/server';
+import {renderToStaticMarkup,renderToReadableStream} from 'react-dom/server';
+async function renderReady(node:React.ReactNode){const stream=await renderToReadableStream(node);await stream.allReady;return new Response(stream).text();}
 import {glucoseDisplayOrder,healthThemes,themeChoices,resolveThemeSelection} from './health-themes';
 import {displayData,csv,type Payload} from './model';
 import {ReportedViews,reportedContext} from './reported-views';
@@ -39,13 +40,13 @@ function fixture(measure:'rate'|'count'='rate',unified=false){
  return reportedContext({data,indicator:data.indicators.find(i=>i.indicator_id==='glucose_people')!,measure,year:2023,regions:['15','15202'],release:'test',review:true,notify:()=>{},source:()=>{}} as Context,true);
 }
 afterEach(()=>vi.unstubAllGlobals());
-test('uses existing IDs and exposes a non-composition all-items set',()=>{
+test('uses existing IDs and exposes a non-composition all-items set',async()=>{
  const c=fixture(),theme=healthThemes.find(t=>t.id==='glucose')!;
  expect(themeChoices(theme,[],c.data.indicators).ids).toEqual(['set:glucose',...glucoseDisplayOrder]);
  for(const id of glucoseDisplayOrder)expect(resolveThemeSelection(null,id,'fallback',[],c.data.indicators)).toEqual({themeId:'glucose',indicatorId:id});
  expect(c.data.indicator_groups).toEqual([]);
 });
-test('never derives unapproved rates in either display mode, CSV or comparison CSV',()=>{
+test('never derives unapproved rates in either display mode, CSV or comparison CSV',async()=>{
  for(const measure of ['count','rate'] as const){
   const c=fixture(measure);
   for(const id of ['glucose_people','random_glucose']){
@@ -60,14 +61,14 @@ test('never derives unapproved rates in either display mode, CSV or comparison C
   expect(output).toContain('78101');expect(output).toContain('6806');expect(output).not.toMatch(/residual|composition_total/);
  }
 });
-test('rejects an injected count-only ratio instead of presenting it',()=>{
+test('rejects an injected count-only ratio instead of presenting it',async()=>{
  const c=fixture('count'),row=c.data.records.find(r=>r.indicator_id==='glucose_people')!;
  row.derived_rate=c.data.records.find(r=>r.indicator_id==='hba1c')!.derived_rate;
  expect(()=>reportedContext(c,true)).toThrow('未承認');
 });
-test('shares all four sections with mixed units and exactly three percentage graph series',()=>{
+test('shares all four sections with mixed units and exactly three percentage graph series',async()=>{
  vi.stubGlobal('window',{matchMedia:()=>({matches:false})});
- const c=fixture();const html=renderToStaticMarkup(<ReportedViews c={c} members={glucoseDisplayOrder} onSelect={()=>{}} onYear={()=>{}}/>);
+ const c=fixture();const html=await renderReady(<ReportedViews c={c} members={glucoseDisplayOrder} onSelect={()=>{}} onYear={()=>{}}/>);
  expect(html).toContain('糖代謝：全項目');expect(html).toContain('78,101人');expect(html).toContain('6,806人');
  expect(html).toContain('category-year-table');expect(html).toContain('割合未承認項目は人数のみ');
  expect(html.match(/data-chart="annual"/g)).toHaveLength(3);
@@ -76,7 +77,7 @@ test('shares all four sections with mixed units and exactly three percentage gra
  expect(html).toContain('data-distribution-reference="selected"');expect(html).toContain('var(--distribution-selected)');
  expect(html).toContain('data-export-surface="map-card"');
 });
-test('keeps fixed domains and unique 30-municipality distribution across all years',()=>{
+test('keeps fixed domains and unique 30-municipality distribution across all years',async()=>{
  const c=fixture();
  for(const id of official){
   const indicator=c.data.indicators.find(i=>i.indicator_id===id)!;
@@ -90,12 +91,12 @@ test('keeps fixed domains and unique 30-municipality distribution across all yea
  }
 });
 
-it('uses the common contract for four approved glucose ratios but never random glucose',()=>{
+it('uses the common contract for four approved glucose ratios but never random glucose',async()=>{
  vi.stubGlobal('window',{matchMedia:()=>({matches:false})});
  const c=fixture('rate',true), rows=c.data.records.filter(r=>r.indicator_id==='glucose_people');
  expect(rows).toHaveLength(93);expect(rows.every(r=>r.unit==='%'&&r.value===78101/113771*100)).toBe(true);
  expect(c.data.records.filter(r=>r.indicator_id==='random_glucose').every(r=>r.unit==='人'&&!r.derivation)).toBe(true);
- const html=renderToStaticMarkup(<ReportedViews c={c} members={glucoseDisplayOrder} onSelect={()=>{}} onYear={()=>{}}/>);
+ const html=await renderReady(<ReportedViews c={c} members={glucoseDisplayOrder} onSelect={()=>{}} onYear={()=>{}}/>);
  expect(html.match(/data-chart="annual"/g)).toHaveLength(4);
  expect(html).toContain('糖代謝4項目の独立した棒グラフ');expect(html).toContain('68.6%');
  expect(html).not.toMatch(/hundred-svg|composition-total|構成合計100%/);
@@ -103,13 +104,13 @@ it('uses the common contract for four approved glucose ratios but never random g
  expect(csv(rows,'test')).toContain('113771');
 });
 
-it('propagates centralized public labels through shared views, export surfaces and CSV',()=>{
+it('propagates centralized public labels through shared views, export surfaces and CSV',async()=>{
  vi.stubGlobal('window',{matchMedia:()=>({matches:false})});
  for(const wording of ['公開名称テスト','一括修正テスト']){
   const c=fixture('count',true);
   c.data.indicators=c.data.indicators.map(i=>({...i,source_label:i.name,public_label:wording+i.indicator_id,name:wording+i.indicator_id,short_label:'短縮'+i.indicator_id,semantic_key:'reported_guidance_or_higher',terminology_version:'test-v1'}));
   c.data=displayData(c.data,'count');c.indicator=c.data.indicators[0];
-  const html=renderToStaticMarkup(<ReportedViews c={c} members={glucoseDisplayOrder} onSelect={()=>{}} onYear={()=>{}}/>);
+  const html=await renderReady(<ReportedViews c={c} members={glucoseDisplayOrder} onSelect={()=>{}} onYear={()=>{}}/>);
   for(const id of glucoseDisplayOrder){expect(html).toContain(wording+id);expect(csv(c.data.records.filter(r=>r.indicator_id===id),wording+id)).toContain(wording+id);}
   for(const kind of ['summary-card','map-card','table-card','graph-card'])expect(html).toContain('data-export-surface="'+kind+'"');
   const text=csv(c.data.records,'test');expect(text).toContain('source_label,public_label,semantic_key,terminology_version');expect(text).toContain('reported_guidance_or_higher');expect(text).toContain('test-v1');

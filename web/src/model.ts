@@ -60,8 +60,8 @@ export function tableText(rows:Observation[],name:string):string {
 }
 export async function loadData():Promise<{payload:Payload;review:boolean;release:string;extensions?:SiteExtension}> {
 
-  const get = async (path:string)=>{
-    const r=await fetch(appUrl(path),{cache:'no-store'});
+  const get = async (path:string,cache:RequestCache='no-store')=>{
+    const r=await fetch(appUrl(path),{cache});
     if(!r.ok)throw new Error('承認済み公開データがありません。ローカル確認は専用のプレビューURLを使用してください。');
     return r;
   };
@@ -72,7 +72,7 @@ export async function loadData():Promise<{payload:Payload;review:boolean;release
   }
   const approval=await (await get('/public-data/current.json')).json();
   if(approval.status!=='approved' || !/^[a-f0-9]{64}$/.test(approval.release_id) || approval.release_id!==approval.data_sha256 || !approval.reviewer) throw new Error('公開承認を確認できません');
-  const raw=await (await get(`/public-data/releases/${approval.release_id}.json`)).arrayBuffer();
+  const raw=await (await get(`/public-data/releases/${approval.release_id}.json`,'default')).arrayBuffer();
   const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',raw)),b=>b.toString(16).padStart(2,'0')).join('');
   if(hash!==approval.data_sha256)throw new Error('公開データのハッシュが一致しません');
   const payload=JSON.parse(new TextDecoder().decode(raw));

@@ -1,9 +1,10 @@
+import {matchPeople,personMotion,type PersonIdentity} from './pictogram-motion';
 import {ExportSurface} from './export-surface';
 import {annualComposition} from './annual-model';
 import {sectionDefinitions} from './content-navigation';
 import {ComparisonActions} from './comparison-export';
 import React,{useEffect,useLayoutEffect,useRef,useState} from 'react';
-import {PICTOGRAM_SCALE,pictogramLayout} from './pictogram-layout';
+import {groupedPictogramLayout,hundredGridLayout} from './grouped-pictogram-layout';
 import type {Category,IndicatorGroup} from './model';
 import {format,formatValue} from './model';
 import {composition,numerator} from './group-model';
@@ -25,33 +26,54 @@ export function CategoryIcon({group,category}:{group:IndicatorGroup;category:Cat
  const visual=groupVisuals[group.group_id]?.[category.category_id];
  return visual?<svg className="category-icon" viewBox="0 0 24 34" aria-hidden="true" style={{color:visual.color}}><PersonShape pose={visual.pose}/></svg>:null;
 }
-function HundredCard({c,group,code,singleRegion}:{c:Context;group:IndicatorGroup;code:string;singleRegion:boolean}) {
- const part=(c.data.schema_version==='annual-1'?annualComposition:composition)(c.data,group,code,c.year),ref=useRef<SVGSVGElement>(null),[active,setActive]=useState('');
+function HundredCard({c,group,code,singleRegion,mode}:{c:Context;group:IndicatorGroup;code:string;singleRegion:boolean;mode:"grid"|"grouped"}) {
+ const part=(c.data.schema_version==='annual-1'?annualComposition:composition)(c.data,group,code,c.year),ref=useRef<SVGSVGElement>(null);
  const drawingRef=useRef<HTMLDivElement>(null),[drawingWidth,setDrawingWidth]=useState(0);
  useEffect(()=>{const el=drawingRef.current;if(!el)return;const observer=new ResizeObserver(entries=>setDrawingWidth(entries[0].contentRect.width));observer.observe(el);return()=>observer.disconnect();},[!!part]);
- const geometry=pictogramLayout(drawingWidth,singleRegion);
+
  const rates=part?.rows.map(r=>(r.derivation??r.derived_rate)?.value??null)??[];
  const allocation=part?allocateHundred(rates):null;
  const symbols=allocation?.flatMap((n,i)=>Array(n).fill(i) as number[])??[];
+ const geometry=(mode==='grid'?hundredGridLayout:groupedPictogramLayout)(drawingWidth,allocation??[]);
+ const previousPeople=useRef<PersonIdentity[]>([]);
+ const previousPositions=useRef(new Map<number,{x:number;y:number;color:string}>());
+ const identities=matchPeople(previousPeople.current,symbols.map(i=>group.categories[i].category_id));
+ const motionKey=JSON.stringify([mode,identities,geometry.width,geometry.columns,geometry.stacked]);
  useLayoutEffect(()=>{
-  const svg=ref.current;if(!svg)return;
-  const people=Array.from(svg.querySelectorAll('[data-person]'));
-  if(!people.length)return;
-  const inset=Math.min(...people.map(person=>person.getBoundingClientRect().left))-svg.getBoundingClientRect().left;
-  svg.parentElement?.style.setProperty('--grid-start',`${inset}px`);
- },[geometry.sideLegend,geometry.narrow,code,c.year,group.group_id,c.measure]);
+  const svg=ref.current;if(!svg){previousPeople.current=[];previousPositions.current.clear();return;}
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const animations:Animation[]=[];const next=new Map<number,{x:number;y:number;color:string}>();
+  identities.forEach((person,index)=>{
+   const position=geometry.position(index),color=groupVisuals[group.group_id][person.category].color;
+   const old=previousPositions.current.get(person.id);const el=svg.querySelector<SVGGElement>(`[data-person="${person.id}"]`);
+   next.set(person.id,{...position,color});
+   if(el&&old&&!reduced.matches&&el.animate&&(old.x!==position.x||old.y!==position.y||old.color!==color)){
+    animations.push(el.animate([{transform:`translate(${old.x}px, ${old.y}px) scale(.8)`,color:old.color},{transform:`translate(${position.x}px, ${position.y}px) scale(.8)`,color}],{...personMotion,duration:person.id%9===0?600:480,delay:person.id%9===0?80:0,fill:'backwards'}));
+   }
+  });
+  previousPeople.current=identities;previousPositions.current=next;
+  const stop=()=>{if(reduced.matches)animations.forEach(a=>a.cancel());};reduced.addEventListener('change',stop);
+  return()=>{animations.forEach(a=>a.cancel());reduced.removeEventListener('change',stop);};
+ },[motionKey]);
  const title=`${nameFor(c,code)}_${c.year}年度_${group.name}_100人図`;
  return <ExportSurface kind="pictogram-card" className={`panel hundred-card ${singleRegion?"hundred-single":"hundred-comparison"}`}><div className="panel-heading"><h3>{nameFor(c,code)} · {c.year}年度</h3>{part&&<Actions c={c} svg={ref} rows={part.rows} title={title} label="100人図（構成の近似表現）"/>}</div>
- {part&&allocation?<div ref={drawingRef} className={`hundred-body ${geometry.sideLegend?"hundred-two-column":""}`}><div className="hundred-drawing"><div className={`hundred-visual-block ${geometry.narrow?"hundred-narrow":""}`} style={geometry.sideLegend?{width:625*PICTOGRAM_SCALE,marginInline:"auto"}:undefined}><h4 className="hundred-recipient-heading">受診者 {format(part.denominator)}人</h4><svg ref={ref} className={`hundred-svg ${singleRegion?"single-region-hundred":""}`} viewBox={geometry.sideLegend?`0 32 625 248`:geometry.viewBox} style={{width:geometry.sideLegend?625*PICTOGRAM_SCALE:geometry.cssWidth,height:geometry.sideLegend?248*PICTOGRAM_SCALE:geometry.cssHeight}} data-density={geometry.wide?'wide':'compact'} data-columns={geometry.columns} data-rows={geometry.rows} data-export-viewbox={geometry.exportViewBox} role="img" aria-label={`${nameFor(c,code)} ${c.year}年度。${geometry.columns}列${geometry.rows}行、100人あたりの近似図。${group.categories.map((cat,i)=>`${cat.label} ${formatValue(rates[i],'%')}%`).join('、')}。正確な人数はカテゴリー別の一覧。`}>
- <rect width={geometry.exportWidth} height={geometry.sideLegend?328:geometry.wide?330:410} fill="white"/><text className="hundred-svg-local-title" x="14" y="22" {...svgText} fontSize="14">{nameFor(c,code)} / {c.year}年度 / 受診者 {format(part.denominator)}人</text>
- {geometry.guides.map(x=><line key={x} data-five-guide="true" x1={x} x2={x} y1="38" y2={geometry.guideBottom} stroke="#b6c6d7" strokeDasharray="3 4"/>)}
- {symbols.map((categoryIndex,i)=>{const cat=group.categories[categoryIndex],v=groupVisuals[group.group_id][cat.category_id];return <g key={i} aria-hidden="true" data-person={i} data-category={cat.category_id} transform={`translate(${geometry.position(i).x} ${geometry.position(i).y}) scale(.8)`} color={v.color} opacity={active&&active!==cat.category_id?0.35:1}><PersonShape pose={v.pose}/></g>;})}
- {group.categories.map((cat,i)=><g key={cat.category_id} transform={`translate(${geometry.legendPosition(i).x} ${geometry.legendPosition(i).y})`}><g transform="scale(.75)" color={cat.color}><PersonShape pose={groupVisuals[group.group_id][cat.category_id].pose}/></g><text x="29" y="9" {...svgText} fontSize="14">{cat.label}</text><text x="29" y="31" {...svgText} fontSize="19" fontWeight="bold">{formatValue(rates[i],'%')}%</text><text x="29" y="49" {...svgText} fill="#64748b" fontSize="15">{format(numerator(part.rows[i]))}人／{format(part.denominator)}人</text><text x="29" y="63" {...svgText} fontSize="10">図では約{allocation[i]}人／100人</text></g>)}
- <text x="15" y={geometry.noteY} {...svgText} fontSize="12">100個は近似表現。色・姿勢はカテゴリーの識別記号です。</text><text x="15" y={geometry.noteY+18} {...svgText} fontSize="11">丸め配分は図のみ。割合・報告人数は補正しません。</text></svg>{geometry.sideLegend&&<div className="hundred-grid-notes"><div>100個は近似表現。色・姿勢はカテゴリーの識別記号です。</div><div>丸め配分は図のみ。割合・報告人数は補正しません。</div></div>}</div></div>
- <div className="hundred-values">{group.categories.map((cat,i)=><button key={cat.category_id} onMouseEnter={()=>setActive(cat.category_id)} onMouseLeave={()=>setActive('')} onFocus={()=>setActive(cat.category_id)} onBlur={()=>setActive('')} onClick={()=>c.source([part.rows[i]])}><CategoryIcon group={group} category={cat}/><span>{cat.label}<strong>{formatValue(rates[i],'%')}%</strong><small className="supporting-count">{format(numerator(part.rows[i]))}人／{format(part.denominator)}人</small><small>図では約{allocation[i]}人／100人 · 出典を確認</small></span></button>)}</div>
- <p className="footnote">受診者100人あたりの近似図です。端数の大きい順に配分して100個にしています。小さい非ゼロ割合が図では0個になる場合も、数値は省略しません。{c.measure==='count'&&'人数表示中も、この図は受診者100人あたりの構成を表します。実人数は一覧で確認できます。'}姿勢は疾病・健康状態の評価を表しません。</p><SourceLink c={c} rows={part.rows}/></div>:<p className="footnote">構成を検証できないため100人図は表示できません。欠損は0に置き換えません。</p>}</ExportSurface>;
+ {part&&allocation?<div ref={drawingRef} className="grouped-hundred-body">
+ <h4 className="hundred-recipient-heading">受診者 {format(part.denominator)}人</h4>
+ <svg ref={ref} className="grouped-hundred-svg" data-layout={mode} data-columns={geometry.columns} viewBox={`0 0 ${geometry.width} ${geometry.height}`} style={{width:'100%',height:geometry.height}} role="img" aria-label={`${nameFor(c,code)} ${c.year}年度。${mode==='grid'?`${geometry.columns}列の100人図`:'カテゴリー別の100人あたり近似図'}。${group.categories.map((cat,i)=>`${cat.label} ${formatValue(rates[i],'%')}%`).join('、')}`}>
+ <rect width={geometry.width} height={geometry.height} fill="white"/>
+ {symbols.map((categoryIndex,i)=>{const cat=group.categories[categoryIndex],v=groupVisuals[group.group_id][cat.category_id];return <g key={identities[i].id} aria-hidden="true" data-person={identities[i].id} data-category={cat.category_id} transform={`translate(${geometry.position(i).x} ${geometry.position(i).y}) scale(.8)`} color={v.color}><PersonShape pose={v.pose}/></g>;})}
+ {group.categories.map((cat,i)=>{const label=geometry.labels[i];return <g key={cat.category_id} data-category-label={cat.category_id} transform={`translate(${label.x} ${label.y})`}>
+ <text {...svgText} fontSize="15" fontWeight="bold">{cat.label}</text>
+ <text y="25" {...svgText} fontSize="22" fontWeight="bold">{formatValue(rates[i],'%')}%</text>
+ <text y="47" {...svgText} fontSize="14">{format(numerator(part.rows[i]))}人</text>
+ <text y="66" {...svgText} fontSize="12">図では約{allocation[i]}人／100人</text>
+ </g>;})}
+ </svg>
+ <div className="hundred-grid-notes"><div>100個は近似表現。色・姿勢はカテゴリーの識別記号です。</div><div>丸め配分は図のみ。割合・報告人数は補正しません。</div></div>
+ <p className="footnote">受診者100人あたりの近似図です。端数の大きい順に配分して100個にしています。小さい非ゼロ割合が図では0個になる場合も、数値は省略しません。姿勢は疾病・健康状態の評価を表しません。</p><SourceLink c={c} rows={part.rows}/></div>:<p className="footnote">構成を検証できないため100人図は表示できません。欠損は0に置き換えません。</p>}</ExportSurface>;
 }
 export function CompositionOverview({c,group}:{c:Context;group:IndicatorGroup}) {
  const [layout,setLayout]=useState<Layout>('side');
- return <section id="overview"><div className="section-heading"><span className="number">01</span><div><span className="eyebrow">COMPOSITION OVERVIEW</span><h2>{sectionDefinitions.overview}</h2></div><p>受診者100人あたりの近似図 · {c.year}年度</p></div><ComparisonActions c={{...c,group}} kind="pictogram" layout={layout}/>{c.regions.length>1&&<LayoutToggle section="100人図" value={layout} onChange={setLayout}/>}<div className={`comparison-panels ${c.regions.length>1?layout:'single'}`}>{c.regions.map(code=><HundredCard key={code} c={c} group={group} code={code} singleRegion={c.regions.length===1}/>)}</div></section>;
+ const [mode,setMode]=useState<'grid'|'grouped'>('grid');
+ return <section id="overview"><div className="section-heading"><span className="number">01</span><div><span className="eyebrow">COMPOSITION OVERVIEW</span><h2>{sectionDefinitions.overview}</h2></div><p>受診者100人あたりの近似図 · {c.year}年度</p></div><div className="pictogram-mode" role="group" aria-label="100人図の表示モード"><button type="button" aria-pressed={mode==='grid'} onClick={()=>setMode('grid')}>100人で見る</button><button type="button" aria-pressed={mode==='grouped'} onClick={()=>setMode('grouped')}>カテゴリー別に並べる</button></div><ComparisonActions c={{...c,group}} kind="pictogram" layout={layout}/>{c.regions.length>1&&<LayoutToggle section="100人図" value={layout} onChange={setLayout}/>}<div className={`comparison-panels ${c.regions.length>1?layout:'single'}`}>{c.regions.map((code,index)=><HundredCard key={index} c={c} group={group} code={code} singleRegion={c.regions.length===1} mode={mode}/>)}</div></section>;
 }

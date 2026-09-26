@@ -1,0 +1,52 @@
+/* Navigation accents describe sections, never data categories. */
+.analysis-layout [data-view=overview],.analysis-layout #overview{--section-ink:#a93165;--section-tint:#fff0f5}
+.analysis-layout [data-view=map],.analysis-layout #map{--section-ink:#087c7a;--section-tint:#eaf8f6}
+.analysis-layout [data-view=table],.analysis-layout #table{--section-ink:#7050aa;--section-tint:#f3effb}
+.analysis-layout [data-view=graph],.analysis-layout #graph{--section-ink:#a86016;--section-tint:#fff4e7}
+.analysis-results .content-navigation{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.analysis-results .content-navigation a{background:var(--section-tint);color:var(--section-ink);padding:14px;box-shadow:none;border:1px solid color-mix(in srgb,var(--section-ink) 18%,white);gap:10px}
+.analysis-results .content-navigation svg{display:block;width:26px;height:26px;flex:none;color:var(--section-ink)}
+.analysis-results .nav-copy strong{font-size:14px;color:var(--section-ink)}
+.analysis-results .nav-copy small{display:block;font-size:12px;margin-top:5px;color:var(--section-ink);line-height:1.5}
+.analysis-results section>.section-heading{background:linear-gradient(90deg,var(--section-tint),transparent);border-left:3px solid var(--section-ink);padding:12px 14px;border-radius:8px}
+.analysis-results section>.section-heading .number{color:var(--section-ink)}
+.conditions-trigger,.conditions-close{display:none}
+@media(min-width:1200px){.conditions-dialog{display:contents}}
+@media(max-width:1199px){
+ body:has(.analysis-layout) .context-bar{display:none}
+ .conditions-trigger{display:block;position:sticky;top:8px;z-index:20;margin:12px 0;padding:12px 18px;min-height:46px;border:1px solid #97bada;border-radius:10px;background:#153d6c;color:white;font-size:16px;font-weight:700}
+ .conditions-dialog{position:fixed;inset:auto 0 0;margin:0;width:100%;max-width:none;max-height:92dvh;box-sizing:border-box;padding:18px;border:0;border-radius:18px 18px 0 0;background:#f4f9fd;overflow-y:auto}
+ .conditions-dialog:not([open]){display:none}.conditions-dialog::backdrop{background:#102c4d88}
+ .conditions-close{display:block;position:sticky;top:0;z-index:6;margin:0 0 14px auto;padding:10px 14px;background:white;border:1px solid #9ebad4;border-radius:8px;color:#153d6c;font-size:15px}
+ .analysis-results .content-navigation{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .analysis-results .content-navigation a{padding:12px 10px;min-height:76px}.analysis-results .nav-copy strong{font-size:13px}
+}
+.analysis-intro .photo-hero{position:relative;display:flex;min-height:260px;box-sizing:border-box;padding:30px 36px;background:#eaf5fb;isolation:isolate}
+.photo-hero .hero-photo{position:absolute;right:0;top:0;width:43%;height:100%;object-fit:cover;object-position:center 35%;z-index:-2}
+.photo-hero:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#f4faff 0%,#edf8fff5 48%,#eaf5fb88 64%,transparent 79%)}
+.photo-hero .hero-copy{width:72%;align-self:center}.analysis-intro .photo-hero h1{font-size:clamp(26px,2.1vw,36px);line-height:1.5}.photo-hero .hero-phrase{color:#153d6c}.photo-hero p{color:#284e71}
+@media(max-width:700px){.analysis-intro .photo-hero{min-height:235px;padding:22px 18px}.photo-hero .hero-photo{width:48%;object-position:60% center}.photo-hero .hero-copy{width:90%}.analysis-intro .photo-hero h1{font-size:24px}.photo-hero p{max-width:75%;font-size:12px}.photo-hero:after{background:linear-gradient(90deg,#f4faff 0%,#edf8fff0 48%,#eaf5fb77 72%,transparent)}}
+
+.analysis-results #overview>.section-heading{border-left-color:var(--section-ink);background:linear-gradient(90deg,var(--section-tint),transparent)}
+.analysis-results #overview>.section-heading .number{color:var(--section-ink)}
+.photo-hero .hero-photo{z-index:0}
+.photo-hero:after{z-index:1;pointer-events:none}
+.photo-hero .hero-copy{position:relative;z-index:2}
+@media(max-width:700px){.photo-hero:after{background:linear-gradient(90deg,#f4faff 0%,#edf8fff5 44%,#eaf5fbcc 72%,#eaf5fb44)}}
+
+/* One continuous section navigation; these are anchors, not page tabs. */
+.analysis-results .content-navigation.section-tab-bar{display:flex;flex-wrap:nowrap;gap:0;border:1px solid #d9e3ed;border-radius:10px;overflow-x:auto;margin:12px 0 20px;background:white}
+.analysis-results .section-tab-bar a{flex:1 1 0;min-width:0;min-height:64px;padding:14px 12px;border:0;border-right:1px solid #d9e3ed;border-bottom:4px solid transparent;border-radius:0;background:color-mix(in srgb,var(--section-tint) 40%,white);box-shadow:none;justify-content:center;gap:8px;transition:background .15s}
+.analysis-results .section-tab-bar a:last-child{border-right:0}
+.analysis-results .section-tab-bar a[aria-current=location]{background:color-mix(in srgb,var(--section-ink) 16%,white);border-bottom-color:var(--section-ink)}
+.analysis-results .section-tab-bar .nav-copy{margin:0}
+.analysis-results .section-tab-bar .nav-copy strong{font-size:14px;font-weight:600;line-height:1.5}
+.analysis-results .section-tab-bar a[aria-current=location] strong{font-weight:800}
+.analysis-results .section-tab-bar svg{width:22px;height:22px}
+.analysis-results .section-tab-bar a:focus-visible{outline:3px solid var(--section-ink);outline-offset:-3px}
+@media(max-width:1199px){.analysis-results .content-navigation.section-tab-bar{display:flex;gap:0}.analysis-results .section-tab-bar a{flex:0 0 auto;min-width:155px;min-height:60px;white-space:nowrap;padding:12px 16px}}
+
+.pictogram-mode{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.pictogram-mode button{padding:10px 16px;border:1px solid #9bb4cc;border-radius:7px;background:white;color:#153d6c;font:inherit;cursor:pointer}
+.pictogram-mode button[aria-pressed=true]{background:#153d6c;color:white;font-weight:700}
+.pictogram-mode button:focus-visible{outline:3px solid #287fc3;outline-offset:2px}

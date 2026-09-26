@@ -1,3 +1,6 @@
+import React from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {StartupScreen} from './src/startup-screen';
 import { defineConfig } from 'vite';
 import {
   readFileSync,
@@ -44,7 +47,9 @@ function head(path: string) {
   const params = new URLSearchParams(location.search);
 
   const wrongHost =
-    location.origin !== ${JSON.stringify(expectedOrigin)};
+    !${JSON.stringify(production)} ||
+    !${JSON.stringify(expectedOrigin)} ||
+    location.origin !== ${JSON.stringify(expectedOrigin || 'https://invalid.local')};
 
   const basePath =
     ${JSON.stringify(basePath)};
@@ -127,7 +132,7 @@ export default defineConfig({
       apply: 'build',
 
       transformIndexHtml(html) {
-        return html.replace(
+        return html.replace('<div id="root"></div>', '<div id="root"><!--hdv-shell-start-->'+renderToStaticMarkup(React.createElement(StartupScreen,{base:viteBase}))+'<!--hdv-shell-end--></div>').replace(
           /<title>.*?<\/title>/,
           '<!--hdv-head-start-->' +
             head('/') +
@@ -157,7 +162,7 @@ export default defineConfig({
             base.replace(
               /<!--hdv-head-start-->[\s\S]*?<!--hdv-head-end-->/,
               head(path)
-            )
+            ).replace(/<!--hdv-shell-start-->[\s\S]*?<!--hdv-shell-end-->/,renderToStaticMarkup(React.createElement(StartupScreen,{base:viteBase,route:path})))
           );
         }
 

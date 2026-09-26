@@ -17,7 +17,7 @@ describe('visible export boundary',()=>{
   for(const privateNode of ['closed details','source dialog','audit data']){
    const querySelector=vi.fn().mockReturnValue(privateNode);
    await expect(cardsPng([{matches:()=>true,querySelector} as unknown as Element],'side')).rejects.toThrow('カードの外');
-   expect(querySelector).toHaveBeenCalledWith('[data-export-private],dialog,details,.provenance');
+   expect(querySelector).toHaveBeenCalledWith('[data-export-private],dialog,details:not([data-export-notes]),.provenance');
   }
  });
  it('ends the PNG at the surface edge without a metadata footer or extra bottom padding',async()=>{

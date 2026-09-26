@@ -45,7 +45,7 @@ Object.assign(indicatorColorAliases,{
  hba1c:groupVisuals.guidance.none,
 });
 export function presentationIndicator(indicator:Indicator):Indicator {
- if(!indicator.map_scale&&recipientMapScales[indicator.indicator_id])indicator={...indicator,map_scale:recipientMapScales[indicator.indicator_id]};
+ if(indicator.capabilities?.map_mode!=='none'&&!indicator.map_scale&&recipientMapScales[indicator.indicator_id])indicator={...indicator,map_scale:recipientMapScales[indicator.indicator_id]};
  if(!indicator.public_label&&indicator.indicator_id==='lipid_people')indicator={...indicator,name:'脂質代謝：実人員'};
  const visual=indicatorColorAliases[indicator.indicator_id];
  return visual?{...indicator,color:visual.color,palette:visual.palette}:indicator;

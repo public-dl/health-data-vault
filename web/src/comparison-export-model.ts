@@ -1,7 +1,7 @@
 import {orderByIndicators} from './health-themes';
 import {isReportedSchema,regionalRateDifference,rateDifferenceText} from './reported-model';
 import type {Payload,IndicatorGroup,Observation} from './model';
-import {csv,format,formatValue} from './model';
+import {csv,format,formatValue,isCountPublication} from './model';
 import {temporalTable} from './temporal-table';
 import {composition,tableYears} from './group-model';
 export type ComparisonInput={annualValues?:boolean;reportedMembers?:string[];data:Payload;regions:string[];indicatorId:string;group?:IndicatorGroup;year:number;measure:'rate'|'count';release:string;review?:boolean};
@@ -17,7 +17,7 @@ export function comparisonTable(input:ComparisonInput) {
  const grid=[['項目','地域',...years.map(y=>y+'年度')],...metrics.flatMap(metric=>regions.map((code,index)=>[metric.label,names[index],...years.map(y=>{
   if(input.reportedMembers){
    const r=data.records.find(r=>r.geography_code===code&&r.indicator_id===metric.id&&r.observation_fiscal_year===y),rate=r?.derivation??r?.derived_rate;
-   return r?`${rate?formatValue(rate.value,'%')+'% / ':''}${format(rate?.numerator_value??r.value)}人 / 受診者 ${format(rate?.denominator_value??r.denominator?.value)}人 / 掲載${r.publication_fiscal_year}年度 / 年度間確認中（pending）`:'未収録';
+   return r?`${rate?formatValue(rate.value,'%')+'% / ':''}${format(rate?.numerator_value??r.value)}人 / 参考：受診者数 ${format(rate?.denominator_value??r.denominator?.value)}人 / 掲載${r.publication_fiscal_year}年度 / 年度間確認中（pending）`:'未収録';
   }
   if(group){
    const part=composition(data,group,code,y);if(!part)return '表示不可';
@@ -39,7 +39,7 @@ export function comparisonTable(input:ComparisonInput) {
  const safeGrid=grid.map(row=>row.map(safeExportCell));
  const indicator=data.indicators.find(i=>i.indicator_id===indicatorId);
  const delta=!input.reportedMembers&&isReportedSchema(data.schema_version)?regionalRateDifference(records.find(r=>r.geography_code===regions[0]&&r.observation_fiscal_year===year),records.find(r=>r.geography_code===regions[1]&&r.observation_fiscal_year===year)):null;
- const notes=[...(delta==null?[]:[`${year}年度 ${names[1]} − ${names[0]}：${rateDifferenceText(delta)}（同年度・地域間の算術差）`]),`健康テーマ：${indicator?.theme_label??''}`, `指標：${input.reportedMembers?(indicator?.display_set_label??'血圧：全区分'):group?group.name+'：全区分':data.indicators.find(i=>i.indicator_id===indicatorId)?.name??indicatorId}`,`${input.review?'未承認・ローカル確認用':'承認済みrelease'}`,`単位：${measure==='rate'?(indicator?.rate?.label??'受診者に占める割合（%）'):'報告人数（人）'}`,data.population_scope,'割合は表示丸めのみ。年齢・性別構成未調整。',`release ${input.release}`,...records.map(r=>`${r.geography_name} / ${r.observation_fiscal_year} / ${r.indicator_id} / ${r.source_url} / ${r.source_sheet} / ${r.source_cell} / comparability ${r.comparability_status}`)];
+ const notes=[...(delta==null?[]:[`${year}年度 ${names[1]} − ${names[0]}：${rateDifferenceText(delta)}（同年度・地域間の算術差）`]),`健康テーマ：${indicator?.theme_label??''}`, `指標：${input.reportedMembers?(indicator?.display_set_label??'血圧：全区分'):group?group.name+'：全区分':data.indicators.find(i=>i.indicator_id===indicatorId)?.name??indicatorId}`,`${input.review?'未承認・ローカル確認用':'承認済みrelease'}`,`単位：${measure==='rate'?(indicator?.rate?.label??'受診者に占める割合（%）'):'報告人数（人）'}`,data.population_scope,isCountPublication(records)?'原表の報告人数です。地域差・年度差は生成しません。':'割合は表示丸めのみ。年齢・性別構成未調整。',`release ${input.release}`,...records.map(r=>`${r.geography_name} / ${r.observation_fiscal_year} / ${r.indicator_id} / ${r.source_url} / ${r.source_sheet} / ${r.source_cell} / comparability ${r.comparability_status}`)];
  return {years,names,grid,records,tsv:[...safeGrid.map(row=>row.join('\t')),...notes.map(safeExportCell)].join('\n'),html:'<table><thead><tr>'+safeGrid[0].map(s=>'<th>'+escapeHtml(s)+'</th>').join('')+'</tr></thead><tbody>'+safeGrid.slice(1).map(row=>'<tr>'+row.map(s=>'<td>'+escapeHtml(s)+'</td>').join('')+'</tr>').join('')+'</tbody></table>'+notes.map(s=>'<p>'+escapeHtml(s)+'</p>').join('')};
 }
 export function comparisonCsv(input:ComparisonInput) {

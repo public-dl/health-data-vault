@@ -1,6 +1,6 @@
 import type {Observation} from './model';
 
-export const isReportedSchema=(schema:string)=>schema==='reported-annual-1'||(schema==='reported-annual-2'||schema==='reported-annual-3'||schema==='reported-annual-4'||schema==='reported-annual-5');
+export const isReportedSchema=(schema:string)=>schema==='reported-annual-1'||(schema==='reported-annual-2'||schema==='reported-annual-3'||schema==='reported-annual-4'||schema==='reported-annual-5'||schema==='reported-annual-6');
 export const reportedRate=(r:Observation|undefined)=>r?.derivation??r?.derived_rate;
 
 /** Explicit same-year capability; never grants temporal comparison permission. */

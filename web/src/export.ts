@@ -44,7 +44,7 @@ export async function cardsPng(elements:Element[],layout:'side'|'stack'|'grid'):
  if(!elements.length)throw new Error('コピーするカードが見つかりません');
  for(const element of elements){
   if(!element.matches('[data-export-surface]'))throw new Error('明示されたカード以外は画像出力できません');
-  if(element.querySelector('[data-export-private],dialog,details,.provenance'))throw new Error('詳細情報は画像出力カードの外に配置してください');
+  if(element.querySelector('[data-export-private],dialog,details:not([data-export-notes]),.provenance'))throw new Error('詳細情報は画像出力カードの外に配置してください');
  }
  const overflows=elements.map(el=>Math.max(0,...Array.from(el.querySelectorAll('.table-scroll')).map(area=>area.scrollWidth-area.clientWidth)));
  const boxes=elements.map((el,i)=>({width:Math.ceil(Math.max(el.getBoundingClientRect().width,el.scrollWidth)+overflows[i]),height:Math.ceil(Math.max(el.getBoundingClientRect().height,el.scrollHeight))}));
@@ -75,7 +75,7 @@ export async function cardsPng(elements:Element[],layout:'side'|'stack'|'grid'):
    out.style.setProperty('animation','none');out.style.setProperty('transition','none');
    if(style.position==='sticky'){out.style.position='static';out.style.removeProperty('left');out.style.removeProperty('top');}
   });
-  clone.querySelectorAll('.actions,.comparison-export,.export-only').forEach(el=>el.remove());
+  clone.querySelectorAll('.actions,.comparison-export,.export-only,details[data-export-notes]:not([open]) .notes-content').forEach(el=>el.remove());
   clone.style.margin='0';clone.style.width=boxes[index].width+'px';clone.style.height='auto';clone.style.maxWidth='none';
   // Computed table heights include caption/border sizing differently when serialized.
   // Let the cloned table retain its content-driven height instead of fixing every row.

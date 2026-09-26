@@ -1,11 +1,11 @@
 {
   "status": "approved",
-  "release_id": "f325c8b7373317aea721442edbf49867788a7270eb4b7da3e3477d38fc479ff9",
-  "data_sha256": "f325c8b7373317aea721442edbf49867788a7270eb4b7da3e3477d38fc479ff9",
+  "release_id": "ad50d1980ded8094a30f9da67df32e63cc85bf9ba7a24547e6de6e123848a753",
+  "data_sha256": "ad50d1980ded8094a30f9da67df32e63cc85bf9ba7a24547e6de6e123848a753",
   "reviewer": "岸克也",
-  "approved_at": "2026-09-26T13:01:08.975212+00:00",
+  "approved_at": "2026-09-26T16:07:41.481607+00:00",
   "validation": {
-    "reported_records": 1581,
+    "reported_records": 2244,
     "errors": 0,
     "status": "passed",
     "analysis": {
@@ -29,7 +29,75 @@
     "annual_records": 279,
     "annual_comparability": "pending",
     "tables": 3,
-    "table_cells": 6762
+    "table_cells": 6762,
+    "health_centers": {
+      "version": "health-center-areas-v1",
+      "mapping_evidence": [
+        {
+          "source_url": "https://www.pref.niigata.lg.jp/uploaded/attachment/314162.pdf",
+          "as_of": "2021-03-31",
+          "title": "保健所・地域福祉事務所管内一覧表",
+          "verification": "user_confirmed_2026-09-27"
+        },
+        {
+          "source_url": "https://www.pref.niigata.lg.jp/uploaded/attachment/350980.pdf",
+          "as_of": "2022-03-31",
+          "title": "保健所・地域福祉事務所管内一覧表",
+          "verification": "user_confirmed_and_official_search_text"
+        },
+        {
+          "source_url": "https://www.pref.niigata.lg.jp/uploaded/attachment/496547.pdf",
+          "as_of": null,
+          "title": "新潟県 生活衛生課 所管区域一覧",
+          "verification": "official_search_text_2026-09-27"
+        }
+      ],
+      "counts": {
+        "official_numeric": 999,
+        "official_missing": 9,
+        "identity": 84,
+        "component_checks": 999
+      },
+      "warnings": [
+        {
+          "code": "hc-15-niitsu",
+          "year": 2021,
+          "group": "metabo",
+          "reason": "missing official component; no imputation"
+        },
+        {
+          "code": "hc-15-niitsu",
+          "year": 2021,
+          "group": "guidance",
+          "reason": "missing official component; no imputation"
+        },
+        {
+          "code": "hc-15-niitsu",
+          "year": 2022,
+          "group": "metabo",
+          "reason": "missing official component; no imputation"
+        },
+        {
+          "code": "hc-15-niitsu",
+          "year": 2023,
+          "group": "metabo",
+          "reason": "missing official component; no imputation"
+        },
+        {
+          "code": "hc-15-niitsu",
+          "year": 2023,
+          "group": "guidance",
+          "reason": "missing official component; no imputation"
+        },
+        {
+          "code": "hc-15-tokamachi",
+          "year": 2021,
+          "group": "guidance",
+          "reason": "missing official component; no imputation"
+        }
+      ],
+      "temporal_comparability": "pending"
+    }
   },
   "data_rights_reviewed": true,
   "map_rights_reviewed": true

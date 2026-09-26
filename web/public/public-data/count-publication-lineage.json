@@ -1,0 +1,15 @@
+{
+  "publication_policy": "reported-count-publication-v1",
+  "previous_release_id": "f325c8b7373317aea721442edbf49867788a7270eb4b7da3e3477d38fc479ff9",
+  "release_id": "819d9ba9988bd53408a032f6092a94782e96054e3e9c71ed7853ad8868f67553",
+  "recorded_at": "2026-09-26T14:31:04.720165+00:00",
+  "reviewer": "岸克也",
+  "authorization": "Current user instruction authorizes a new count-only approved release and local distribution; no push or production deployment.",
+  "reuse_decision_file": "reuse-decision.json",
+  "reuse_decision_sha256": "68778860b8f6833afc2e1e27f8561428905c059346c44af623d43d08772e5561",
+  "statistical_reuse_decision": "reviewer_approved",
+  "official_license_verified": false,
+  "cc_by_verified": false,
+  "map_rights_reviewed": true,
+  "approval_scope": "Publication policy only; existing source reuse decision retained unchanged."
+}

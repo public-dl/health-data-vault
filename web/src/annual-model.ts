@@ -1,12 +1,14 @@
 import type {Payload,IndicatorGroup,Observation} from './model';
 import {numerator} from './group-model';
 import {tableText} from './model';
+import {regionalComposition} from './regional-composition';
 export function annualTableText(rows:Observation[],group:IndicatorGroup):string {
  const lines=rows.map(r=>tableText([r],`${group.name}：${group.categories.find(c=>c.indicator_id===r.indicator_id)?.label??r.indicator_id}`).split('\n'));
  return [lines[0]?.[0]+'\t年度間比較',...lines.map(line=>line[1]+'\tpending（各年度を個別表示）')].join('\n');
 }
 /** Separate capability: never promote pending records to reuse temporal views. */
 export function annualComposition(data:Payload,group:IndicatorGroup,code:string,year:number) {
+ if(data.geographies?.find(g=>g.code===code)?.level==='health_center_area')return regionalComposition(data,group,code,year);
  if(data.schema_version!=='annual-1')return null;
  const proof=data.composition_validation?.find(p=>p.group_id===group.group_id&&p.geography_code===code&&p.observation_fiscal_year===year);
  if(!proof||proof.validation_status!=='passed'||proof.difference!==0||proof.denominator_value<=0||proof.definition_version!==group.definition_version)return null;

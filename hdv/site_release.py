@@ -145,7 +145,7 @@ def published_tables(root, analysis, annual, reported=None):
     return result
 
 
-def construct(root, base_id, include_reported=False, reported_rates=False, include_lipids=False, lipid_fixed_breaks=False, include_glucose=False, unified_rates=False, terminology_version=None, include_liver=False, include_renal=False):
+def construct(root, base_id, include_reported=False, reported_rates=False, include_lipids=False, lipid_fixed_breaks=False, include_glucose=False, unified_rates=False, terminology_version=None, include_liver=False, include_renal=False, count_only=False, health_centers=False):
     analysis, report = inspect_analysis(root, base_id)
     records, _ = verified_records(root, analysis['input_run_id'])
     annual = annual_payload(analysis, records)
@@ -168,18 +168,42 @@ def construct(root, base_id, include_reported=False, reported_rates=False, inclu
         require(include_liver and unified_rates, 'renal requires verified current foundation')
         from .renal import extend
         reported = extend(reported, root, analysis, records)
+    if count_only:
+        from .count_publication import project, validate
+        verified = reported
+        reported = project(verified)
+        validate(reported, verified)
     tables = published_tables(root, analysis, annual, reported)
+    if count_only:
+        ids = {i["indicator_id"] for i in reported["indicators"]}
+        for table in tables:
+            for row in table["rows"]:
+                for cell in row["cells"]:
+                    link = cell.get("visualization")
+                    if link and link["indicator_id"] in ids:
+                        link["section"] = "table"
     payload = dict(schema_version='site-1', analysis_release_id=base_id, analysis=analysis, annual=annual, published_tables=tables)
     if reported is not None:
         payload['reported'] = reported
+    if health_centers:
+        require(count_only, 'health centers require count-only publication')
+        from .health_centers import extend
+        payload = extend(payload, records)
     return payload, dict(reported_records=len(reported['records']) if reported else 0, errors=0, status='passed', analysis=report, annual_groups=len(annual['composition_validation']),
         annual_records=len(annual['records']), annual_comparability='pending', tables=len(tables),
         table_cells=sum(t['row_count']*t['column_count'] for t in tables))
 
 
-def build(root, base_id, include_renal=False):
+def build(root, base_id, include_renal=False, count_only=False, health_centers=False):
     from .terminology import configuration
-    payload, report = construct(root, base_id, include_reported=True, reported_rates=True, include_lipids=True, lipid_fixed_breaks=True, include_glucose=True, unified_rates=True, terminology_version=configuration()['current_version'], include_liver=True, include_renal=include_renal)
+    payload, report = construct(root, base_id, include_reported=True, reported_rates=True, include_lipids=True, lipid_fixed_breaks=True, include_glucose=True, unified_rates=True, terminology_version=configuration()['current_version'], include_liver=True, include_renal=include_renal, count_only=count_only)
+    if health_centers:
+        require(count_only, 'health centers require count-only publication')
+        from .health_centers import extend
+        records, _ = verified_records(root, payload['analysis']['input_run_id'])
+        payload = extend(payload, records)
+        report['health_centers'] = payload['health_center_extension']
+        report['reported_records'] = len(payload['reported']['records'])
     content = encoded(payload); id = digest(content)
     directory = Path(root)/'site/candidates'/id
     with locked(Path(root)/'site'):
@@ -195,7 +219,23 @@ def inspect(root, id):
     require(digest(raw)==id, 'Site hash mismatch')
     payload = json.loads(raw)
     version = payload.get('reported',{}).get('schema_version')
-    expected, report = construct(root, payload['analysis_release_id'], include_reported='reported' in payload, reported_rates=version in ('reported-annual-2','reported-annual-3','reported-annual-4','reported-annual-5'), include_lipids=version in ('reported-annual-3','reported-annual-4','reported-annual-5'), lipid_fixed_breaks=payload.get('reported',{}).get('map_scale_version')=='lipids-fixed-2021-2023-v1', include_glucose=version in ('reported-annual-4','reported-annual-5'), unified_rates=version=='reported-annual-5', terminology_version=payload.get('reported',{}).get('reported_semantics_version'), include_liver=payload.get('reported',{}).get('rate_policy',{}).get('contract_version')=='reported-recipient-rate-v3', include_renal='renal_contract' in payload.get('reported',{}))
+    count_only = version == 'reported-annual-6'
+    health_centers = 'health_center_extension' in payload
+    if count_only:
+        if health_centers:
+            from .health_centers import validate
+            validate(payload)
+        else:
+            from .count_publication import validate
+            validate(payload['reported'])
+        version = 'reported-annual-5'
+    expected, report = construct(root, payload['analysis_release_id'], include_reported='reported' in payload, reported_rates=version in ('reported-annual-2','reported-annual-3','reported-annual-4','reported-annual-5'), include_lipids=version in ('reported-annual-3','reported-annual-4','reported-annual-5'), lipid_fixed_breaks=payload.get('reported',{}).get('map_scale_version')=='lipids-fixed-2021-2023-v1', include_glucose=version in ('reported-annual-4','reported-annual-5'), unified_rates=version=='reported-annual-5', terminology_version=payload.get('reported',{}).get('reported_semantics_version'), include_liver=count_only or payload.get('reported',{}).get('rate_policy',{}).get('contract_version')=='reported-recipient-rate-v3', include_renal=count_only or 'renal_contract' in payload.get('reported',{}), count_only=count_only)
+    if health_centers:
+        from .health_centers import extend
+        records, _ = verified_records(root, expected['analysis']['input_run_id'])
+        expected = extend(expected, records)
+        report['health_centers'] = expected['health_center_extension']
+        report['reported_records'] = len(expected['reported']['records'])
     require(payload==expected, 'Site rebuild mismatch')
     return payload, report
 
@@ -233,11 +273,13 @@ def main():
     p.add_argument('command',choices=['build','validate','approve'])
     p.add_argument('--data-dir',type=Path,default=Path('data'))
     p.add_argument('--analysis-release'); p.add_argument('--release-id')
+    p.add_argument('--count-only', action='store_true', help='Build the versioned count-only publication; requires renal coverage')
+    p.add_argument('--health-centers', action='store_true', help='Add audited health center areas; requires count-only and renal')
     p.add_argument('--include-renal', action='store_true', help='Build a renal candidate only; does not approve or publish')
     p.add_argument('--reviewer',default=''); p.add_argument('--confirm-hash',default='')
     p.add_argument('--data-rights-reviewed',action='store_true'); p.add_argument('--map-rights-reviewed',action='store_true')
     a=p.parse_args()
-    if a.command=='build': result=build(a.data_dir,a.analysis_release,include_renal=a.include_renal)
+    if a.command=='build': result=build(a.data_dir,a.analysis_release,include_renal=a.include_renal, count_only=a.count_only, health_centers=a.health_centers)
     elif a.command=='validate': result=inspect(a.data_dir,a.release_id)[1]
     else: result=approve(a.data_dir,a.release_id,a.reviewer,a.confirm_hash,a.data_rights_reviewed,a.map_rights_reviewed)
     print(json.dumps(result,ensure_ascii=False,indent=2))

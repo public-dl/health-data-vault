@@ -35,6 +35,10 @@
 @media(max-width:700px){.photo-hero:after{background:linear-gradient(90deg,#f4faff 0%,#edf8fff5 44%,#eaf5fbcc 72%,#eaf5fb44)}}
 
 /* One continuous section navigation; these are anchors, not page tabs. */
+/* Desktop has no fixed top toolbar; align section anchors near the viewport edge.
+   Mobile keeps clearance for the sticky conditions button. */
+.analysis-results :is(#overview,#map,#table,#graph){scroll-margin-top:72px}
+@media(min-width:1200px){.analysis-results :is(#overview,#map,#table,#graph){scroll-margin-top:8px}}
 .analysis-results .content-navigation.section-tab-bar{display:flex;flex-wrap:nowrap;gap:0;border:1px solid #d9e3ed;border-radius:10px;overflow-x:auto;margin:12px 0 20px;background:white}
 .analysis-results .section-tab-bar a{flex:1 1 0;min-width:0;min-height:64px;padding:14px 12px;border:0;border-right:1px solid #d9e3ed;border-bottom:4px solid transparent;border-radius:0;background:color-mix(in srgb,var(--section-tint) 40%,white);box-shadow:none;justify-content:center;gap:8px;transition:background .15s}
 .analysis-results .section-tab-bar a:last-child{border-right:0}

@@ -1,4 +1,4 @@
-import {indexable} from '../../src/seo';
+import {indexable} from '../../src/seo.ts';
 declare const Netlify:{env:{get:(name:string)=>string|undefined}};
 export default async (request:Request, context:{next:()=>Promise<Response>;deploy:{context:string}})=>{
  const response=await context.next();const url=new URL(request.url);

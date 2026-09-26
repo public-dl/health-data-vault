@@ -26,6 +26,8 @@ it.each([
  const bars=renderToStaticMarkup(<GroupGraph c={c} group={group}/>);
  for(const year of [2021,2022,2023])for(const region of [a,b])expect(bars).toContain(`data-region="${region}" data-year="${year}"`);
  expect(bars).toContain('>区分の推移</button>');
+ expect(bars).not.toContain('構成表示不可');
+ expect(bars.match(/data-category="/g)).toHaveLength(group.categories.length*6);
  const rows=data.records.filter(r=>r.geography_code.startsWith('hc-')&&r.indicator_id===indicator.indicator_id);
  for(const region of [a,b].filter(r=>r.startsWith('hc-'))){
   const local=rows.filter(r=>r.geography_code===region).sort((a,b)=>a.observation_fiscal_year-b.observation_fiscal_year);

@@ -49,3 +49,5 @@ Python全109件成功。旧公開releaseのSHA-256不変を確認。commit・pus
 
 ## 公開承認（2026-09-27）
 ユーザーの最終公開指示を受け、同一候補を岸克也氏の既存再利用判断を保持して承認済みreleaseへ昇格。配信currentと新release、health-center-temporal-publication-lineage.jsonを追加。旧release・reuse-decision.jsonは不変。最終Python109件、UI179件、TypeScript、Netlify production設定build、Validator error 0を再確認。本節以前の未公開記載は候補作成時点の履歴。
+
+本番確認でregionalCompositionに旧pending限定条件が残り、承認後の構成表示が不可になる問題を検出。構成検証と年度間許可を分離し、厳密な分母・カテゴリ合計・原値検証は保持。3年度×2地域の実際の棒セグメント数を検証するUIテストを追加し、179件・TypeScript・production buildを再実行して成功。release hashは不変。

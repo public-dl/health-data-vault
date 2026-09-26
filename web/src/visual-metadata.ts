@@ -34,6 +34,10 @@ export const indicatorColorAliases:Record<string,CategoryVisual>={
  bp_referral:groupVisuals.metabo.case,
 };
 Object.assign(indicatorColorAliases,{
+ renal_urinary_people:indicatorColorAliases.lipid_people,
+ urine_protein:groupVisuals.doctor_judgment.normal,
+ urine_blood:groupVisuals.metabo.noncase,
+ creatinine:groupVisuals.metabo.indeterminate,
  glucose_people:indicatorColorAliases.lipid_people,
  urine_glucose:groupVisuals.doctor_judgment.normal,
  fasting_glucose:groupVisuals.metabo.noncase,

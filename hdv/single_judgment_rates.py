@@ -65,6 +65,13 @@ def derive_single_rate(numerator, denominator, policy):
             require(item['source_sha256']==n['source_sha256'] and item['source_sheet']==n['source_sheet']
                     and item['numerator_column']==contract['numerator_column'] and item['denominator_column']==contract['denominator_column'], 'formula evidence source mismatch')
             result['formula_evidence']=item
+        # Optional explicit distinction between an official formula and HDV's
+        # computed display value. Existing immutable contracts are unchanged.
+        if 'value_origin' in contract:
+            require(contract['value_origin']=='hdv_derived_from_reported_count', 'unknown value origin')
+            require(origin=='official_formula_confirmed' and contract.get('official_formula_confirmed') is True,
+                    'unverified official formula claim')
+            result.update(value_origin=contract['value_origin'], official_formula_confirmed=True)
         return result
 
     if n['indicator_id'] in policy.get('required_evidence_ids', []):

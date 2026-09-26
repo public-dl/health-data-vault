@@ -24,12 +24,12 @@ function AnnualChart({c,indicator}:{c:Context;indicator:Indicator}){
    {[0,max/2,max].map(v=><g key={v}><line x1="70" x2="530" y1={y(v)} y2={y(v)} stroke="#dce6ef"/><text x="59" y={y(v)+5} textAnchor="end">{v}%</text></g>)}
    {years.map(yr=><text key={yr} x={x(yr)} y="270" textAnchor="middle">{yr}年度</text>)}
    {series.map(s=><g key={s.code} fill={color(indicator)} stroke={color(indicator)}>{s.rows.map((r,j)=>{const prev=s.rows[j-1],v=r.value;if(v==null)return null;const tooltip=`${indicator.name} / 特定健診受診者に占める割合 / ${nameFor(c,s.code)}・${r.observation_fiscal_year}年度：${pct(v)}`;return <g key={r.record_id}>
-    {prev?.value!=null&&r.observation_fiscal_year===prev.observation_fiscal_year+1&&<line data-annual-reference-link="true" x1={x(prev.observation_fiscal_year)} y1={y(prev.value)} x2={x(r.observation_fiscal_year)} y2={y(v)} strokeWidth="2" strokeDasharray={s.county?'7 5':undefined}/>}
+    {indicator.capabilities?.annual_reference_lines!==false&&prev?.value!=null&&r.observation_fiscal_year===prev.observation_fiscal_year+1&&<line data-annual-reference-link="true" x1={x(prev.observation_fiscal_year)} y1={y(prev.value)} x2={x(r.observation_fiscal_year)} y2={y(v)} strokeWidth="2" strokeDasharray={s.county?'7 5':undefined}/>}
     <g tabIndex={0} role="img" aria-label={tooltip}><title>{tooltip}</title>{s.county?<circle cx={x(r.observation_fiscal_year)} cy={y(v)} r="5" fill="white" strokeWidth="2"/>:s.index===0?<path d={`M${x(r.observation_fiscal_year)} ${y(v)-6}l6 6-6 6-6-6z`}/>:<rect x={x(r.observation_fiscal_year)-5} y={y(v)-5} width="10" height="10"/>}</g>
    </g>;})}</g>)}
   </svg></div>
   <div className="table-scroll"><table className="chart-values"><caption className="sr-only">各ポイントの正確な表示値</caption><thead><tr><th>地域</th>{years.map(yr=><th key={yr}>{yr}年度</th>)}</tr></thead><tbody>{series.map(s=><tr key={s.code}><th>{nameFor(c,s.code)}</th>{years.map(yr=><td key={yr}>{pct(s.rows.find(r=>r.observation_fiscal_year===yr)?.value)}</td>)}</tr>)}</tbody></table></div>
-  <p className="chart-note">線は年度ごとの点を結ぶ参照線です。中間時点の実測値や、変化の評価を示しません。</p>
+  <p className="chart-note">{indicator.capabilities?.annual_reference_lines===false?'各年度の実績値を個別の点で表示しています。年度間の変化の評価は行いません。':'線は年度ごとの点を結ぶ参照線です。中間時点の実測値や、変化の評価を示しません。'}</p>
  </ChartCard>;
 }
 export function DistributionChart({c,indicator}:{c:Context;indicator:Indicator}){
@@ -83,10 +83,11 @@ function IndicatorBars({c,indicators,code}:{c:Context;indicators:Indicator[];cod
 }
 export function ReportedCharts({c}:{c:Context}){
  const theme=healthThemes.find(t=>t.indicatorIds.includes(c.indicator.indicator_id));
- const indicators=(theme?.indicatorIds??[]).map(id=>c.data.indicators.find(i=>i.indicator_id===id)).filter((i):i is Indicator=>!!i&&!!i.rate&&(i.chart_max??chartMax[i.indicator_id])!=null);
+ const indicators=(c.indicator.capabilities?.selected_indicator_charts?[c.indicator.indicator_id]:theme?.indicatorIds??[]).map(id=>c.data.indicators.find(i=>i.indicator_id===id)).filter((i):i is Indicator=>!!i&&!!i.rate&&(i.chart_max??chartMax[i.indicator_id])!=null);
  const [selected,setSelected]=useState(c.indicator.indicator_id);
  useEffect(()=>setSelected(c.indicator.indicator_id),[c.indicator.indicator_id]);
  const distribution=indicators.find(i=>i.indicator_id===selected)??indicators[0];
+ if(c.indicator.capabilities?.distribution===false)return <p className="annual-notice">割合による地域分布は現在公開していません。報告人数は表で確認できます。</p>;
  if(!distribution)return <p>グラフに必要な検証済み割合を確認できません。</p>;
  return <div className="reported-charts"><p className="annual-notice">{chartPending}</p><details className="chart-guide"><summary>グラフの見方</summary><p>特定健診受診者に占める割合（%）を表示します。医学的判定区分を示すものではありません。改善・悪化の評価は行いません。同じ指標では年度・地域を変更しても固定の表示尺度を使用します。04は表示値の選択にかかわらず割合を表示します。</p></details>
  <p className="footnote">割合の公開が許可された項目のみ表示しています。</p><div className="reported-chart-grid">{indicators.map(i=><AnnualChart key={i.indicator_id} c={c} indicator={i}/>)}</div>

@@ -1,0 +1,14 @@
+{
+  "release_id": "f325c8b7373317aea721442edbf49867788a7270eb4b7da3e3477d38fc479ff9",
+  "previous_release_id": "8e1fe8695fc86b4358bb695ce0a1c3ccfccdb9f5c0f5ecc45098a6d5fb915827",
+  "recorded_at": "2026-09-26T13:01:09.361860+00:00",
+  "reviewer": "岸克也",
+  "existing_reuse_decision_file": "reuse-decision.json",
+  "existing_reuse_decision_sha256": "68778860b8f6833afc2e1e27f8561428905c059346c44af623d43d08772e5561",
+  "statistical_reuse_decision": "reviewer_approved",
+  "official_license_verified": false,
+  "cc_by_verified": false,
+  "map_rights_reviewed": true,
+  "authorization": "User explicitly authorized regenerating and approving the renal release using the existing formal statistical and map reuse decisions; stop before main push.",
+  "legacy_boolean_interpretation": "data_rights_reviewed=true records this named reviewer decision, not verification of an official license or CC BY."
+}

@@ -7,12 +7,25 @@ import type {Indicator,IndicatorGroup} from './model';
 const groups=['metabo','doctor_judgment','guidance'].map(group_id=>({group_id,name:group_id,categories:[{indicator_id:group_id+'_one'}]})) as IndicatorGroup[];
 const catalog=groups.map(g=>({indicator_id:g.categories[0].indicator_id})) as Indicator[];
 describe('health theme navigation',()=>{
+ it('enables the four existing renal indicators only when present in the release',()=>{
+  const theme=healthThemes.find(t=>t.id==='renal-urinary')!;
+  const ids=['renal_urinary_people','urine_protein','urine_blood','creatinine'];
+  const renal=ids.map(indicator_id=>({indicator_id} as Indicator));
+  expect(theme.status).toBe('available');
+  expect(themeChoices(theme,[],renal).ids).toEqual(ids);
+  for(const id of ids)expect(resolveThemeSelection(theme.id,id,'group:metabo',groups,[...catalog,...renal])).toEqual({themeId:theme.id,indicatorId:id});
+  const html=renderToStaticMarkup(<HealthThemeMenu selected={theme.id} groups={[]} catalog={renal} onSelect={()=>{}}/>);
+  expect(html).toMatch(/<strong>腎・尿路系<\/strong>/);
+  expect(themeChoices(theme,[],[]).ids).toEqual([]);
+  const unavailable=renderToStaticMarkup(<HealthThemeMenu selected="overall" groups={groups} catalog={catalog} onSelect={()=>{}}/>);
+  expect(unavailable).toContain('腎・尿路系<em>配信データ未収録</em>');
+ });
  it('preserves every existing theme URL and blocks the two future themes',()=>{
   const current=[...catalog,...['bp_referral','lipid_people','liver','glucose_people'].map(indicator_id=>({indicator_id} as Indicator))];
   for(const [theme,id] of [['overall','group:metabo'],['blood-pressure','bp_referral'],['lipids','lipid_people'],['liver','liver'],['glucose','glucose_people']]){
    expect(resolveThemeSelection(theme,id,'group:metabo',groups,current)).toEqual({themeId:theme,indicatorId:id});
   }
-  expect(healthThemes.filter(t=>t.status==='planned').map(t=>t.id)).toEqual(['renal-urinary','detailed','other']);
+  expect(healthThemes.filter(t=>t.status==='planned').map(t=>t.id)).toEqual(['detailed','other']);
   for(const t of healthThemes.filter(t=>t.status==='planned'))expect(themeChoices(t,groups,current).ids).toEqual([]);
  });
  it('defaults to overall and preserves each existing group and single indicator link',()=>{
@@ -35,7 +48,7 @@ describe('health theme navigation',()=>{
   expect(healthThemes.map(t=>t.label)).toEqual(['総合判定','血圧','脂質代謝','肝機能','糖代謝','腎・尿路系','詳細な健診項目','その他の健診項目']);
   expect(html).not.toMatch(/BMI|腹囲/);
   for(const t of healthThemes)expect(html).toContain(t.label);
-  expect(html.match(/準備中/g)).toHaveLength(7);
+  expect(html.match(/準備中/g)).toHaveLength(2);
  });
  it('keeps current composition presentation explicit without granting comparison permission',()=>{
   for(const g of groups)expect(groupPresentation[g.group_id].visualizationType).toBe('composition');

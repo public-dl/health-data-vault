@@ -40,7 +40,7 @@ export function SourceLink({c,rows}:{c:Context;rows:Observation[]}) {return <but
 export function Insight({c,code,map=false}:{c:Context;code:string;map?:boolean}) {
   const result=c.data.insights.find(i=>(i.measure??'count')===c.measure&&i.indicator_id===c.indicator.indicator_id&&i.geography_code===code&&i.observation_fiscal_year===c.year);
   const text=refreshTemporalComment(result?.text ?? '説明は準備中です。',rowsFor(c,code),c.year);
-  return <DataNotes group={!map}><p>{map?localMapText(text):text}</p>{!map&&<small>{map?(c.measure==='rate'?'色は受診者に占める割合です。年齢・性別構成を調整していません。':'色は報告人数の大小です。受診者の規模に左右されます。'):'対象年度：'+c.data.years.join('・')+'年度。'+(isReportedSchema(c.data.schema_version)?'年度間比較はpendingです。':'割合は年齢・性別構成を調整していません。')}</small>}</DataNotes>;
+  return <DataNotes group={!map}>{!map&&c.indicator.data_notes&&<p>{c.indicator.data_notes}</p>}<p>{map?localMapText(text):text}</p>{!map&&<small>{map?(c.measure==='rate'?'色は受診者に占める割合です。年齢・性別構成を調整していません。':'色は報告人数の大小です。受診者の規模に左右されます。'):'対象年度：'+c.data.years.join('・')+'年度。'+(isReportedSchema(c.data.schema_version)?'年度間比較はpendingです。':'割合は年齢・性別構成を調整していません。')}</small>}</DataNotes>;
 }
 export function MapPanel({c,region,onSelect,compact=false,highlightRegion,onHighlightRegion,showNotes=true}:{c:Context;region:string;onSelect:(s:string)=>void;compact?:boolean;showNotes?:boolean;highlightRegion?:string;onHighlightRegion?:(code:string)=>void}) {
   const code=c.data.geographies.find(g=>g.code===region)?.level==='municipality'?region:undefined;

@@ -19,8 +19,9 @@ def require(ok, message):
         raise ValueError('Reported annual: '+message)
 
 
-def reported_payload(analysis, records, with_rates=False, lipid_evidence=None, lipid_fixed_breaks=False, glucose_evidence=None, liver_evidence=None):
-    members = MEMBERS
+def reported_payload(analysis, records, with_rates=False, lipid_evidence=None, lipid_fixed_breaks=False, glucose_evidence=None, liver_evidence=None, count_members=None):
+    require(count_members is None or not any((with_rates, lipid_evidence, glucose_evidence, liver_evidence)), 'count-only input cannot grant rates')
+    members = MEMBERS if count_members is None else count_members
     if lipid_evidence is not None:
         from .lipids import MEMBERS as LIPID_MEMBERS
         require(with_rates, "lipids require validated recipient ratios")

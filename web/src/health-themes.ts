@@ -15,7 +15,7 @@ export const healthThemes:HealthTheme[]=[
  {id:'lipids',accentColor:'#A87516',order:3,label:'脂質代謝',description:'中性脂肪・HDL・LDL・総コレステロール',icon:'drop',groupIds:[],indicatorIds:lipidDisplayOrder,status:'available',independentComparison:true},
  {id:'glucose',accentColor:'#258E84',order:5,label:'糖代謝',description:'尿糖・血糖・HbA1c',icon:'cube',groupIds:[],indicatorIds:glucoseDisplayOrder,status:'available',independentComparison:true},
  {id:'liver',accentColor:'#A8674B',order:4,label:'肝機能',description:'肝機能',icon:'liver',groupIds:[],indicatorIds:['liver'],status:'available'},
- {id:'renal-urinary',accentColor:'#287FC3',order:6,label:'腎・尿路系',description:'尿蛋白・尿潜血・クレアチニン',icon:'drop',groupIds:[],indicatorIds:[],status:'planned'},
+ {id:'renal-urinary',accentColor:'#287FC3',order:6,label:'腎・尿路系',description:'尿蛋白・尿潜血・クレアチニン',icon:'drop',groupIds:[],indicatorIds:['renal_urinary_people','urine_protein','urine_blood','creatinine'],status:'available'},
  {id:'detailed',accentColor:'#7B64C8',order:7,label:'詳細な健診項目',description:'貧血検査・心電図検査・眼底検査',icon:'heart',groupIds:[],indicatorIds:[],status:'planned'},
  {id:'other',accentColor:'#667788',order:8,label:'その他の健診項目',description:'血清尿酸・血清総蛋白',icon:'more',groupIds:[],indicatorIds:[],status:'planned'},
 ].sort((a,b)=>a.order-b.order) as HealthTheme[];

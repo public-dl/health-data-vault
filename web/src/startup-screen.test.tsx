@@ -22,7 +22,7 @@ it('keeps theme subtitles concise without modifying indicator memberships',()=>{
  expect(healthThemes.map(t=>t.description).join(' ')).not.toMatch(/実人員|予定：|報告人数|原表/);
  expect(healthThemes.find(t=>t.id==='lipids')!.indicatorIds).toContain('lipid_people');
  expect(healthThemes.find(t=>t.id==='glucose')!.indicatorIds).toContain('glucose_people');
- expect(healthThemes.filter(t=>t.status==='planned')).toHaveLength(3);
+ expect(healthThemes.filter(t=>t.status==='planned')).toHaveLength(2);
 });
 it('requires configured production and rejects review key presence regardless of value',()=>{
  const site='https://health-data-vault.netlify.app/';

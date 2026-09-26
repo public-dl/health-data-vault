@@ -20,7 +20,7 @@
  .comparison-panels.side .panel-heading{height:106px;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;padding:16px 18px}
  .comparison-panels.side .panel-heading h3{font-size:18px;line-height:1.4}
  .comparison-panels.side .panel-body{display:block;padding:18px}
- .comparison-panels.side .insight{margin-top:16px;min-height:230px}
+ .comparison-panels.side .insight{margin-top:16px}
  .comparison-panels.side .actions{flex-wrap:nowrap}
  .comparison-panels.side th,.comparison-panels.side td{padding:14px 7px;font-size:11px}
  .comparison-panels.side td:nth-child(2){font-size:16px}

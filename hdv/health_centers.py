@@ -87,7 +87,7 @@ def area_map(municipal_map, areas):
     return json.loads(encoded(result))
 
 
-def extend(base, raw_records):
+def extend(base, raw_records, derived_zero=False, annual_facts=False):
     from .count_publication import validate as validate_counts
     validate_counts(base['reported'])
     require('health_center_extension' not in base, 'duplicate regional extension')
@@ -182,6 +182,12 @@ def extend(base, raw_records):
                 if match:cell['visualization']=match
     result['health_center_extension']=dict(version=VERSION,mapping_evidence=MAPPING_EVIDENCE,
         counts=counts,warnings=warnings,temporal_comparability='pending')
+    if derived_zero:
+        from .health_center_zero import apply
+        result = apply(result)
+    if annual_facts:
+        from .health_center_temporal import apply
+        result = apply(result)
     validate(result,base)
     return result
 
@@ -189,6 +195,13 @@ def extend(base, raw_records):
 def validate(payload, base=None):
     from .count_publication import validate as validate_counts
     require(payload['health_center_extension']['version']==VERSION, 'unknown regional contract')
+    if "health_center_temporal_policy" in payload:
+        from .health_center_temporal import validate as validate_temporal
+        validate_temporal(payload)
+    zero_proofs = {}
+    if 'derived_zero_policy' in payload:
+        from .health_center_zero import validate_policy
+        zero_proofs = validate_policy(payload)
     for key, n in [('analysis',8),('annual',3),('reported',17)]:
         data=payload[key]; areas=[g for g in data['geographies'] if g['level']=='health_center_area']
         require(len(areas)==13 and len(data['geographies'])==44, 'regional coverage')
@@ -202,8 +215,17 @@ def validate(payload, base=None):
         for r in rows:
             a=next(g for g in areas if g['code']==r['geography_code'])
             require(r['source_row']==(50 if a['identity_municipality'] else a['source_row']), 'incorrect source row')
-            require(r['value_origin']==a['value_origin'] and r['mapping_reference']==a['code'], 'incorrect origin')
-            require(r['comparability_status']=='pending' and not r['comparison_allowed'] and r['comparability_intervals']==INTERVALS, 'temporal permission changed')
+            proof = zero_proofs.get((r['source_sha256'],r['source_sheet'],r['source_cell']))
+            if r.get('value_origin')=='derived_zero_from_complete_child_sum':
+                require(proof is not None and r.get('zero_derivation')==proof and r.get('raw_value','absent') is None and r.get('derived_value')==0 and r['value']==0 and r['original_value'] is None, 'invalid derived zero')
+            else:
+                require(r['value_origin']==a['value_origin'], 'incorrect origin')
+                require(proof is None, 'derived zero origin omitted')
+            require(r['mapping_reference']==a['code'], 'incorrect mapping')
+            approved = key=='analysis' and 'health_center_temporal_policy' in payload
+            from .health_center_temporal import fields
+            expected_temporal = fields() if approved else dict(comparability_status='pending',comparison_allowed=False,comparability_intervals=INTERVALS)
+            require(all(r.get(f)==v for f,v in expected_temporal.items()), 'temporal permission changed')
             require((r['value'] is None and r['value_state']=='blank') or
                     (isinstance(r['value'], (int,float)) and r['value']>=0 and r['value_state']==('zero' if r['value']==0 else 'numeric')), 'invalid missing/zero state')
             if a['identity_municipality']:
@@ -214,8 +236,7 @@ def validate(payload, base=None):
             if rate:
                 denominator=next(x for x in data['denominator_records'] if x['record_id']==rate['denominator_record_id'])
                 require(rate['regional_contract']==VERSION and rate['regional_composition_allowed'] and
-                        rate['comparability_status']=='pending' and not rate['comparison_allowed'] and
-                        rate['comparability_intervals']==INTERVALS and denominator['value']>0 and
+                        all(rate.get(f)==v for f,v in expected_temporal.items()) and denominator['value']>0 and
                         denominator['geography_code']==r['geography_code'] and denominator['observation_fiscal_year']==r['observation_fiscal_year'] and
                         rate['numerator_record_id']==r['record_id'] and rate['numerator_value']==r['value'] and
                         rate['denominator_value']==denominator['value'] and rate['formula']==FORMULA and

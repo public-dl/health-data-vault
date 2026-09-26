@@ -55,3 +55,10 @@ export function transposedGroupTableText(data:Payload,group:IndicatorGroup,code:
   ...groupRows(data,group,[code]).filter(r=>years.includes(r.observation_fiscal_year)).map(r=>`${r.observation_fiscal_year}\t${r.indicator_id}\t${r.source_url}\t${r.source_sheet}\t${r.source_cell}\t${r.source_sha256}`)
  ].join('\n');
 }
+
+/** Temporal evaluation permission is separate from displaying validated annual compositions. */
+export function compositionTrendAllowed(data:Payload,group:IndicatorGroup,codes:string[]) {
+ const ids=new Set(group.categories.map(c=>c.indicator_id));
+ const rows=data.records.filter(r=>codes.includes(r.geography_code)&&ids.has(r.indicator_id)&&data.years.includes(r.observation_fiscal_year));
+ return group.allowed_views.includes('category_trend')&&rows.length>0&&rows.every(r=>r.comparison_allowed&&r.comparability_status==='compatible');
+}

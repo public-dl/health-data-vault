@@ -3,7 +3,7 @@ import {connect,formatValue,type Observation} from './model';
 export function previousYearComment(rows:Observation[],year:number):string {
  const current=rows.find(r=>r.observation_fiscal_year===year);
  const previous=rows.filter(r=>r.observation_fiscal_year<year).sort((a,b)=>b.observation_fiscal_year-a.observation_fiscal_year)[0];
- if(!connect(previous,current))return '';
+ if(current?.temporal_difference_allowed===false||previous?.temporal_difference_allowed===false||!connect(previous,current))return '';
  const delta=current!.value!-previous.value!;
  return `${previous.observation_fiscal_year}年度との差は${delta>=0?'+':''}${formatValue(delta,current!.unit)}${current!.unit==='%'?'ポイント':current!.unit}です。`;
 }

@@ -51,9 +51,13 @@ class HealthCenterCandidateTests(unittest.TestCase):
         self.assertEqual(next(r['value'] for r in den if r['geography_code']=='15213' and r['observation_fiscal_year']==2023),3401)
         rows=[r for k in ('analysis','annual','reported') for r in self.data[k]['records'] if r['geography_level']=='health_center_area']
         self.assertEqual(len(rows),1092)
-        self.assertEqual(sum(r['value'] is None for r in rows),9)
+        self.assertEqual(sum(r['value'] is None for r in rows),0 if 'derived_zero_policy' in self.data else 9)
         self.assertTrue(all(r['source_row']!=51 for r in rows))
-        self.assertTrue(all(r['comparability_status']=='pending' and not r['comparison_allowed'] for r in rows))
+        approved='health_center_temporal_policy' in self.data
+        allowed_ids={r['record_id'] for r in self.data['analysis']['records']} if approved else set()
+        for r in rows:
+            self.assertEqual(r['comparability_status'],'compatible' if r['record_id'] in allowed_ids else 'pending')
+            self.assertEqual(r['comparison_allowed'],r['record_id'] in allowed_ids)
         self.assertTrue(all('derived_rate' not in r for r in self.data['reported']['records']))
         self.assertTrue(all(r['value_state']=='zero' for r in self.data['reported']['records'] if r['value']==0))
 

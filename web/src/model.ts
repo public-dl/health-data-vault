@@ -4,6 +4,8 @@ import {presentationIndicator} from './visual-metadata';
 import type {FeatureCollection, Geometry} from 'geojson';
 
 export type Observation = {
+  temporal_display_scope?:string;temporal_difference_allowed?:boolean;trend_evaluation_allowed?:boolean;causal_evaluation_allowed?:boolean;
+  raw_value?:number|null;derived_value?:number;zero_derivation?:{explanation:string;source_sheet:string;source_cell:string;child_sum:number;mapping_evidence:string;children:{name:string;cell:string;raw_value:number}[]};
   value_origin?:string; mapping_reference?:string;statistical_source_record_id?:string;regional_composition_allowed?:boolean;
   source_label?:string;public_label?:string;semantic_key?:string;terminology_version?:string;
   display_contract?:string; annual_display_allowed?:boolean; regional_difference_allowed?:boolean; denominator_record_id?:string;

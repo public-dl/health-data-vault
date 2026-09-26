@@ -1,9 +1,9 @@
 {
   "status": "approved",
-  "release_id": "ad50d1980ded8094a30f9da67df32e63cc85bf9ba7a24547e6de6e123848a753",
-  "data_sha256": "ad50d1980ded8094a30f9da67df32e63cc85bf9ba7a24547e6de6e123848a753",
+  "release_id": "1e0b2f10ab797f8f635573d522c212f8f223d6d195851bddbd7fdb13cf3c9b17",
+  "data_sha256": "1e0b2f10ab797f8f635573d522c212f8f223d6d195851bddbd7fdb13cf3c9b17",
   "reviewer": "岸克也",
-  "approved_at": "2026-09-26T16:07:41.481607+00:00",
+  "approved_at": "2026-09-26T17:34:31.328157+00:00",
   "validation": {
     "reported_records": 2244,
     "errors": 0,
@@ -58,45 +58,8 @@
         "identity": 84,
         "component_checks": 999
       },
-      "warnings": [
-        {
-          "code": "hc-15-niitsu",
-          "year": 2021,
-          "group": "metabo",
-          "reason": "missing official component; no imputation"
-        },
-        {
-          "code": "hc-15-niitsu",
-          "year": 2021,
-          "group": "guidance",
-          "reason": "missing official component; no imputation"
-        },
-        {
-          "code": "hc-15-niitsu",
-          "year": 2022,
-          "group": "metabo",
-          "reason": "missing official component; no imputation"
-        },
-        {
-          "code": "hc-15-niitsu",
-          "year": 2023,
-          "group": "metabo",
-          "reason": "missing official component; no imputation"
-        },
-        {
-          "code": "hc-15-niitsu",
-          "year": 2023,
-          "group": "guidance",
-          "reason": "missing official component; no imputation"
-        },
-        {
-          "code": "hc-15-tokamachi",
-          "year": 2021,
-          "group": "guidance",
-          "reason": "missing official component; no imputation"
-        }
-      ],
-      "temporal_comparability": "pending"
+      "warnings": [],
+      "temporal_comparability": "group_specific_annual_facts"
     }
   },
   "data_rights_reviewed": true,

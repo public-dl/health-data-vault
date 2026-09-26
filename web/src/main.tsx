@@ -12,6 +12,7 @@ import './loading.css';
 import './desktop-density.css';
 import './analysis-sidebar.css';
 import './presentation.css';
+import './wide-screen-density.css';
 
 const root=createRoot(document.getElementById('root')!);
 const route=appRoute(location.pathname),base=import.meta.env.BASE_URL;

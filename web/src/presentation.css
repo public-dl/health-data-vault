@@ -10,6 +10,10 @@
 .analysis-results .nav-copy small{display:block;font-size:12px;margin-top:5px;color:var(--section-ink);line-height:1.5}
 .analysis-results section>.section-heading{background:linear-gradient(90deg,var(--section-tint),transparent);border-left:3px solid var(--section-ink);padding:12px 14px;border-radius:8px}
 .analysis-results section>.section-heading .number{color:var(--section-ink)}
+.map-heading-notes{flex:1 1 520px;min-width:0;margin-left:20px}
+.section-heading .map-heading-notes p{margin:0;font-size:12px;line-height:1.7;color:#48617a;width:auto}
+.section-heading .map-heading-notes .group-scale-note{padding:0;border:0;background:none;margin-top:6px}
+@media(max-width:900px){#map>.section-heading{flex-wrap:wrap}.map-heading-notes{flex-basis:100%;margin-left:0}}
 .conditions-trigger,.conditions-close{display:none}
 @media(min-width:1200px){.conditions-dialog{display:contents}}
 @media(max-width:1199px){
@@ -51,6 +55,8 @@
 @media(max-width:1199px){.analysis-results .content-navigation.section-tab-bar{display:flex;gap:0}.analysis-results .section-tab-bar a{flex:0 0 auto;min-width:155px;min-height:60px;white-space:nowrap;padding:12px 16px}}
 
 .pictogram-mode{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.pictogram-controls{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:12px 24px;margin:12px 0 14px}
+.pictogram-controls .pictogram-mode,.pictogram-controls .layout-control{margin:0}
 .pictogram-mode button{padding:10px 16px;border:1px solid #9bb4cc;border-radius:7px;background:white;color:#153d6c;font:inherit;cursor:pointer}
 .pictogram-mode button[aria-pressed=true]{background:#153d6c;color:white;font-weight:700}
 .pictogram-mode button:focus-visible{outline:3px solid #287fc3;outline-offset:2px}

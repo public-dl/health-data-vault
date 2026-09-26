@@ -1,0 +1,35 @@
+/* Large desktop density; no zoom, transforms or changes to data geometry. */
+@media (min-width:1600px){
+ main.analysis-layout{grid-template-columns:300px minmax(0,1fr);column-gap:20px;padding:12px 20px 20px 0}
+ .analysis-sidebar{top:12px;max-height:calc(100dvh - 24px);padding:18px}
+ .sidebar-title{font-size:18px;margin-bottom:12px}
+ .analysis-sidebar .filters{gap:12px}
+ .analysis-sidebar .step-heading{font-size:15px;line-height:1.45}
+ .analysis-sidebar .health-theme-menu{padding-bottom:6px}
+ .analysis-sidebar .theme-current{padding:9px 12px}
+ .analysis-sidebar .theme-current strong{font-size:16px}
+ .analysis-sidebar .filters select{min-height:40px;padding:8px 30px 8px 10px;font-size:14px}
+ .analysis-sidebar .region-selects{gap:9px}
+ .condition-summary{margin-top:14px;padding:10px 12px;font-size:13px}
+ .condition-summary dl{gap:4px 8px}
+ .analysis-intro .photo-hero{min-height:200px;padding:20px 28px}
+ .analysis-intro .photo-hero h1{font-size:30px;line-height:1.35;margin:4px 0 8px}
+ .analysis-intro .photo-hero p{font-size:14px;line-height:1.6}
+ .analysis-results .content-navigation.section-tab-bar{margin:10px 0 14px}
+ .analysis-results .section-tab-bar a{min-height:52px;padding:9px 12px}
+ .analysis-results .section-tab-bar svg{width:20px;height:20px}
+ .analysis-results section>.section-heading{margin-top:22px;margin-bottom:12px;padding:8px 12px}
+ .analysis-results .section-heading h2{font-size:22px}
+ .analysis-results .section-heading .number{font-size:30px}
+ .analysis-results .panel-heading{padding:10px 16px}
+ .analysis-results .panel-body{padding:12px 16px}
+ .analysis-results .panel-heading h3{font-size:17px}
+ .analysis-results .comparison-panels{gap:14px}
+ .pictogram-controls{margin:8px 0 12px;gap:10px 20px}
+ .pictogram-mode button{padding:8px 12px;font-size:14px}
+ .analysis-results .data-notes summary{padding:10px 16px;min-height:44px;font-size:14px}
+ .analysis-results .data-notes .notes-content{padding:0 16px 14px}
+ .analysis-results .quality{margin-top:20px;padding:16px 20px}
+ .site-header{padding-top:8px;padding-bottom:8px}
+ footer{padding-top:16px;padding-bottom:16px}
+}

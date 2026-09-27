@@ -39,7 +39,8 @@ it('all 17 indicators render count surfaces only in public and review, with sepa
   const c=context(i.indicator_id,review),text=await html(<ReportedViews c={c} onYear={()=>{}} onSelect={()=>{}}/>);
   expect(text).toContain('data-export-surface="summary-card"');expect(text).toContain('data-export-surface="table-card"');
   expect(text).not.toMatch(/data-export-surface="(?:map|graph|pictogram)-card"|data-chart=|data-metric="rate"|ポイント|%<|％<|100人ピクトグラム/);
-  expect(text).toContain('地図表示は停止');expect(text).toContain('グラフ・地域分布は表示していません');
+  expect(text).toContain('地図は表示していません');expect(text).toContain('地域分布・比較グラフは表示していません');
+  expect(text).not.toMatch(/pending|再確認|停止しています|相互排他|残差/);
   const rows=c.data.records.filter(r=>r.indicator_id===i.indicator_id&&r.geography_code==='15');
   const model=temporalTable(rows,2023,'count');expect(model.columns).toEqual([2021,2022,2023]);
   expect(model.rows.map(r=>r.id)).toEqual(['value','reference','publication','comparison']);

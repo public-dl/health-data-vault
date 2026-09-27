@@ -8,16 +8,16 @@ export function temporalTable(records:Observation[],selectedYear:number,measure:
   {id:'value',label:'報告人数（人）',text:(r:Observation)=>format(r.value)+'人'},
   {id:'reference',label:'参考：特定健診受診者数（人）',text:(r:Observation)=>format(r.denominator?.value)+'人'},
   {id:'publication',label:'掲載年度',text:(r:Observation)=>`${r.publication_fiscal_year}年度`},
-  {id:'comparison',label:'比較可否',text:()=> '確認中（pending）'},
+  {id:'comparison',label:'比較可否',text:()=> '増減比較なし'},
  ]:singleRate?[
   {id:'rate',label:'特定健診受診者に占める割合（%）',text:(r:Observation)=>formatValue((r.derivation??r.derived_rate)?.value,'%')+'%'},
   {id:'population',label:'報告人数／受診者数（人）',text:(r:Observation)=>`${format((r.derivation??r.derived_rate)?.numerator_value)} / ${format((r.derivation??r.derived_rate)?.denominator_value)}`},
   {id:'publication',label:'掲載年度',text:(r:Observation)=>`${r.publication_fiscal_year}年度`},
-  {id:'comparison',label:'比較可否',text:()=> '確認中（pending）'}, ]:[
+  {id:'comparison',label:'比較可否',text:()=> '増減比較なし'}, ]:[
   {id:'value',label:measure==='rate'?'受診者に占める割合（%）':'報告人数（人）',text:(r:Observation)=>formatValue(r.value,r.unit)+(r.value==null?`（${r.value_state}）`:'')},
   {id:'population',label:'報告人数／受診者数（人）',text:(r:Observation)=>`${format(r.derivation?.numerator_value??r.value)} / ${format(r.derivation?.denominator_value??r.derived_rate?.denominator_value??r.denominator?.value)}`},
   {id:'publication',label:'掲載年度',text:(r:Observation)=>`${r.publication_fiscal_year}年度`},
-  {id:'comparison',label:'比較可否',text:(r:Observation)=>r.comparison_allowed?'比較可能':r.denominator_record_id?'年度間確認中（pending）':'保留'},
+  {id:'comparison',label:'比較可否',text:(r:Observation)=>r.comparison_allowed?'比較可能':r.denominator_record_id?'増減比較なし':'保留'},
  ];
  return {columns,records:visible,rows:metrics.map(m=>({id:m.id,label:m.label,cells:visible.map(r=>({year:r.observation_fiscal_year,text:m.text(r),record:r}))}))};
 }

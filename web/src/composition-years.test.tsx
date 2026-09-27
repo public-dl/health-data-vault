@@ -29,7 +29,7 @@ it.each([
  }
  expect(JSON.stringify(data)).toBe(before);
  if(a.startsWith('hc-')||b.startsWith('hc-')){
-  expect(html).toContain('年度間の比較可能性は確認中');
+  expect(html).toContain('年度間の増減比較は行っていません');
   expect(html).not.toContain('>区分の推移</button>');
  }
 });
@@ -38,7 +38,7 @@ it('retains Niitsu missing values and never draws invented 100% bars',()=>{
  const html=chart(['15','hc-15-niitsu']);
  expect(html.match(/data-category="/g)).toHaveLength(12); // Only three prefecture bars.
  expect(html.match(/>構成表示不可<\/text>/g)).toHaveLength(3);
- expect(html).toContain('欠損を0に置き換えていません');
+ expect(html).toContain('構成表示不可（区分の空欄など）');
  for(const year of [2021,2022,2023]){
   expect(composition(data,group,'hc-15-niitsu',year)).toBeNull();
   expect(raw.records.some(r=>r.geography_code==='hc-15-niitsu'&&r.observation_fiscal_year===year&&r.value===null)).toBe(true);

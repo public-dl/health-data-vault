@@ -43,7 +43,7 @@ it('renders only two published rows through the shared category/year table witho
  expect(html.match(/<th scope="row">/g)).toHaveLength(2);
  for(const y of [2021,2022,2023])expect(html).toContain(`${y}年度`);
  expect(html).not.toMatch(/composition-total|人数合計一致|構成合計100|hundred-svg|正常/);
- expect(html).toContain('年度間比較 確認中');
+ expect(html).toContain('年度間比較なし');
 });
 it('publishes independently verified recipient ratios without temporal comparison',()=>{
  const c=ratioFixture(),rows=c.data.records.filter(r=>r.indicator_id==='bp_guidance');

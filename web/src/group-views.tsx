@@ -1,3 +1,5 @@
+import {GraphValuesTable} from './graph-values-table';
+import {graphRoundingNotice} from './presentation-copy';
 import {ExportSurface} from './export-surface';
 import {DataNotes} from './data-notes';
 import {CategoryYearTable,CategoryValue} from './category-year-table';
@@ -82,11 +84,10 @@ function CompositionGraph({c,group}:GroupProps) {
       side:c.regions.indexOf(b.code)===0&&c.regions.length>1?'left' as const:'right' as const};
   }):[]),{left:75,right:940,top:55,bottom:332});
   const footerShift=Math.max(0,...labels.map(l=>l.top+l.height-332));
-  const height=490+bars.length*52+footerShift;
-  const active=bars.find(b=>b.code===detail.code&&b.year===detail.year)??bars[0];
+  const height=435+footerShift;
   return <ExportSurface kind="graph-card" className="panel"><div className="panel-heading"><h3>{group.name}：構成を見る</h3><Actions c={c} svg={ref} rows={rows} title={title} label={group.name}/></div>
     <div className="series-controls" role="group" aria-label="構成グラフの表示地域">{c.regions.map(code=><label key={code}><input type="checkbox" checked={visible.includes(code)} disabled={visible.length===1&&visible.includes(code)} onChange={()=>setVisible(v=>toggleSeries(v,code))}/>{nameFor(c,code)}</label>)}<small>地域の表示切替では軸を変更しません。</small></div>
-    <div className="group-controls category-legend" role="group" aria-label="カテゴリーの強調">{group.categories.map(cat=><button key={cat.category_id} aria-pressed={highlight===cat.category_id} onClick={()=>setHighlight(h=>h===cat.category_id?'':cat.category_id)}><CategoryIcon group={group} category={cat}/><i style={{background:cat.color}}/>{cat.label}</button>)}<small>凡例は強調のみ。全カテゴリーを保持します。</small></div>
+    <div className="group-controls category-legend" role="group" aria-label="判定区分の強調">{group.categories.map(cat=><button key={cat.category_id} aria-pressed={highlight===cat.category_id} onClick={()=>setHighlight(h=>h===cat.category_id?'':cat.category_id)}><CategoryIcon group={group} category={cat}/><i style={{background:cat.color}}/>{cat.label}</button>)}<small>凡例を押すと判定区分を強調します。</small></div>
     <div className="composition-body"><div className="chart-scroll"><svg ref={ref} viewBox={`0 0 ${width} ${height}`} className="chart composition-chart" role="img" aria-label={`${title} ${measureLabel(c)}`} data-axis-max={max}><rect width={width} height={height} fill="white"/><text x="24" y="30" {...svgText} fontSize="19">{group.name}：全区分 / {measureLabel(c)}</text>
       {[0,.25,.5,.75,1].map(t=><g key={t}><line x1="70" x2="920" y1={baseline-t*plotHeight} y2={baseline-t*plotHeight} stroke="#dce6ef"/><text x="62" y={baseline-t*plotHeight+5} {...svgText} textAnchor="end" fontSize="13">{formatValue(c.measure==='rate'?max*t:Math.round(max*t),c.indicator.unit)}</text></g>)}
       {bars.map(b=><g key={b.code+b.year} data-region={b.code} data-year={b.year} tabIndex={0} role="button" aria-label={`${nameFor(c,b.code)} ${b.year}年度の全区分詳細`} onFocus={()=>setDetail({code:b.code,year:b.year})} onMouseEnter={()=>setDetail({code:b.code,year:b.year})} onClick={()=>setDetail({code:b.code,year:b.year})} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setDetail({code:b.code,year:b.year});}}}>
@@ -99,12 +100,9 @@ function CompositionGraph({c,group}:GroupProps) {
       </g>)}
       {c.data.years.map(year=><text key={year} x={80+c.data.years.indexOf(year)*step+step/2} y={373+footerShift} {...svgText} textAnchor="middle" fontSize="15">{year}年度</text>)}
       {group.categories.map((cat,i)=><g key={cat.category_id} transform={`translate(${45+i*(870/group.categories.length)} ${399+footerShift})`}><rect width="15" height="15" fill={cat.color}/><text x="23" y="13" {...svgText} fontSize="13">{cat.label}</text></g>)}
-      <text x="24" y={440+footerShift} {...svgText} fontSize="12">全区分の値（凡例順）／報告人数 ／ 受診者数。割合は丸め補正・再正規化しません。</text>
-      {bars.map((b,i)=><g key={b.code+b.year}><text x="24" y={464+i*52+footerShift} {...svgText} fontSize="12">{b.year}年度 {nameFor(c,b.code)}：{b.part?b.part.rows.map((r,j)=>`${group.categories[j].label} ${formatValue(r.value,r.unit)}${r.unit}`).join(' / '):'表示不可'}</text><text x="24" y={484+i*52+footerShift} {...svgText} fontSize="12">報告人数（凡例順）：{b.part?b.part.rows.map(r=>format(numerator(r))+'人').join(' / '):'—'} ／ 受診者数 {b.part?format(b.part.denominator):'—'}人</text></g>)}
     </svg></div><p className="chart-scroll-hint">横スクロールで全年度を確認できます。</p>
-    <section className="composition-values" aria-label="全カテゴリーの値（常時表示）"><h4>全カテゴリーの値（常時表示）</h4><div className="composition-values-grid">{bars.map(b=><article key={b.code+b.year}><h5>{nameFor(c,b.code)} · {b.year}年度</h5>{b.part?<><dl>{b.part.rows.map((r,i)=><div key={r.record_id}><dt><i style={{background:group.categories[i].color}}/>{group.categories[i].label}</dt><dd>{stackValueText(r.value,r.unit,r.value_state)}{c.measure==='rate'&&<small>報告人数 {format(numerator(r))}人</small>}</dd></div>)}</dl><p>受診者数 {format(b.part.denominator)}人</p></>:<p>構成表示不可：原表の一部区分が空欄、または構成検証条件を満たしていません。欠損を0に置き換えていません。</p>}</article>)}</div></section>
-    <div className="composition-detail" aria-live="polite"><strong>{active?.year}年度 {active&&nameFor(c,active.code)}の詳細</strong><p>棒に触れる・タップ・キーボードで選ぶと切り替わります。</p>{active?.part?<><p>受診者数：{format(active.part.denominator)}人</p><ul>{active.part.rows.map((r,i)=><li key={r.record_id}>{group.categories[i].label}：{formatValue(r.value,r.unit)}{r.unit}／報告人数 {format(numerator(r))}人 <button className="source-link" onClick={()=>c.source([r])}>出典</button></li>)}</ul></>:'構成検証を満たさないため表示できません。'}</div>
-    {rows.some(r=>r.comparability_status==='pending')&&<p className="annual-notice">年度間の比較可能性は確認中です。グラフには各年度の実績構成比・報告人数を併記しますが、前年差・増減率・トレンドは表示しません。</p>}<SourceLink c={c} rows={groupRows(c.data,group,c.regions)}/><p className="footnote">各区分は監査済み分母に対する原割合です。表示値は丸めのため合計が100.0%にならない場合があります。</p><GroupNotes c={c} group={group} codes={visibleCodes}/></div></ExportSurface>;
+    <GraphValuesTable rows={bars.map(b=>({code:b.code,name:nameFor(c,b.code),year:b.year,records:b.part?.rows??[],recipients:b.part?.denominator??null,unavailable:!b.part}))} categories={group.categories.map(cat=>({id:cat.indicator_id,label:cat.label}))} onSource={c.source} active={detail}/>
+    <p className="footnote">{graphRoundingNotice}{rows.some(r=>r.comparability_status==='pending')&&'年度間の増減比較は行っていません。'}</p><SourceLink c={c} rows={groupRows(c.data,group,c.regions)}/><GroupNotes c={c} group={group} codes={visibleCodes}/></div></ExportSurface>;
 }
 export function GroupGraph({c,group}:GroupProps) {
   const [requestedMode,setMode]=useState(group.allowed_views.includes('composition')?'composition':'trend'),[category,setCategory]=useState(group.categories[0].category_id);

@@ -22,7 +22,7 @@ it.each([
  expect(html.match(/data-temporal-connection="true"/g)).toHaveLength(4);
  for(const year of [2021,2022,2023])expect(html.match(new RegExp(`data-year="${year}"`,'g'))).toHaveLength(2);
  expect(html).toContain('stroke-dasharray=');
- expect(html).toContain('各年度の公表実績を線で接続');
+ expect(html).toContain('各年度の公表実績です。');
  const bars=renderToStaticMarkup(<GroupGraph c={c} group={group}/>);
  for(const year of [2021,2022,2023])for(const region of [a,b])expect(bars).toContain(`data-region="${region}" data-year="${year}"`);
  expect(bars).toContain('>区分の推移</button>');

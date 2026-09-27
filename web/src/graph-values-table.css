@@ -1,0 +1,11 @@
+.graph-values-scroll{margin:18px 0 12px;max-width:100%}
+.graph-values-table{width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+.graph-values-table caption{font-size:15px;color:#254668;padding:0 0 10px}
+.graph-values-table th,.graph-values-table td{padding:12px 14px;font-size:14px;white-space:nowrap;vertical-align:middle}
+.graph-values-table td{font-weight:500}
+.graph-value-source{display:block;border:0;background:transparent;padding:3px 0;text-align:left;color:#24486c;font-size:15px;line-height:1.5}
+.graph-value-source small{display:block;font-size:13px;font-weight:500}
+.graph-value-source:hover{background:transparent;text-decoration:underline}
+.panel-body.graph-body{display:block}
+.graph-body>.footnote,.composition-body>.footnote{padding:4px 0 12px}
+@media(max-width:700px){.graph-values-table th,.graph-values-table td{padding:10px;font-size:13px}.graph-values-scroll{margin-top:12px}}

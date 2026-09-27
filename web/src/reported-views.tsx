@@ -1,3 +1,4 @@
+import {countYearNotice,countMapNotice,countGraphNotice} from './presentation-copy';
 import {DeferredSection} from './deferred-section';
 const ReportedCharts=React.lazy(()=>import('./reported-charts').then(m=>({default:m.ReportedCharts})));
 import {ExportSurface} from './export-surface';
@@ -10,7 +11,7 @@ import {ComparisonActions} from './comparison-export';
 import {MapNotes} from './map-notes';
 import {YearTimeline} from './year-timeline';
 
-export const reportedNotice='年度間の比較可能性は確認中です。表には各年度の実績値を併記しますが、前年差・増減率・トレンドは表示しません。';
+export const reportedNotice=countYearNotice;
 
 /** Map capability is independent of the value selected for counts/tables. */
 export function reportedMapContext(c:Context):Context|null {
@@ -79,13 +80,13 @@ export function ReportedViews({c,members,onSelect,onYear}:{c:Context;members?:st
  const tableContext={...c,measure:c.indicator.capabilities?.temporal_rate?'rate' as const:c.measure,data:{...tableData,years:tableData.years.filter(y=>y<=c.year),records:tableData.records.filter(r=>r.observation_fiscal_year<=c.year)}};
  const current=(context:Context):Context=>({...context,annualValues:false,data:{...context.data,years:[c.year],records:context.data.records.filter(r=>r.observation_fiscal_year===c.year)}});
  const heading=(number:string,title:string)=><div className="section-heading"><span className="number">{number}</span><h2>{title}</h2></div>;
- return <><p className="annual-notice">{reportedNotice}</p>{members&&<p className="footnote">{c.indicator.set_notice??'全区分は、原資料に掲載されている「受診勧奨」「保健指導」の2区分を表示しています。受診者全体を完全分類した構成ではありません。'}</p>}
+ return <>{!countOnly&&<p className="annual-notice">{reportedNotice}</p>}{members&&!countOnly&&<p className="footnote">{c.indicator.set_notice??'全区分は、原資料に掲載されている「受診勧奨」「保健指導」の2区分を表示しています。受診者全体を完全分類した構成ではありません。'}</p>}
  <section id="overview">{heading('01',c.indicator.overview_label??'判定状況をひと目で見る')}
  <div className={members&&c.regions.length===1?'group-map-grid':'reported-overviews'}>{contexts.map(context=><div key={context.indicator.indicator_id} id={'reported-overview-'+context.indicator.indicator_id}>
  <div className="comparison-heading">{members&&<h3 className="category-heading">{context.indicator.name}</h3>}<ComparisonActions c={current(context)} kind="overview" layout={layout} mapScope={'#reported-overview-'+context.indicator.indicator_id}/></div>
  <div className={`comparison-panels ${c.regions.length>1?layout:'single'}`}>{c.regions.map(code=><ReportedOverview key={code} c={current(context)} code={code}/>)}</div></div>)}</div>
  </section>
- <DeferredSection id="map">{heading('02','地図で見る')}{countOnly?<p className="annual-notice">地域比較に用いる割合の分母を再確認しているため、地図表示は停止しています。<a href="#table">報告人数は表で確認できます。</a></p>:<>{contexts.some(x=>x.indicator.capabilities?.map_mode!=='none')&&<MapNotes measure={c.indicator.capabilities?.map_mode==='rate'?'rate':c.measure} rateLabel={c.indicator.rate?.label} mixed={c.measure==='rate'&&contexts.some(x=>!x.indicator.rate)}/>}
+ <DeferredSection id="map">{heading('02','地図で見る')}{countOnly?<p className="annual-notice">{countMapNotice}<a href="#table">報告人数は「表で見る」で確認できます。</a></p>:<>{contexts.some(x=>x.indicator.capabilities?.map_mode!=='none')&&<MapNotes measure={c.indicator.capabilities?.map_mode==='rate'?'rate':c.measure} rateLabel={c.indicator.rate?.label} mixed={c.measure==='rate'&&contexts.some(x=>!x.indicator.rate)}/>}
  <p className="footnote">{c.indicator.source_notice??<>原資料の「判定区分（保健指導以上を再掲）」に掲載された人数です。割合は同年度・同地域の特定健診受診者数を分母として算出しています。受診勧奨・保健指導以外の受診者を「正常」とするものではありません。受診者数は血圧測定者数ではありません。</>}{(c.measure==='rate'||c.indicator.capabilities?.map_mode==='rate')&&contexts.some(x=>x.indicator.map_scale)?'地図の色は割合の大小を連続的に示しています。医学的判定区分を示すものではありません。同じ指標では年度・地域を変更しても同じ表示尺度を使用しています。':c.indicator.capabilities?.map_mode==='none'?'':'凡例は分布を読むための表示階級です。'}</p>
  {c.regions.length>1&&<LayoutToggle section={(c.indicator.theme_label??"判定")+"の地図・表"} value={layout} onChange={setLayout}/>}
  <div className={members&&c.regions.length===1?'group-map-grid':''}>{contexts.map(context=>{const local=reportedMapContext(current(context)),scope='reported-map-'+context.indicator.indicator_id;if(!local)return <p key={scope} className="annual-notice">この指標は割合の公開契約が未承認のため、地図表示を行っていません。報告人数は表で確認できます。</p>;return <div key={scope} id={scope}>
@@ -94,8 +95,8 @@ export function ReportedViews({c,members,onSelect,onYear}:{c:Context;members?:st
  <YearTimeline years={years} year={c.year} playing={false} onYear={onYear} label={context.indicator.name+'・単年度閲覧'}/>
  <div className={`comparison-panels ${c.regions.length>1?layout:'single'}`}>{c.regions.map(code=><Insight key={code} c={local} code={code} map/>)}</div>
  </div>;})}</div></>}</DeferredSection>
- <DeferredSection id="table">{heading('03','表で見る')}<p>各年度の実績値を併記しています。年度間の比較可能性は確認中です。</p>
+ <DeferredSection id="table">{heading('03','表で見る')}<p>{countYearNotice}</p>
  <ComparisonActions c={{...tableContext,reportedMembers:members}} kind="table" layout={layout}/>
  <div className={`comparison-panels ${c.regions.length>1?layout:'single'}`}>{c.regions.map(code=>members?<ReportedSetTable key={code} c={tableContext} code={code} members={members}/>:<TablePanel key={code} c={tableContext} code={code}/>)}</div></DeferredSection>
- <DeferredSection id="graph">{heading('04','グラフで見る')}{countOnly?<p className="annual-notice">地域比較に用いる割合の分母を再確認しているため、グラフ・地域分布は表示していません。<a href="#table">各年度の報告人数は表で確認できます。</a></p>:<React.Suspense fallback={<p role="status">グラフを読み込んでいます</p>}><ReportedCharts c={c}/></React.Suspense>}</DeferredSection></>;
+ <DeferredSection id="graph">{heading('04','グラフで見る')}{countOnly?<p className="annual-notice">{countGraphNotice}<a href="#table">年度別の報告人数は「表で見る」で確認できます。</a></p>:<React.Suspense fallback={<p role="status">グラフを読み込んでいます</p>}><ReportedCharts c={c}/></React.Suspense>}</DeferredSection></>;
 }

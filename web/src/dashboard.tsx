@@ -1,3 +1,4 @@
+import {presentationGroup} from './presentation-order';
 import {countNotice} from './presentation-copy';
 import {RegionOptions,RegionSourceNote} from './region-hierarchy';
 import {AnalysisControls} from './analysis-controls';
@@ -38,7 +39,7 @@ export function App({data,review,release,extensions}:{data:Payload;review:boolea
   const defaultIndicator=defaultGroup?'group:'+defaultGroup.group_id:data.indicators[0].indicator_id;
   const defaultMeasure=defaultGroup||data.indicators[0].rate?'rate':'count';
   const catalog=[...data.indicators,...(extensions?.annual.indicators??[]),...(extensions?.reported?.indicators??[])].map(presentationIndicator);
-  const groups=[...(data.indicator_groups??[]),...(extensions?.annual.indicator_groups??[])].sort((a,b)=>['metabo','doctor_judgment','guidance'].indexOf(a.group_id)-['metabo','doctor_judgment','guidance'].indexOf(b.group_id));
+  const groups=[...(data.indicator_groups??[]),...(extensions?.annual.indicator_groups??[])].map(presentationGroup).sort((a,b)=>['metabo','doctor_judgment','guidance'].indexOf(a.group_id)-['metabo','doctor_judgment','guidance'].indexOf(b.group_id));
   const requested=new URLSearchParams(location.search);
   const requestedIndicator=requested.get('indicator');
   const initialIndicator=resolveThemeSelection(requested.get('theme'),requestedIndicator,defaultIndicator,groups,catalog).indicatorId;

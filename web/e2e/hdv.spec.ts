@@ -183,3 +183,28 @@ test('PNG save creates a valid file',async({page})=>{
   await page.locator('#overview').getByRole('button',{name:/をPNG保存$/}).click();
   await assertPng(await download);
 });
+
+for(const [a,b] of [['15','hc-15-tokamachi'],['hc-15-sanjo','15213']]){
+  test(`physician display order ${a} / ${b}: referral, guidance, normal`,async({page},testInfo)=>{
+    await open(page);await choose(page,{indicator:'group:doctor_judgment',a,b});
+    const ids=['referral','guidance','normal'],labels=['受診勧奨','保健指導','異常認めず'];
+    const options=page.getByRole('combobox',{name:'データを選ぶ',exact:true,includeHidden:true}).locator('option[value^="physician_"]');
+    expect(await options.evaluateAll(es=>es.map(e=>(e as HTMLOptionElement).value))).toEqual(ids.map(id=>'physician_'+id));
+    const cards=page.locator('#overview [data-export-surface="pictogram-card"]');
+    await expect(cards).toHaveCount(2);
+    for(const [i,code] of [a,b].entries()){
+      expect(await cards.nth(i).locator('[data-category-label]').evaluateAll(es=>es.map(e=>e.getAttribute('data-category-label')))).toEqual(ids);
+      await expect(cards.nth(i).locator('[data-person]')).toHaveCount(100);
+      for(const id of ids){
+        const r=record('physician_'+id,code),label=cards.nth(i).locator(`[data-category-label="${id}"]`);
+        await expect(label).toContainText(count(r.value)+'人');
+        await expect(label).toContainText(percent(r.derived_rate.value)+'%');
+      }
+    }
+    const map=await section(page,'map');
+    await expect(map.locator('[id^="annual-map-"] > h3')).toHaveText(labels);
+    const table=await section(page,'table');
+    for(const card of await table.locator('[data-export-surface="table-card"]').all())await expect(card.locator('tbody th')).toHaveText(labels);
+    await testInfo.attach('physician-order',{body:await page.screenshot(),contentType:'image/png'});
+  });
+}

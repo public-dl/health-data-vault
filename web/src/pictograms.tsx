@@ -1,3 +1,4 @@
+import {presentationAllocation} from './presentation-order';
 import {matchPeople,personMotion,type PersonIdentity} from './pictogram-motion';
 import {ExportSurface} from './export-surface';
 import {annualComposition} from './annual-model';
@@ -8,7 +9,7 @@ import {groupedPictogramLayout,hundredGridLayout} from './grouped-pictogram-layo
 import type {Category,IndicatorGroup} from './model';
 import {format,formatValue} from './model';
 import {composition,numerator} from './group-model';
-import {groupVisuals,allocateHundred,type Pose} from './visual-metadata';
+import {groupVisuals,type Pose} from './visual-metadata';
 import {Actions,SourceLink,LayoutToggle,nameFor,type Context,type Layout,svgText} from './panels';
 
 export function PersonShape({pose}:{pose:Pose}) {
@@ -32,7 +33,7 @@ function HundredCard({c,group,code,singleRegion,mode}:{c:Context;group:Indicator
  useEffect(()=>{const el=drawingRef.current;if(!el)return;const observer=new ResizeObserver(entries=>setDrawingWidth(entries[0].contentRect.width));observer.observe(el);return()=>observer.disconnect();},[!!part]);
 
  const rates=part?.rows.map(r=>(r.derivation??r.derived_rate)?.value??null)??[];
- const allocation=part?allocateHundred(rates):null;
+ const allocation=part?presentationAllocation(group,c.data.indicator_groups?.find(g=>g.group_id===group.group_id)??group,rates):null;
  const symbols=allocation?.flatMap((n,i)=>Array(n).fill(i) as number[])??[];
  const geometry=(mode==='grid'?hundredGridLayout:groupedPictogramLayout)(drawingWidth,allocation??[]);
  const previousPeople=useRef<PersonIdentity[]>([]);

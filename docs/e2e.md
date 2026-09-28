@@ -5,7 +5,7 @@
 - `web/playwright.config.ts`：2画面サイズ、production server、失敗成果物
 - `web/e2e/serve.mjs`：buildとpreview起動
 - `web/e2e/fixtures.ts`：ローカル配信、approved release照合、画面操作
-- `web/e2e/hdv.spec.ts`：代表28ケース
+- `web/e2e/hdv.spec.ts`：代表30ケース
 - `web/e2e/tsconfig.json`：E2Eコードの型検査
 - `web/package.json` / `package-lock.json`：実行コマンドとdevDependencies
 - `.github/workflows/e2e.yml`：PR/手動CI
@@ -47,7 +47,7 @@ current.jsonがapprovedであることと実ファイルSHA-256を検証し、�
 
 このE2Eは**監査済み原本・releaseから画面までの代表回帰確認**。県HPのExcelを毎回ダウンロードする全セル監査の代替ではない。県側の原本差し替え検知と取り込みValidatorは既存の監査・検証工程で行う。派生0はraw空欄とchild sumも照合し、画面の出典モーダルまで確認する。
 
-## 28ケース（両projectで計56実行）
+## 30ケース（両projectで計60実行）
 
 1. 固定既知値・原典位置・release hashと画面
 2–4. 県計・燕市・三条保健所管内：人数、割合、100人、3年度表/構成棒
@@ -63,6 +63,7 @@ current.jsonがapprovedであることと実ファイルSHA-256を検証し、�
 22–24. production通常/review/exportReviewのrobots、初期HTML、canonical
 25–27. コピー成功/拒否/非対応：通常・地図・表・グラフ・比較画像
 28. PNG保存
+29–30. 医師の判断の表示順（県計／十日町保健所管内、三条保健所管内／燕市）：指標選択・100人図・地図・表の順序と人数・割合を照合
 
 医師の判断は現行仕様どおり単年度表を年度selectorで切替確認し、経年グラフ自体がないことと線がないことを検証する。テストを通すためにUI仕様やcomparabilityを変えない。
 
@@ -84,8 +85,8 @@ current.jsonがapprovedであることと実ファイルSHA-256を検証し、�
 
 ## ローカル実行結果（2026-09-28）
 
-- `npm run test:e2e`：56 passed、4.3分、retryなし。desktop 28/28、iphone相当28/28。
-- 既存UI：35ファイル、188件成功。
+- `npm run test:e2e`：60 passed、4.4分、retryなし。desktop 30/30、iphone相当30/30。
+- 既存UI：36ファイル、191件成功。
 - アプリTypeScript / E2E TypeScript：成功。
 - production build：成功（各E2E起動時に`tsc`と`vite build`を実行）。
 - コピー成功・拒否・非対応fallback、PNG署名検証：両projectで成功。

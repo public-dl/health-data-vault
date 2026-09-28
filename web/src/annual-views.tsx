@@ -1,3 +1,4 @@
+import {presentationGroup} from './presentation-order';
 import {DeferredSection} from './deferred-section';
 import {appUrl} from './app-url';
 import {ExportSurface} from './export-surface';
@@ -20,7 +21,7 @@ function AnnualTable({c,group,code}:{c:Context;group:IndicatorGroup;code:string}
  <svg ref={ref} className="export-only" aria-hidden="true" viewBox={`0 0 1100 ${130+rows.length*68}`}><rect width="1100" height="500" fill="white"/><text x="24" y="30" {...svgText} fontSize="20">{nameFor(c,code)} / {group.name} / {c.year}年度</text><text x="24" y="58" {...svgText} fontSize="14">{annualNotice}</text>{rows.map((r,i)=>{const rate=r.derivation??r.derived_rate!;return <text key={r.record_id} x="24" y={105+i*68} {...svgText} fontSize="18">{group.categories.find(cat=>cat.indicator_id===r.indicator_id)?.label}　{formatValue(r.value,r.unit)}{r.unit}　報告人数 {format(rate.numerator_value)}／受診者数 {format(rate.denominator_value)}人　掲載 {r.publication_fiscal_year}年度</text>;})}</svg></ExportSurface>;
 }
 export function AnnualViews({c,onSelect}:{c:Context;onSelect:(code:string)=>void}) {
- const group=visualGroup(c.data.indicator_groups![0]);
+ const group=visualGroup(presentationGroup(c.data.indicator_groups![0]));
  const [layout,setLayout]=useState<Layout>('side');
  const valid=c.regions.every(code=>annualComposition(c.data,group,code,c.year));
  const categories=group.categories.filter(cat=>c.group||cat.indicator_id===c.indicator.indicator_id);

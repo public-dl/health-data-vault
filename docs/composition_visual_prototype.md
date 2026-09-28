@@ -105,3 +105,6 @@
 
 回帰テストは表示モデルの期待値に加え、Reactサーバーレンダリングで4項目行に各年度セルが並ぶDOMを検証。最大5列・欠損／実値0・コピーを確認。Vitest64件成功、ビルド成功。
 変更：新規`web/src/temporal-table.tsx`・`web/src/temporal-table.test.tsx`、`web/src/panels.tsx`、`web/src/style.css`、本書。データ・Validator・公開判定は未変更。commit/pushなし。
+
+
+2026-09-29更新：メタボ割合地図の階級記述は旧版仕様です。新しい表示版は[固定domain連続色](metabo_continuous_map.md)を参照してください。全区分・単区分で同一尺度を使用します。

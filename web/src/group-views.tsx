@@ -11,15 +11,15 @@ import {Actions,Context,Insight,GraphPanel,Layout,LayoutToggle,MapPanel,SourceLi
 import {composition,compositionTrendAllowed,groupRows,groupCsv,groupTableText,tableYears,numerator,stackSegments} from './group-model';
 import {placeStackLabels,stackValueText} from './stack-labels';
 import {CategoryIcon} from './pictograms';
-import {groupVisuals} from './visual-metadata';
+import {groupVisuals,presentationIndicator} from './visual-metadata';
 import {toggleSeries} from './comparison';
 import {cardsPng,outputPng,pngMessage} from './export';
 
 type GroupProps={c:Context;group:IndicatorGroup};
-function categoryContext(c:Context,group:IndicatorGroup,id:string):Context {
+export function categoryContext(c:Context,group:IndicatorGroup,id:string):Context {
   const category=group.categories.find(cat=>cat.category_id===id)!;
-  const indicator=c.data.indicators.find(i=>i.indicator_id===category.indicator_id)!;
-  return {...c,palette:groupVisuals[group.group_id]?.[id]?.palette,indicator:{...indicator,map_breaks:c.measure==='rate'?category.rate_map_breaks:category.count_map_breaks}};
+  const indicator=presentationIndicator(c.data.indicators.find(i=>i.indicator_id===category.indicator_id)!);
+  return {...c,palette:groupVisuals[group.group_id]?.[id]?.palette,indicator:{...indicator,map_breaks:c.measure==='rate'?(indicator.map_scale?[]:category.rate_map_breaks):category.count_map_breaks}};
 }
 function CategorySelect({group,value,onChange,label}:{group:IndicatorGroup;value:string;onChange:(s:string)=>void;label:string}) {
   return <label className="category-select">{label}<select value={value} onChange={e=>onChange(e.target.value)}>{group.categories.map(cat=><option key={cat.category_id} value={cat.category_id}>{cat.label}</option>)}</select></label>;

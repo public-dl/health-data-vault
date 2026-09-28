@@ -1,5 +1,6 @@
 import type {Indicator,IndicatorGroup} from './model';
 import {recipientMapScales} from './map-scale';
+import {metaboMapScales} from './metabo-map-scales';
 export type Pose='lean'|'head'|'wave'|'neutral'|'support'|'step'|'open';
 export type CategoryVisual={pose:Pose;color:string;palette:string[]};
 // Soft UI, clear data: muted category hues with stronger data contrast; UI surfaces stay unchanged.
@@ -45,6 +46,8 @@ Object.assign(indicatorColorAliases,{
  hba1c:groupVisuals.guidance.none,
 });
 export function presentationIndicator(indicator:Indicator):Indicator {
+ const metabo=metaboMapScales[indicator.indicator_id];
+ if(metabo&&indicator.capabilities?.map_mode!=='none')indicator={...indicator,map_scale:metabo};
  if(indicator.capabilities?.map_mode!=='none'&&!indicator.map_scale&&recipientMapScales[indicator.indicator_id])indicator={...indicator,map_scale:recipientMapScales[indicator.indicator_id]};
  if(!indicator.public_label&&indicator.indicator_id==='lipid_people')indicator={...indicator,name:'脂質代謝：実人員'};
  const visual=indicatorColorAliases[indicator.indicator_id];

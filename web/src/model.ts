@@ -43,7 +43,7 @@ export function displayData(data:Payload, measure:'count'|'rate'):Payload {
  data={...data,indicators:data.indicators.map(presentationIndicator),records:data.records.map(r=>{const i=data.indicators.find(i=>i.indicator_id===r.indicator_id);return i?.semantic_key?{...r,source_label:i.source_label,public_label:i.public_label,semantic_key:i.semantic_key,terminology_version:i.terminology_version}:r;})};
   if(measure==='count')return data;
   const denominators=new Map((data.denominator_records??[]).map(r=>[r.record_id,r]));
-  return {...data,indicators:data.indicators.map(i=>i.rate?{...i,unit:'%',map_breaks:i.rate.map_breaks,intervals:i.rate.intervals}:i),
+  return {...data,indicators:data.indicators.map(i=>i.rate?{...i,unit:'%',map_breaks:i.map_scale?[]:i.rate.map_breaks,intervals:i.rate.intervals}:i),
     records:data.records.map(r=>{const d=r.derived_rate;if(!d)return ['reported-annual-4','reported-annual-5','reported-annual-6'].includes(data.schema_version)&&!data.indicators.find(i=>i.indicator_id===r.indicator_id)?.rate?r:{...r,value:null,comparison_allowed:false};
       return {...r,...d,record_id:r.record_id+':recipient_percentage',derivation:d,denominator:denominators.get(d.denominator_record_id)};})};
 }

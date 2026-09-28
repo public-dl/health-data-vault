@@ -206,3 +206,7 @@
 
 /* Three-year temporal tables fit side-by-side desktop cards; mobile retains its scroll surface. */
 @media(min-width:701px){.temporal-table{--temporal-min-width:560px}}
+
+.map-range-notices:empty{display:none}
+.map-range-notices{font-size:13px;line-height:1.6;margin:8px 12px;padding-left:18px;color:#26364e}
+.map-gradient-ticks span{white-space:nowrap}

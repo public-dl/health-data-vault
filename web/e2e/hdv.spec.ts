@@ -208,3 +208,30 @@ for(const [a,b] of [['15','hc-15-tokamachi'],['hc-15-sanjo','15213']]){
     await testInfo.attach('physician-order',{body:await page.screenshot(),contentType:'image/png'});
   });
 }
+
+for(const [id,ticks] of [['metabo_case',[10,20,30,40]],['metabo_preliminary',[5,10,15,20]],['metabo_noncase',[40,55,70,85]],['metabo_indeterminate',[0,1,2,3,4]]] as const){
+ test('continuous metabo map '+id,async({page},testInfo)=>{
+  test.setTimeout(120000);
+  await open(page);
+  for(const [region,year] of [['15','2021'],['hc-15-sanjo','2022'],['15213','2023'],['15586','2023']]){
+   await choose(page,{indicator:'group:metabo',a:region,year});
+   const maps=await section(page,'map');
+   const grouped=maps.locator('svg.map[data-indicator="'+id+'"]');
+   await expect(grouped).toHaveCount(1);
+   const fills=await grouped.locator('path[data-geography]').evaluateAll(nodes=>nodes.map(n=>[n.getAttribute('data-geography'),n.getAttribute('fill')]));
+   const policy=await grouped.getAttribute('data-map-scale');
+   await choose(page,{indicator:id});await section(page,'map');
+   const single=maps.locator('svg.map[data-indicator="'+id+'"]');
+   await expect(single).toHaveAttribute('data-map-scale',policy!);
+   await expect(single).toHaveAttribute('data-breaks','[]');
+   expect(await single.locator('path[data-geography]').evaluateAll(nodes=>nodes.map(n=>[n.getAttribute('data-geography'),n.getAttribute('fill')]))).toEqual(fills);
+   const legend=maps.locator('.map-legend');await expect(legend).toHaveAttribute('data-legend-mode','continuous');
+   for(const tick of ticks)await expect(legend.locator('.map-gradient-ticks')).toContainText(tick+'%');
+   await expect(legend).not.toContainText('未満');
+   const boxes=await legend.locator('.map-gradient-ticks span').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {left:r.left,right:r.right};}));
+   for(let i=1;i<boxes.length;i++)expect(boxes[i].left).toBeGreaterThanOrEqual(boxes[i-1].right);
+   await expect(maps.locator('[data-range-status]')).toHaveCount(0);
+  }
+  await page.locator('#map .map-card').first().screenshot({path:testInfo.outputPath(id+'.png')});
+ });
+}

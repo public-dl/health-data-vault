@@ -19,8 +19,8 @@ it('uses seven fixed ranges and continuous colors, independent of year or geogra
   expect(html).toContain('linear-gradient');expect(html).not.toContain('未満');expect(html).toContain(`${scale.max}%`);expect(html).toContain('欠損・数値なし');
  }
 });
-it('leaves overall-category metadata and coloring unchanged',()=>{
- const indicator={indicator_id:'metabo_case',name:'メタボ判定',map_breaks:[15,20,25,30]} as Indicator;
+it('leaves non-metabo category metadata and coloring unchanged',()=>{
+ const indicator={indicator_id:'guidance_active',name:'保健指導',map_breaks:[15,20,25,30]} as Indicator;
  expect(presentationIndicator(indicator).map_scale).toBeUndefined();
  const palette=['#111111','#333333','#555555','#777777','#999999'];
  expect([0,15,20,25,30].map(v=>mapFill(v,palette,indicator.map_breaks))).toEqual(palette);

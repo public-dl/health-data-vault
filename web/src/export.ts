@@ -30,12 +30,41 @@ export async function copyImage(blob:Blob|Promise<Blob>) {
   await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
 }
 
-/** Copy and download consume the exact same renderer, without any metadata append step. */
-export async function outputPng(rendered:Promise<Blob>,action:'copy'|'png',filename:string) {
- if(action==='copy')await copyImage(rendered);
- const blob=await rendered;
- if(action==='png')save(blob,filename);
- window.dispatchEvent(new CustomEvent('hdv-export-result',{detail:{blob,action,filename}}));
+export type PngOutcome = 'copied' | 'saved' | 'fallback';
+export function pngMessage(outcome:PngOutcome,subject='画像') {
+ return outcome==='fallback'?'画像コピーが利用できなかったため、PNGとして保存しました。':outcome==='copied'?`${subject}をクリップボードにコピーしました`:`${subject}のPNGを保存しました`;
+}
+function validPng(blob:Blob):Blob {
+ if(blob.type!=='image/png'||blob.size===0)throw new Error('PNG生成失敗：有効なPNG画像を取得できませんでした');
+ return blob;
+}
+/** Render once; begin clipboard write during the click, and reuse the PNG on failure. */
+export async function outputPng(rendered:Promise<Blob>,action:'copy'|'png',filename:string):Promise<PngOutcome> {
+ const checked=rendered.then(validPng);
+ // Observe render rejection even when capability detection rejects before consuming the promise.
+ void checked.catch(()=>{});
+ let outcome:PngOutcome=action==='copy'?'copied':'saved';
+ if(action==='copy') {
+  try {await copyImage(checked);}
+  catch(error) {
+   console.warn('[HDV image clipboard]',error,{
+    errorName:error instanceof Error?error.name:'UnknownError',
+    errorMessage:error instanceof Error?error.message:String(error),
+    secureContext:globalThis.isSecureContext,
+    documentFocused:typeof document.hasFocus==='function'?document.hasFocus():undefined,
+    userActivation:navigator.userActivation?.isActive,
+    clipboardWrite:typeof navigator.clipboard?.write==='function',
+    clipboardItem:typeof globalThis.ClipboardItem==='function',
+   });
+   outcome='fallback';
+  }
+ }
+ let blob:Blob;
+ try {blob=await checked;}
+ catch(error) {console.error('[HDV PNG rendering]',error);throw error;}
+ if(outcome!=='copied')save(blob,filename);
+ window.dispatchEvent(new CustomEvent('hdv-export-result',{detail:{blob,action:outcome==='copied'?'copy':'png',filename,outcome}}));
+ return outcome;
 }
 
 /** Capture the actual shared card DOM, including computed table/map/KPI styles. */

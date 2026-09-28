@@ -13,7 +13,7 @@ import {placeStackLabels,stackValueText} from './stack-labels';
 import {CategoryIcon} from './pictograms';
 import {groupVisuals} from './visual-metadata';
 import {toggleSeries} from './comparison';
-import {cardsPng,outputPng} from './export';
+import {cardsPng,outputPng,pngMessage} from './export';
 
 type GroupProps={c:Context;group:IndicatorGroup};
 function categoryContext(c:Context,group:IndicatorGroup,id:string):Context {
@@ -37,8 +37,8 @@ export function GroupMaps({c,group,layout,onLayout,onSelect,timeline}:GroupProps
       const cards=Array.from(mapsRef.current?.querySelectorAll('[data-export-surface="map-card"]')??[]);
       if(cards.length!==group.categories.length)throw new Error('地図を準備できません');
       const blob=cardsPng(cards,'grid');
-      await outputPng(blob,copy?'copy':'png',`${group.name}_${nameFor(c,region)}_${c.year}_全区分地図.png`);
-      c.notify(copy?'全区分地図をコピーしました':'全区分地図のPNGを保存しました');
+      const outcome=await outputPng(blob,copy?'copy':'png',`${group.name}_${nameFor(c,region)}_${c.year}_全区分地図.png`);
+      c.notify(pngMessage(outcome,'全区分地図'));
     }catch(e){c.notify('操作できませんでした：'+String(e));}
   };
   return <>

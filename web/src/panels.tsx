@@ -13,7 +13,7 @@ import React, {useEffect,useId,useMemo,useRef,useState} from 'react';
 import {geoMercator,geoPath} from 'd3-geo';
 import type {Payload,Indicator,Observation,IndicatorGroup} from './model';
 import {format,formatValue,colors,colorFor,connect,csv} from './model';
-import {save,cardsPng,outputPng} from './export';
+import {save,cardsPng,outputPng,pngMessage} from './export';
 import {TemporalTable,temporalTable} from './temporal-table';
 import {MapSummary} from './map-summary';
 import {CategoryIcon} from './pictograms';
@@ -35,7 +35,7 @@ export function Actions({c,svg,rows,title,table=false,label,csvText}:{c:Context;
       if(kind==='csv') {save(new Blob([csvText??csv(rows,c.indicator.name,{headers:['release_id','health_theme','rate_label'],values:r=>[c.release,c.indicator.theme_label,c.indicator.rate?.label]})],{type:'text/csv;charset=utf-8'}),`${title}.csv`);c.notify('CSVを保存しました');return;}
       if(!svg.current)throw new Error('図表を準備できません');
       const blob=cardsPng([exportSurfaceFor(svg.current)],'side');
-      await outputPng(blob,kind==='copy'?'copy':'png',`${title}.png`);c.notify(kind==='copy'?'画像をコピーしました':'PNGを保存しました');
+      const outcome=await outputPng(blob,kind==='copy'?'copy':'png',`${title}.png`);c.notify(pngMessage(outcome));
     }catch(e){c.notify('操作できませんでした：'+(e instanceof Error?e.message:String(e)));}
   };
   return <div className="actions"><button onClick={()=>act('copy')} aria-label={`${title}をコピー`}>▣ <span>コピー</span></button>{table&&<button onClick={()=>act('csv')}>↓ CSV</button>}<button onClick={()=>act('png')} aria-label={`${title}をPNG保存`}>↓ PNG保存</button></div>;

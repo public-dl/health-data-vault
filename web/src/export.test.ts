@@ -75,3 +75,44 @@ describe('blood pressure reuses metabo color objects',()=>{
   }
  });
 });
+
+describe('PNG clipboard fallback',()=>{
+ function setup(supported=true,fail=false) {
+  const click=vi.fn(),createObjectURL=vi.fn().mockReturnValue('blob:test');
+  const write=vi.fn().mockImplementation(async(items)=>{await items[0].content['image/png'];if(fail)throw new DOMException('Write permission denied','NotAllowedError');});
+  class Item {constructor(public content:Record<string,Blob|Promise<Blob>>) {}}
+  vi.stubGlobal('navigator',{clipboard:{write}});vi.stubGlobal('ClipboardItem',supported?Item:undefined);
+  vi.stubGlobal('URL',{createObjectURL,revokeObjectURL:vi.fn()});
+  vi.stubGlobal('document',{createElement:()=>({click})});vi.stubGlobal('window',{dispatchEvent:vi.fn()});
+  vi.stubGlobal('CustomEvent',class{constructor(public type:string,public options:unknown){}});
+  return {write,click,createObjectURL};
+ }
+ it('starts write before asynchronous PNG rendering resolves',async()=>{
+  const {write,click}=setup();let resolve!:(b:Blob)=>void;
+  const pending=new Promise<Blob>(r=>{resolve=r;});
+  const result=outputPng(pending,'copy','comparison.png');
+  expect(write).toHaveBeenCalledOnce();
+  resolve(new Blob(['png'],{type:'image/png'}));
+  expect(await result).toBe('copied');expect(click).not.toHaveBeenCalled();
+ });
+ for(const [label,supported,fail] of [['unsupported ClipboardItem',false,false],['write rejection',true,true]] as const) {
+  it(`saves the same generated PNG on ${label}`,async()=>{
+   const {click,createObjectURL}=setup(supported,fail);
+   const blob=new Blob(['png'],{type:'image/png'});
+   expect(await outputPng(Promise.resolve(blob),'copy','comparison.png')).toBe('fallback');
+   expect(createObjectURL).toHaveBeenCalledExactlyOnceWith(blob);expect(click).toHaveBeenCalledOnce();
+  });
+ }
+ for(const blob of [new Blob([],{type:'image/png'}),new Blob(['wrong'],{type:'text/plain'})]) {
+  it('does not save invalid PNG output or report success',async()=>{
+   const {click}=setup();
+   await expect(outputPng(Promise.resolve(blob),'copy','bad.png')).rejects.toThrow('PNG生成失敗');
+   expect(click).not.toHaveBeenCalled();
+  });
+ }
+ it('preserves render failure and does not download a fake PNG',async()=>{
+  const {click}=setup(false);
+  await expect(outputPng(Promise.reject(new Error('canvas failed')),'copy','bad.png')).rejects.toThrow('canvas failed');
+  expect(click).not.toHaveBeenCalled();
+ });
+});

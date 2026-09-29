@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import {appRoute} from './app-url';
 import {PublicHeader,PublicFooter} from './public-shell';
 import {StartupScreen} from './startup-screen';
+import {initializeAnalytics} from './analytics';
 import './public.css';
 import './annual-pages.css';
 import './style.css';
@@ -13,6 +14,10 @@ import './desktop-density.css';
 import './analysis-sidebar.css';
 import './presentation.css';
 import './wide-screen-density.css';
+
+declare const __HDV_PRODUCTION__: boolean;
+declare const __HDV_ANALYTICS_ENABLED__: boolean;
+initializeAnalytics(window, import.meta.env.PROD && __HDV_PRODUCTION__, __HDV_ANALYTICS_ENABLED__);
 
 const root=createRoot(document.getElementById('root')!);
 const route=appRoute(location.pathname),base=import.meta.env.BASE_URL;

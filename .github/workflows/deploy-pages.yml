@@ -47,6 +47,7 @@ jobs:
           PUBLIC_CONTACT_URL: https://health-data-vault.netlify.app/contact/
           CONTEXT: production
           PUBLIC_SITE_URL: https://public-dl.github.io/health-data-vault
+          PUBLIC_GA4_ENABLED: 'true'
         run: npm run build
 
       - name: Upload Pages artifact

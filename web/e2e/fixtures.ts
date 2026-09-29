@@ -23,6 +23,9 @@ export const percent=(n:number)=>n.toFixed(1);
 
 export const test=base.extend({
   page:async({page},use)=>{
+    // Exercise analytics initialization without sending test visits to Google.
+    await page.route('https://www.googletagmanager.com/**', route => route.fulfill({contentType:'application/javascript',body:''}));
+    await page.route(/https:\/\/[^/]*google-analytics\.com\//, route => route.abort());
     // Fulfil the production origin with LOCAL build bytes. Never hit or modify production.
     // The browser sees the real HTTPS origin, so the robots guard is tested unchanged.
     await page.route('https://public-dl.github.io/**',async route=>{

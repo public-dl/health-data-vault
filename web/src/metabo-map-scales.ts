@@ -14,4 +14,6 @@ const policy={mode:'continuous',unit:'%',domain_version:'metabo-continuous-v1',
 export const metaboMapScales:Record<string,MetaboMapScale>=Object.fromEntries([
  ['case',10,40,[10,20,30,40]],['preliminary',5,20,[5,10,15,20]],
  ['noncase',40,85,[40,55,70,85]],['indeterminate',0,4,[0,1,2,3,4]],
-].map(([category,min,max,ticks])=>{const id='metabo_'+category;return [id,{...policy,indicator_id:id,category_id:category,min,max,ticks} as MetaboMapScale];}));
+].map(([category,min,max,ticks])=>{const id='metabo_'+category;return [id,{...policy,
+ ...(category==='noncase'?{palette_version:'metabo-noncase-green-v1',reviewed_at:'2026-10-03',review_reason:'User-approved green category identity, separate from brand blue. No medical meaning; domain, interpolation and clamp unchanged.'}:{}),
+ indicator_id:id,category_id:category,min,max,ticks} as MetaboMapScale];}));

@@ -226,6 +226,10 @@ for(const [id,ticks] of [['metabo_case',[10,20,30,40]],['metabo_preliminary',[5,
    await expect(single).toHaveAttribute('data-breaks','[]');
    expect(await single.locator('path[data-geography]').evaluateAll(nodes=>nodes.map(n=>[n.getAttribute('data-geography'),n.getAttribute('fill')]))).toEqual(fills);
    const legend=maps.locator('.map-legend');await expect(legend).toHaveAttribute('data-legend-mode','continuous');
+   if(id==='metabo_noncase'){
+    const gradient=await legend.locator('.map-gradient-bar').evaluate(node=>getComputedStyle(node).backgroundImage);
+    for(const color of ['rgb(215, 234, 223)','rgb(175, 214, 191)','rgb(130, 191, 156)','rgb(85, 159, 120)','rgb(53, 117, 86)'])expect(gradient).toContain(color);
+   }
    for(const tick of ticks)await expect(legend.locator('.map-gradient-ticks')).toContainText(tick+'%');
    await expect(legend).not.toContainText('未満');
    const boxes=await legend.locator('.map-gradient-ticks span').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {left:r.left,right:r.right};}));
@@ -233,5 +237,6 @@ for(const [id,ticks] of [['metabo_case',[10,20,30,40]],['metabo_preliminary',[5,
    await expect(maps.locator('[data-range-status]')).toHaveCount(0);
   }
   await page.locator('#map .map-card').first().screenshot({path:testInfo.outputPath(id+'.png')});
+  if(id==='metabo_noncase')await page.screenshot({path:testInfo.outputPath('noncase-green-viewport.png')});
  });
 }

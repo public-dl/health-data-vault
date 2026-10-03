@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {allocateHundred,visualGroup,groupVisuals,indicatorVisual,categorySeries,dataBarMaximum} from './visual-metadata';
+import {allocateHundred,visualGroup,groupVisuals,indicatorVisual,categorySeries,dataBarMaximum,indicatorColorAliases} from './visual-metadata';
 import type {IndicatorGroup} from './model';
 describe('approximate composition visual metadata',()=>{
  it('allocates exactly 100 in deterministic contiguous category order',()=>{
@@ -32,6 +32,12 @@ describe('approximate composition visual metadata',()=>{
 });
 
 describe('shared single-category visual language',()=>{
+ it('retains blue for unrelated count indicators when metabo noncase becomes green',()=>{
+  for(const id of ['hdl','urine_blood','fasting_glucose']){
+   expect(indicatorColorAliases[id]).toEqual({pose:'wave',color:'#629fce',palette:['#d0e5f4','#a9cde8','#7fb3da','#518fbe','#356b96']});
+   expect(indicatorColorAliases[id]).not.toBe(groupVisuals.metabo.noncase);
+  }
+ });
  const group={group_id:'metabo',categories:['case','preliminary','noncase','indeterminate'].map((category_id,order)=>({category_id,indicator_id:'metabo_'+category_id,order,color:'original'}))} as IndicatorGroup;
  for(const id of ['case','preliminary','noncase','indeterminate'])it(`resolves ${id} consistently for map, table, icon and graph`,()=>{
   const result=indicatorVisual([group],'metabo_'+id)!;

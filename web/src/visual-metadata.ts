@@ -20,15 +20,17 @@ export const groupVisuals:Record<string,Record<string,CategoryVisual>>={
  metabo:{
   case:{pose:'lean',color:'#d97883',palette:['#f4d4d9','#e9adb7','#da8595','#c66076','#9f425c']},
   preliminary:{pose:'head',color:'#d9a34f',palette:['#f8e7bd','#ebcd8c','#dcb25f','#bd8b38','#956523']},
-  noncase:{pose:'wave',color:'#629fce',palette:['#d0e5f4','#a9cde8','#7fb3da','#518fbe','#356b96']},
+  noncase:{pose:'wave',color:'#559f78',palette:['#d7eadf','#afd6bf','#82bf9c','#559f78','#357556']},
   indeterminate:{pose:'neutral',color:'#8e9bad',palette:['#dde3eb','#c2ccd9','#a2afc0','#7e8da3','#586b84']},
  }
 };
+// Preserve the blue identity of unrelated indicators when metabo noncase changes hue.
+const reportedBlueVisual:CategoryVisual={pose:'wave',color:'#629fce',palette:['#d0e5f4','#a9cde8','#7fb3da','#518fbe','#356b96']};
 // References, not copied hex values: changes to the source tokens propagate together.
 export const indicatorColorAliases:Record<string,CategoryVisual>={
  lipid_people:{pose:'neutral',color:'#124b9b',palette:['#dbeafe','#a7cffe','#6aa8ed','#337bce','#124b9b']},
  triglycerides:groupVisuals.doctor_judgment.normal,
- hdl:groupVisuals.metabo.noncase,
+ hdl:reportedBlueVisual,
  ldl:groupVisuals.guidance.none,
  total_cholesterol:groupVisuals.metabo.indeterminate,
  bp_guidance:groupVisuals.metabo.preliminary,
@@ -37,11 +39,11 @@ export const indicatorColorAliases:Record<string,CategoryVisual>={
 Object.assign(indicatorColorAliases,{
  renal_urinary_people:indicatorColorAliases.lipid_people,
  urine_protein:groupVisuals.doctor_judgment.normal,
- urine_blood:groupVisuals.metabo.noncase,
+ urine_blood:reportedBlueVisual,
  creatinine:groupVisuals.metabo.indeterminate,
  glucose_people:indicatorColorAliases.lipid_people,
  urine_glucose:groupVisuals.doctor_judgment.normal,
- fasting_glucose:groupVisuals.metabo.noncase,
+ fasting_glucose:reportedBlueVisual,
  random_glucose:groupVisuals.metabo.indeterminate,
  hba1c:groupVisuals.guidance.none,
 });

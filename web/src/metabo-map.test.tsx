@@ -56,6 +56,12 @@ it('renders out-of-range labels separately from missing and real zero',()=>{
 });
 
 it('has stable colors at the approved legend ticks',()=>{
- const expected:Record<string,string[]>={case:['#f4d4d9','#e4a0ac','#cd6c80','#9f425c'],preliminary:['#f8e7bd','#e6c47d','#c79845','#956523'],noncase:['#d0e5f4','#9bc4e3','#609bc7','#356b96'],indeterminate:['#dde3eb','#c2ccd9','#a2afc0','#7e8da3','#586b84']};
+ const expected:Record<string,string[]>={case:['#f4d4d9','#e4a0ac','#cd6c80','#9f425c'],preliminary:['#f8e7bd','#e6c47d','#c79845','#956523'],noncase:['#d7eadf','#a0ceb3','#64aa84','#357556'],indeterminate:['#dde3eb','#c2ccd9','#a2afc0','#7e8da3','#586b84']};
  for(const s of Object.values(metaboMapScales))expect(s.ticks.map(v=>mapFill(v,groupVisuals.metabo[s.category_id].palette,[],s))).toEqual(expected[s.category_id]);
+});
+
+it('changes only the noncase palette version, keeping the approved display domain contract',()=>{
+ expect(metaboMapScales.metabo_noncase).toMatchObject({min:40,max:85,domain_version:'metabo-continuous-v1',interpolation_method:'piecewise-srgb',clamp_method:'endpoints-with-label',palette_version:'metabo-noncase-green-v1'});
+ expect(groupVisuals.metabo.noncase).toEqual({pose:'wave',color:'#559f78',palette:['#d7eadf','#afd6bf','#82bf9c','#559f78','#357556']});
+ for(const id of ['metabo_case','metabo_preliminary','metabo_indeterminate'])expect(metaboMapScales[id].palette_version).toBe('metabo-existing-five-stops-v1');
 });

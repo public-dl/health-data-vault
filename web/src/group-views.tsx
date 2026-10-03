@@ -9,7 +9,7 @@ import type {IndicatorGroup} from './model';
 import {format,formatValue} from './model';
 import {Actions,Context,Insight,GraphPanel,Layout,LayoutToggle,MapPanel,SourceLink,measureLabel,nameFor,svgText} from './panels';
 import {composition,compositionTrendAllowed,groupRows,groupCsv,groupTableText,tableYears,numerator,stackSegments} from './group-model';
-import {placeStackLabels,stackValueText} from './stack-labels';
+import {placeStackLabels,stackValueText,stackLabelColor} from './stack-labels';
 import {CategoryIcon} from './pictograms';
 import {groupVisuals,presentationIndicator} from './visual-metadata';
 import {toggleSeries} from './comparison';
@@ -95,8 +95,8 @@ function CompositionGraph({c,group}:GroupProps) {
         <text x={xpos(b.code,b.year)+barWidth/2} y={345+footerShift} {...svgText} fontSize="12" textAnchor="middle">{nameFor(c,b.code)}</text></g>)}
       {labels.map(l=><g key={l.id} className="stack-value-label" data-placement={l.inside?'inside':'outside'} data-record-id={l.id} pointerEvents="none">
         {!l.inside&&<><line x1={l.anchorX} y1={l.anchorY} x2={l.left+l.width/2<l.anchorX?l.left+l.width:l.left} y2={l.top+l.height/2} stroke={l.color} strokeWidth="1.5"/><circle cx={l.anchorX} cy={l.anchorY} r="2" fill={l.color}/></>}
-        <rect className="stack-label-box" x={l.left} y={l.top} width={l.width} height={l.height} rx="3" fill={l.inside?'transparent':'white'} stroke={l.inside?'none':l.color}/>
-        <text x={l.left+l.width/2} y={l.top+15} fill={l.inside&&!groupVisuals[group.group_id]?'white':'#172b45'} fontFamily="sans-serif" fontSize="13" textAnchor="middle">{l.text}</text>
+        {!l.inside&&<rect className="stack-label-box" x={l.left} y={l.top} width={l.width} height={l.height} rx="3" fill="white" stroke={l.color}/>}
+        <text x={l.left+l.width/2} y={l.inside?l.top+l.height/2:l.top+15} dominantBaseline={l.inside?'central':undefined} fill={l.inside?stackLabelColor(l.color,highlight&&l.color!==group.categories.find(cat=>cat.category_id===highlight)?.color ? 0.65 : 1):'#172b45'} fontFamily="sans-serif" fontSize="13" textAnchor="middle">{l.text}</text>
       </g>)}
       {c.data.years.map(year=><text key={year} x={80+c.data.years.indexOf(year)*step+step/2} y={373+footerShift} {...svgText} textAnchor="middle" fontSize="15">{year}年度</text>)}
       {group.categories.map((cat,i)=><g key={cat.category_id} transform={`translate(${45+i*(870/group.categories.length)} ${399+footerShift})`}><rect width="15" height="15" fill={cat.color}/><text x="23" y="13" {...svgText} fontSize="13">{cat.label}</text></g>)}

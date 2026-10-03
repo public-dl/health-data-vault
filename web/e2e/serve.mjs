@@ -1,6 +1,6 @@
 import {spawnSync, spawn} from 'node:child_process';
 // A real production build with the real deployment base. No application policy overrides.
-const env={...process.env, CONTEXT:'production', PUBLIC_SITE_URL:'https://public-dl.github.io/health-data-vault', PUBLIC_CONTACT_URL:'https://health-data-vault.netlify.app/contact/', PUBLIC_GA4_ENABLED:'true'};
+const env={...process.env, CONTEXT:'production', PUBLIC_SITE_URL:'https://public-dl.github.io/health-data-vault', PUBLIC_GA4_ENABLED:'true'};
 for(const args of [['node_modules/typescript/bin/tsc'],['node_modules/vite/bin/vite.js','build']]){
   const result=spawnSync(process.execPath,args,{env,stdio:'inherit'});
   if(result.status!==0)process.exit(result.status??1);

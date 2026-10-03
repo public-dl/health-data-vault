@@ -120,8 +120,6 @@ export default defineConfig({
   base: viteBase,
 
   define: {
-    __HDV_NETLIFY_FORMS__: JSON.stringify(process.env.NETLIFY === 'true'),
-    __HDV_CONTACT_URL__: JSON.stringify(process.env.PUBLIC_CONTACT_URL ?? ''),
     __HDV_ORIGIN__: JSON.stringify(siteUrl),
     __HDV_PRODUCTION__: JSON.stringify(production),
     // Enable only after GA4 Enhanced Measurement has been disabled in the data stream.

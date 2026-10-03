@@ -1,6 +1,32 @@
 import {test,expect,open,choose,controls,section,years,record,count,percent,release,site} from './fixtures';
 import {readFile} from 'node:fs/promises';
 
+test('Nagaoka composition counts use centered internal labels and small external labels',async({page},testInfo)=>{
+ await open(page);await choose(page,{a:'15202',indicator:'group:metabo'});
+ await controls(page,async()=>{await page.getByRole('combobox',{name:'表示する値',exact:true}).selectOption('count');});
+ const graph=await years(page,'graph'),chart=graph.locator('svg.composition-chart');
+ for(const year of [2021,2022,2023]){
+  const text=count(record('metabo_noncase','15202',year).value)+'人';
+  const label=chart.locator('.stack-value-label').filter({has:page.getByText(text,{exact:true})});
+  await expect(label).toHaveAttribute('data-placement','inside');
+  await expect(label.locator('rect,line,circle')).toHaveCount(0);
+  await expect(label.locator('text')).toHaveAttribute('fill','#172b45');
+  const segment=chart.locator(`[data-region="15202"][data-year="${year}"] rect[data-category="noncase"]`);
+  const box=await label.locator('text').boundingBox(),bar=await segment.boundingBox();
+  expect(box!.x).toBeGreaterThanOrEqual(bar!.x);expect(box!.x+box!.width).toBeLessThanOrEqual(bar!.x+bar!.width);
+  expect(box!.y).toBeGreaterThanOrEqual(bar!.y);expect(box!.y+box!.height).toBeLessThanOrEqual(bar!.y+bar!.height);
+  expect(Math.abs(box!.x+box!.width/2-bar!.x-bar!.width/2)).toBeLessThan(1);
+  expect(Math.abs(box!.y+box!.height/2-bar!.y-bar!.height/2)).toBeLessThan(3);
+  const small=count(record('metabo_indeterminate','15202',year).value)+'人';
+  const outside=chart.locator('.stack-value-label').filter({has:page.getByText(small,{exact:true})});
+  await expect(outside).toHaveAttribute('data-placement','outside');await expect(outside.locator('line')).toHaveCount(1);
+ }
+ const boxes=await chart.locator('.stack-value-label text').evaluateAll(nodes=>nodes.map(node=>{const r=node.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom};}));
+ expect(boxes).toHaveLength(12);
+ boxes.forEach((a,i)=>boxes.slice(i+1).forEach(b=>expect(a.x<b.right&&a.right>b.x&&a.y<b.bottom&&a.bottom>b.y).toBe(false)));
+ await chart.screenshot({path:testInfo.outputPath('nagaoka-count-labels.png')});
+});
+
 test('audited anchors and source provenance guard the release oracle',async({page})=>{
   const t=record('metabo_case','15213');
   expect(t.value).toBe(793);expect(t.derived_rate.denominator_value).toBe(3401);

@@ -4,6 +4,13 @@ export type Rect={left:number;top:number;width:number;height:number};
 export type StackLabelInput={id:string;barId:string;text:string;color:string;bar:Rect;segmentTop:number;segmentHeight:number;width:number;height:number;side:'left'|'right'};
 export type StackLabel=StackLabelInput&Rect&{inside:boolean;anchorX:number;anchorY:number};
 export const intersects=(a:Rect,b:Rect,gap=4)=>a.left<b.left+b.width+gap&&a.left+a.width+gap>b.left&&a.top<b.top+b.height+gap&&a.top+a.height+gap>b.top;
+/** Prefer white only where small text has sufficient contrast against the painted segment. */
+export function stackLabelColor(color:string,opacity=1) {
+ const channels=[1,3,5].map(i=>(parseInt(color.slice(i,i+2),16)*opacity+255*(1-opacity))/255)
+  .map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);
+ const luminance=channels[0]*.2126+channels[1]*.7152+channels[2]*.0722;
+ return 1.05/(luminance+.05)>=4.5?'#ffffff':'#172b45';
+}
 export function stackValueText(value:number|null,unit:string,state:string) {
   return value==null?`表示不可（${state}）`:formatValue(value,unit)+unit;
 }
@@ -13,7 +20,8 @@ export function placeStackLabels(inputs:StackLabelInput[],bounds:{left:number;ri
   const placed:StackLabel[]=[],external:StackLabelInput[]=[];
   const bars=[...new Map(inputs.map(i=>[i.barId,i.bar])).values()];
   for(const input of inputs) {
-    if(input.segmentHeight>=input.height+8&&input.bar.width>=input.width+12) {
+    // width already includes the caller's 8px text padding; retain 2px per outer edge.
+    if(input.segmentHeight>=input.height+8&&input.bar.width>=input.width+4) {
       placed.push({...input,left:input.bar.left+(input.bar.width-input.width)/2,
         top:input.segmentTop+(input.segmentHeight-input.height)/2,inside:true,
         anchorX:input.bar.left+input.bar.width/2,anchorY:input.segmentTop+input.segmentHeight/2});

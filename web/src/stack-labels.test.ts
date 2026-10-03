@@ -1,8 +1,19 @@
 import {describe,it,expect} from 'vitest';
-import {placeStackLabels,intersects,stackValueText,type StackLabelInput} from './stack-labels';
+import {placeStackLabels,intersects,stackValueText,stackLabelColor,type StackLabelInput} from './stack-labels';
 const bounds={left:0,right:960,top:20,bottom:320};
 const input=(id:string,x=150,h=4,width=48):StackLabelInput=>({id,barId:String(x),text:'0.3%',color:'#123456',bar:{left:x,top:80,width:72,height:240},segmentTop:80,segmentHeight:h,width,height:22,side:'left'});
 describe('stacked value labels',()=>{
+ it('fits padded count labels centrally without double-counting padding',()=>{
+  const l=placeStackLabels([{...input('noncase',150,160,66),text:'12,345人'}],bounds)[0];
+  expect(l.inside).toBe(true);expect(l.left+l.width/2).toBe(186);expect(l.top+l.height/2).toBe(160);
+  expect(placeStackLabels([input('tiny',150,10,66)],bounds)[0].inside).toBe(false);
+ });
+ it('uses white only on sufficiently dark segments, including faded highlights',()=>{
+  expect(stackLabelColor('#172b45')).toBe('#ffffff');
+  expect(stackLabelColor('#559f78')).toBe('#172b45');
+  expect(stackLabelColor('#d97883')).toBe('#172b45');
+  expect(stackLabelColor('#172b45',.2)).toBe('#172b45');
+ });
  it('uses inside only when height and measured width fit',()=>{
   expect(placeStackLabels([input('a',150,80)],bounds)[0].inside).toBe(true);
   expect(placeStackLabels([input('a',150,80,90)],bounds)[0].inside).toBe(false);

@@ -1,0 +1,8 @@
+.examination-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));gap:20px;margin-bottom:20px}
+.examination-facts,.examination-chart{padding:20px;min-width:0}
+.examination-values{margin:0}.examination-values>div{padding:14px 0;border-bottom:1px solid #e2eaf2}.examination-values dt{font-size:13px;color:#36536f}.examination-values dd{font-size:27px;font-weight:700;margin:8px 0;color:#7257b1}
+.examination-chart>svg{display:block;width:100%;height:auto;font-size:13px;overflow:visible}.examination-chart p{font-size:13px;line-height:1.8}
+.examination-source-button{border:0;background:transparent;color:#175b9a;text-decoration:underline;padding:14px 0;cursor:pointer;font:inherit;font-size:13px}
+.examination-source{width:min(900px,94vw);max-height:85vh;overflow:auto;border:1px solid #bfcfe1;border-radius:14px;padding:24px}.examination-source section{border-top:1px solid #dbe5ef;padding-top:16px}.examination-source code{overflow-wrap:anywhere;font-size:11px}
+.examination-table{min-width:680px}.examination-table caption{text-align:left;padding:12px 0}.examination-table th,.examination-table td{padding:16px;font-size:13px;line-height:1.7}.examination-table th:first-child{width:35%}
+@media(max-width:600px){.examination-facts,.examination-chart{padding:14px}.examination-values dd{font-size:23px}.examination-chart .panel-heading{display:block}.examination-chart .actions{margin:10px 0}}

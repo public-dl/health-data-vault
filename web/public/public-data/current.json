@@ -1,9 +1,9 @@
 {
   "status": "approved",
-  "release_id": "7f4b5b8dfee4bd415413442bff14884d03d8f1826644614ba0ef86f9459804c3",
-  "data_sha256": "7f4b5b8dfee4bd415413442bff14884d03d8f1826644614ba0ef86f9459804c3",
+  "release_id": "36d764c21393fad5a4b93dab5efe74cd1373e274d4f9f38bde5e8cc0fe339d9c",
+  "data_sha256": "36d764c21393fad5a4b93dab5efe74cd1373e274d4f9f38bde5e8cc0fe339d9c",
   "reviewer": "岸克也",
-  "approved_at": "2026-11-07T05:37:03.013389+00:00",
+  "approved_at": "2026-11-07T06:18:25.484252+00:00",
   "validation": {
     "reported_records": 3036,
     "errors": 0,
@@ -75,6 +75,9 @@
       "source_reference": "docs/detailed_healthcheck_v1.md",
       "rate_allowed": false,
       "temporal_comparison_allowed": false
+    },
+    "detailed_rates": {
+      "records": 396
     }
   },
   "data_rights_reviewed": true,

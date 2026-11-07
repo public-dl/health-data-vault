@@ -1,9 +1,12 @@
+import {validateExaminationPayload} from './examination-model';
 import {appUrl} from './app-url';
 import type {MapScale} from './map-scale';
 import {presentationIndicator} from './visual-metadata';
 import type {FeatureCollection, Geometry} from 'geojson';
 
+export type ExaminationRate={value:number|null;state:'valid'|'zero_denominator'|'missing';label:string;contract:string;denominator_kind:string;numerator_value:number|null;denominator_value:number|null;numerator_record_id:string;denominator_record_id:string;numerator_cell:string;denominator_cell:string;source_sha256:string;formula:string;unit:string;numerator_unit:string;denominator_unit:string;comparison_allowed:boolean;validation_status:string;official_evidence:{overview_sheet:string;rate_cell:string;formula:string;source_url:string;cached_value:number}};
 export type Observation = {
+  examination_rate?:ExaminationRate;
   source_count_contract?:string;
   temporal_display_scope?:string;temporal_difference_allowed?:boolean;trend_evaluation_allowed?:boolean;causal_evaluation_allowed?:boolean;
   raw_value?:number|null;derived_value?:number;zero_derivation?:{explanation:string;source_sheet:string;source_cell:string;child_sum:number;mapping_evidence:string;children:{name:string;cell:string;raw_value:number}[]};
@@ -19,7 +22,7 @@ export type Observation = {
   source_url:string; annual_page_url:string; source_sheet:string; source_cell:string; source_sha256:string; retrieved_at:string;
 };
 export type DerivedRate = {regional_contract?:string;regional_composition_allowed?:boolean;value_origin?:string;official_formula_confirmed?:boolean;rate_origin?:string;formula_evidence?:{origin:string;rationale:string;overview_sheet?:string;rate_cell?:string;formula?:string};statistic?:string;label?:string;regional_difference_allowed?:boolean;denominator_kind?:string;annual_display_allowed?:boolean;value:number; value_state:string; unit:string; numerator_value:number; denominator_value:number; numerator_record_id:string; denominator_record_id:string; formula:string; definition_version:string; definition_reference:string; comparability_status:string; comparability_intervals:Record<string,string>; comparison_allowed:boolean; validation_status:string};
-export type Indicator = {source_count_contract?:string;source_label?:string;source_hierarchy?:string[];public_label?:string;short_label?:string;semantic_key?:string;terminology_version?:string;chart_max?:number;data_notes?:string;capabilities?:{count_only?:boolean;can_compare_regions?:boolean;recipient_rate:boolean;composition:boolean;map_mode?:'rate'|'none';temporal_rate?:boolean;distribution?:boolean;annual_reference_lines?:boolean;selected_indicator_charts?:boolean};map_scale?:MapScale;count_label?:string;display_set_label?:string;set_notice?:string;source_notice?:string;theme_id?:string;theme_label?:string;recipient_label?:string;visualization_type?:string;overview_label?:string;color?:string;palette?:string[];indicator_id:string; name:string; group:string; description:string; unit:string; map_breaks:number[]; intervals:Record<string,string>; rate?:{label:string;map_breaks:number[];intervals:Record<string,string>}};
+export type Indicator = {examination_contract?:string;examination_rate_label?:string;examination_test_id?:string;source_count_contract?:string;source_label?:string;source_hierarchy?:string[];public_label?:string;short_label?:string;semantic_key?:string;terminology_version?:string;chart_max?:number;data_notes?:string;capabilities?:{count_only?:boolean;can_compare_regions?:boolean;recipient_rate:boolean;composition:boolean;map_mode?:'rate'|'none';temporal_rate?:boolean;distribution?:boolean;annual_reference_lines?:boolean;selected_indicator_charts?:boolean};map_scale?:MapScale;count_label?:string;display_set_label?:string;set_notice?:string;source_notice?:string;theme_id?:string;theme_label?:string;recipient_label?:string;visualization_type?:string;overview_label?:string;color?:string;palette?:string[];indicator_id:string; name:string; group:string; description:string; unit:string; map_breaks:number[]; intervals:Record<string,string>; rate?:{label:string;map_breaks:number[];intervals:Record<string,string>}};
 export type Category = {category_id:string;label:string;order:number;indicator_id:string;color:string;rate_map_breaks:number[];count_map_breaks:number[]};
 export type IndicatorGroup = {group_id:string;name:string;definition_version:string;audit_reference:string;composition_rule:string;denominator_indicator_id:string;required_category_ids:string[];allowed_views:string[];categories:Category[]};
 export type CompositionEvidence = {regional_contract?:string;group_id:string;observation_fiscal_year:number;geography_code:string;category_record_ids:string[];denominator_record_id:string;category_sum:number;denominator_value:number;difference:number;validation_status:string;definition_version:string};
@@ -37,6 +40,7 @@ export const isCountPublication=(rows:Observation[])=>rows.length>0&&rows.every(
 export const format = (value:number|null|undefined) => value == null ? '欠損' : value.toLocaleString('ja-JP');
 export const formatValue = (value:number|null|undefined,unit:string) => value == null ? '欠損' : unit === '%' ? value.toLocaleString('ja-JP',{minimumFractionDigits:1,maximumFractionDigits:1}) : format(value);
 export function displayData(data:Payload, measure:'count'|'rate'):Payload {
+ if(data.schema_version==='detailed-examination-1'){validateExaminationPayload(data);return data;}
  if(data.schema_version==='reported-annual-6'){
   if(data.indicators.some(i=>!i.capabilities?.count_only||i.rate||i.capabilities.recipient_rate||i.capabilities.map_mode!=='none'||i.capabilities.distribution)
    ||data.records.some(r=>['derived_rate','derivation','rate','percentage','recipient_percentage'].some(k=>k in r)))throw new Error('人数公開契約に割合を含めることはできません');
@@ -97,12 +101,13 @@ export async function loadData():Promise<{payload:Payload;review:boolean;release
 
 export type TableCell={row:number;column:number;coordinate:string;value:number|null;value_state:string;original_value:unknown;cached_value:unknown;source_data_type:string;number_format:string;formula:string|null;display_text:string;visualization:{indicator_id:string;region:string;section?:'table'}|null};
 export type PublishedTable={source:{observation_fiscal_year:number;publication_fiscal_year:number;source_url:string;annual_page_url:string;sha256:string;retrieved_at:string;original_filename:string};source_sheet:string;header_rows:number;row_count:number;column_count:number;rows:{index:number;level:string;cells:TableCell[]}[]};
-export type SiteExtension={reported?:Payload;annual:Payload;published_tables:PublishedTable[]};
+export type SiteExtension={detailed_rates?:Payload;reported?:Payload;annual:Payload;published_tables:PublishedTable[]};
 function unpack(value:Payload & SiteExtension & {analysis?:Payload},review:boolean,release:string){
  if(value.schema_version==='site-1'){
   if(value.analysis?.schema_version!=='public-3'||value.annual?.schema_version!=='annual-1'||!Array.isArray(value.published_tables))throw new Error('未対応の単年度表示契約');
   if(value.reported && !['reported-annual-1','reported-annual-2','reported-annual-3','reported-annual-4','reported-annual-5','reported-annual-6'].includes(value.reported.schema_version))throw new Error('未対応の報告人数契約');
-  return {payload:value.analysis,extensions:{annual:value.annual,reported:value.reported,published_tables:value.published_tables},review,release};
+  if(value.detailed_rates)validateExaminationPayload(value.detailed_rates);
+  return {payload:value.analysis,extensions:{detailed_rates:value.detailed_rates,annual:value.annual,reported:value.reported,published_tables:value.published_tables},review,release};
  }
  return {payload:value,review,release};
 }

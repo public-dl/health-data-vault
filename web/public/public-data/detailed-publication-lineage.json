@@ -1,10 +1,10 @@
 {
-  "release_id": "7f4b5b8dfee4bd415413442bff14884d03d8f1826644614ba0ef86f9459804c3",
-  "base_release_id": "1e0b2f10ab797f8f635573d522c212f8f223d6d195851bddbd7fdb13cf3c9b17",
-  "recorded_at": "2026-11-07T05:37:58.855514+00:00",
+  "release_id": "36d764c21393fad5a4b93dab5efe74cd1373e274d4f9f38bde5e8cc0fe339d9c",
+  "base_release_id": "7f4b5b8dfee4bd415413442bff14884d03d8f1826644614ba0ef86f9459804c3",
+  "recorded_at": "2026-11-07T06:19:04.258224+00:00",
   "reviewer": "岸克也",
   "authorization": "Explicit user instruction to commit, push and publish the reviewed detailed examination candidate",
-  "detailed_contract": "detailed-healthcheck-counts-v1",
+  "detailed_contract": "detailed-examination-rates-v1",
   "raw_sources_unchanged": true,
   "map_unchanged": true,
   "reuse_decision_file": "reuse-decision.json",
@@ -13,5 +13,5 @@
   "official_license_verified": false,
   "cc_by_verified": false,
   "map_rights_reviewed": true,
-  "display_scope": "Original judgment persons and examination counts only; no rates or temporal comparisons"
+  "display_scope": "Judgment persons, examination counts and examination-specific percentages; no temporal comparison"
 }

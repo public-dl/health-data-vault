@@ -21,10 +21,10 @@ function fixture(id:string){
  const shown=displayData(data,'count');return reportedContext({data:shown,indicator:shown.indicators.find(i=>i.indicator_id===id)!,measure:'count',year:2023,regions:['15'],release:'test',review:true,notify:()=>{},source:()=>{}} as Context,true);
 }
 
-it('enables six detailed choices only when present in the release and preserves deep links',()=>{
+it('enables three examination choices and keeps legacy count deep links usable',()=>{
  const theme=healthThemes.find(t=>t.id==='detailed')!;const c=fixture('ecg');
- expect(themeChoices(theme,[],c.data.indicators).ids).toEqual(ids);expect(themeChoices(theme,[],[]).ids).toEqual([]);
- for(const id of ids)expect(resolveThemeSelection('detailed',id,'group:metabo',[],c.data.indicators)).toEqual({themeId:'detailed',indicatorId:id});
+ expect(themeChoices(theme,[],c.data.indicators).ids).toEqual(['anemia','ecg','fundus']);expect(themeChoices(theme,[],[]).ids).toEqual([]);
+ for(const id of ids)expect(resolveThemeSelection('detailed',id,'group:metabo',[],c.data.indicators)).toEqual({themeId:'detailed',indicatorId:id.replace(/_tests$/,'')});
 });
 it('preserves incompatible ECG status without granting rate or trend permission',()=>{
  const c=fixture('ecg');expect(reportedMapContext(c)).toBeNull();

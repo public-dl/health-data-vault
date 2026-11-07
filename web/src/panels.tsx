@@ -1,6 +1,6 @@
 import {GraphValuesTable} from './graph-values-table';
 import {graphRoundingNotice} from './presentation-copy';
-import {countNotice} from './presentation-copy';
+import {countNoticeFor} from './presentation-copy';
 import {regionMap} from './region-hierarchy';
 import {previousYearComment,refreshTemporalComment} from './temporal-comment';
 import {mapFill,mapRangeLabel} from './map-scale';
@@ -26,7 +26,7 @@ function IndicatorBadge({c}:{c:Context}) {
 }
 export const rowsFor=(c:Context,code:string)=>regionRows(c.data.records,c.indicator.indicator_id,code);
 export const nameFor=(c:Context,code:string)=>c.data.geographies.find(g=>g.code===code)?.name ?? code;
-export const measureLabel=(c:Context)=>c.measure==='rate'?(c.indicator.rate?.label??'受診者に占める割合（%）'):'報告人数（人）';
+export const measureLabel=(c:Context)=>c.measure==='rate'?(c.indicator.rate?.label??'受診者に占める割合（%）'):c.indicator.unit==='件'?'実施件数（件）':'報告人数（人）';
 export const svgText={fill:'#26364e',fontFamily:'sans-serif'};
 
 export function Actions({c,svg,rows,title,table=false,label,csvText}:{c:Context;svg:React.RefObject<SVGSVGElement|null>;rows:Observation[];title:string;table?:boolean;label?:string;csvText?:string}) {
@@ -46,7 +46,7 @@ export function Insight({c,code,map=false}:{c:Context;code:string;map?:boolean})
   const current=rowsFor(c,code).find(r=>r.observation_fiscal_year===c.year);
   const fallback=current?.geography_level==='health_center_area'?`${c.year}年度の${nameFor(c,code)}：${c.indicator.name}は${formatValue(current.value,current.unit)}${current.value==null?'':current.unit}です。年度間比較は確認中です。`:'説明は準備中です。';
   const text=refreshTemporalComment(result?.text ?? fallback,rowsFor(c,code),c.year);
-  if(c.indicator.capabilities?.count_only)return <DataNotes group={!map}><p>{countNotice}</p><SourceLink c={c} rows={rowsFor(c,code)}/></DataNotes>;
+  if(c.indicator.capabilities?.count_only)return <DataNotes group={!map}><p>{countNoticeFor(c.indicator)}</p><SourceLink c={c} rows={rowsFor(c,code)}/></DataNotes>;
   return <DataNotes group={!map}>{!map&&c.indicator.data_notes&&<p>{c.indicator.data_notes}</p>}<p>{map?localMapText(text):text}</p>{!map&&<small>{map?(c.measure==='rate'?'色は受診者に占める割合です。年齢・性別構成を調整していません。':'色は報告人数の大小です。受診者の規模に左右されます。'):'対象年度：'+c.data.years.join('・')+'年度。'+(isReportedSchema(c.data.schema_version)?'年度間の増減比較は行っていません。':'割合は年齢・性別構成を調整していません。')}</small>}</DataNotes>;
 }
 export function MapPanel({c,region,onSelect,compact=false,highlightRegion,onHighlightRegion,showNotes=true}:{c:Context;region:string;onSelect:(s:string)=>void;compact?:boolean;showNotes?:boolean;highlightRegion?:string;onHighlightRegion?:(code:string)=>void}) {

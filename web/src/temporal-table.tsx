@@ -5,10 +5,10 @@ export function temporalTable(records:Observation[],selectedYear:number,measure:
  const visible=columns.map(year=>records.find(r=>r.observation_fiscal_year===year)!);
  const singleRate=visible.some(r=>(r.derivation??r.derived_rate)?.statistic==='single_judgment_recipient_percentage');
  const metrics=isCountPublication(visible)?[
-  {id:'value',label:'報告人数（人）',text:(r:Observation)=>format(r.value)+'人'},
+  {id:'value',label:visible[0]?.unit==='件'?'実施件数（件）':'報告人数（人）',text:(r:Observation)=>format(r.value)+(r.value==null?(r.value_state==='blank'?'（原表空欄）':'（'+r.value_state+'）'):r.unit)},
   {id:'reference',label:'参考：特定健診受診者数（人）',text:(r:Observation)=>format(r.denominator?.value)+'人'},
   {id:'publication',label:'掲載年度',text:(r:Observation)=>`${r.publication_fiscal_year}年度`},
-  {id:'comparison',label:'比較可否',text:()=> '増減比較なし'},
+  {id:'comparison',label:'比較可否',text:(r:Observation)=>r.comparability_intervals?.['2022_2023']==='incompatible'?'2022→2023年度は比較不可':'増減比較なし'},
  ]:singleRate?[
   {id:'rate',label:'特定健診受診者に占める割合（%）',text:(r:Observation)=>formatValue((r.derivation??r.derived_rate)?.value,'%')+'%'},
   {id:'population',label:'報告人数／受診者数（人）',text:(r:Observation)=>`${format((r.derivation??r.derived_rate)?.numerator_value)} / ${format((r.derivation??r.derived_rate)?.denominator_value)}`},

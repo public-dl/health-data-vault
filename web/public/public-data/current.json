@@ -1,11 +1,11 @@
 {
   "status": "approved",
-  "release_id": "1e0b2f10ab797f8f635573d522c212f8f223d6d195851bddbd7fdb13cf3c9b17",
-  "data_sha256": "1e0b2f10ab797f8f635573d522c212f8f223d6d195851bddbd7fdb13cf3c9b17",
+  "release_id": "7f4b5b8dfee4bd415413442bff14884d03d8f1826644614ba0ef86f9459804c3",
+  "data_sha256": "7f4b5b8dfee4bd415413442bff14884d03d8f1826644614ba0ef86f9459804c3",
   "reviewer": "岸克也",
-  "approved_at": "2026-09-26T17:34:31.328157+00:00",
+  "approved_at": "2026-11-07T05:37:03.013389+00:00",
   "validation": {
-    "reported_records": 2244,
+    "reported_records": 3036,
     "errors": 0,
     "status": "passed",
     "analysis": {
@@ -60,6 +60,21 @@
       },
       "warnings": [],
       "temporal_comparability": "group_specific_annual_facts"
+    },
+    "detailed": {
+      "version": "detailed-healthcheck-counts-v1",
+      "indicators": [
+        "anemia",
+        "anemia_tests",
+        "ecg",
+        "ecg_tests",
+        "fundus",
+        "fundus_tests"
+      ],
+      "records": 792,
+      "source_reference": "docs/detailed_healthcheck_v1.md",
+      "rate_allowed": false,
+      "temporal_comparison_allowed": false
     }
   },
   "data_rights_reviewed": true,

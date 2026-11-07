@@ -25,7 +25,7 @@ describe('health theme navigation',()=>{
   for(const [theme,id] of [['overall','group:metabo'],['blood-pressure','bp_referral'],['lipids','lipid_people'],['liver','liver'],['glucose','glucose_people']]){
    expect(resolveThemeSelection(theme,id,'group:metabo',groups,current)).toEqual({themeId:theme,indicatorId:id});
   }
-  expect(healthThemes.filter(t=>t.status==='planned').map(t=>t.id)).toEqual(['detailed','other']);
+  expect(healthThemes.filter(t=>t.status==='planned').map(t=>t.id)).toEqual(['other']);
   for(const t of healthThemes.filter(t=>t.status==='planned'))expect(themeChoices(t,groups,current).ids).toEqual([]);
  });
  it('defaults to overall and preserves each existing group and single indicator link',()=>{
@@ -48,7 +48,7 @@ describe('health theme navigation',()=>{
   expect(healthThemes.map(t=>t.label)).toEqual(['総合判定','血圧','脂質代謝','肝機能','糖代謝','腎・尿路系','詳細な健診項目','その他の健診項目']);
   expect(html).not.toMatch(/BMI|腹囲/);
   for(const t of healthThemes)expect(html).toContain(t.label);
-  expect(html.match(/準備中/g)).toHaveLength(2);
+  expect(html.match(/準備中/g)).toHaveLength(1);
  });
  it('keeps current composition presentation explicit without granting comparison permission',()=>{
   for(const g of groups)expect(groupPresentation[g.group_id].visualizationType).toBe('composition');

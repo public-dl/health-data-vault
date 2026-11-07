@@ -7,3 +7,7 @@ export const overallMapNotice='色の濃さは、受診者数に占める各判�
 export const graphRoundingNotice='割合は丸め補正・再正規化していません。';
 
 export const metaboMapNotice='色の濃さは、その判定区分の割合を示します。地域・年度・表示方法によって基準は変わりません。区分ごとに色の範囲が異なり、医学的な判定基準を表すものではありません。年齢・性別は調整していません。詳しくは「諸元・出典を確認」をご覧ください。';
+
+export function countNoticeFor(i:{unit:string;source_count_contract?:string}){
+ return i.source_count_contract?(i.unit==='件'?'単位：件。原表の検査実施件数です。判定人数とは異なります。':'単位：人。原表の判定人数です。各検査の実施件数とは異なります。'):countNotice;
+}

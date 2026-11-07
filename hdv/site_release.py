@@ -194,7 +194,7 @@ def construct(root, base_id, include_reported=False, reported_rates=False, inclu
         table_cells=sum(t['row_count']*t['column_count'] for t in tables))
 
 
-def build(root, base_id, include_renal=False, count_only=False, health_centers=False, derived_zero=False, annual_facts=False):
+def build(root, base_id, include_renal=False, count_only=False, health_centers=False, derived_zero=False, annual_facts=False, include_detailed=False):
     require(not annual_facts or derived_zero, "annual facts requires derived zero")
     require(not derived_zero or health_centers, "derived zero requires health centers")
     from .terminology import configuration
@@ -205,6 +205,13 @@ def build(root, base_id, include_renal=False, count_only=False, health_centers=F
         records, _ = verified_records(root, payload['analysis']['input_run_id'])
         payload = extend(payload, records, derived_zero=derived_zero, annual_facts=annual_facts)
         report['health_centers'] = payload['health_center_extension']
+        report['reported_records'] = len(payload['reported']['records'])
+    if include_detailed:
+        require(count_only, 'detailed requires count-only publication')
+        from .detailed import extend
+        records, _ = verified_records(root, payload['analysis']['input_run_id'])
+        payload = extend(payload, records)
+        report['detailed'] = payload['detailed_extension']
         report['reported_records'] = len(payload['reported']['records'])
     content = encoded(payload); id = digest(content)
     directory = Path(root)/'site/candidates'/id
@@ -220,6 +227,10 @@ def inspect(root, id):
     raw = (checked_path(root, 'site/candidates/'+id)/'data.json').read_bytes()
     require(digest(raw)==id, 'Site hash mismatch')
     payload = json.loads(raw)
+    has_detailed = 'detailed_extension' in payload
+    if has_detailed:
+        from .detailed import without_extension
+        payload = without_extension(payload)
     version = payload.get('reported',{}).get('schema_version')
     count_only = version == 'reported-annual-6'
     health_centers = 'health_center_extension' in payload
@@ -237,6 +248,13 @@ def inspect(root, id):
         records, _ = verified_records(root, expected['analysis']['input_run_id'])
         expected = extend(expected, records, derived_zero="derived_zero_policy" in payload, annual_facts="health_center_temporal_policy" in payload)
         report['health_centers'] = expected['health_center_extension']
+        report['reported_records'] = len(expected['reported']['records'])
+    if has_detailed:
+        from .detailed import extend
+        records, _ = verified_records(root, expected['analysis']['input_run_id'])
+        expected = extend(expected, records)
+        payload = json.loads(raw)
+        report['detailed'] = expected['detailed_extension']
         report['reported_records'] = len(expected['reported']['records'])
     require(payload==expected, 'Site rebuild mismatch')
     return payload, report
@@ -275,6 +293,7 @@ def main():
     p.add_argument('command',choices=['build','validate','approve'])
     p.add_argument('--data-dir',type=Path,default=Path('data'))
     p.add_argument('--analysis-release'); p.add_argument('--release-id')
+    p.add_argument('--include-detailed', action='store_true', help='Build detailed examination counts; requires count-only')
     p.add_argument('--count-only', action='store_true', help='Build the versioned count-only publication; requires renal coverage')
     p.add_argument('--health-centers', action='store_true', help='Add audited health center areas; requires count-only and renal')
     p.add_argument('--annual-facts', action='store_true', help='Approve HC metabo/guidance annual facts connection only')
@@ -283,7 +302,7 @@ def main():
     p.add_argument('--reviewer',default=''); p.add_argument('--confirm-hash',default='')
     p.add_argument('--data-rights-reviewed',action='store_true'); p.add_argument('--map-rights-reviewed',action='store_true')
     a=p.parse_args()
-    if a.command=='build': result=build(a.data_dir,a.analysis_release,include_renal=a.include_renal, count_only=a.count_only, health_centers=a.health_centers, derived_zero=a.derived_zero, annual_facts=a.annual_facts)
+    if a.command=='build': result=build(a.data_dir,a.analysis_release,include_renal=a.include_renal, count_only=a.count_only, health_centers=a.health_centers, derived_zero=a.derived_zero, annual_facts=a.annual_facts, include_detailed=a.include_detailed)
     elif a.command=='validate': result=inspect(a.data_dir,a.release_id)[1]
     else: result=approve(a.data_dir,a.release_id,a.reviewer,a.confirm_hash,a.data_rights_reviewed,a.map_rights_reviewed)
     print(json.dumps(result,ensure_ascii=False,indent=2))

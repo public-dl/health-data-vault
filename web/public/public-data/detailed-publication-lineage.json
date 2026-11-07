@@ -1,0 +1,17 @@
+{
+  "release_id": "7f4b5b8dfee4bd415413442bff14884d03d8f1826644614ba0ef86f9459804c3",
+  "base_release_id": "1e0b2f10ab797f8f635573d522c212f8f223d6d195851bddbd7fdb13cf3c9b17",
+  "recorded_at": "2026-11-07T05:37:58.855514+00:00",
+  "reviewer": "岸克也",
+  "authorization": "Explicit user instruction to commit, push and publish the reviewed detailed examination candidate",
+  "detailed_contract": "detailed-healthcheck-counts-v1",
+  "raw_sources_unchanged": true,
+  "map_unchanged": true,
+  "reuse_decision_file": "reuse-decision.json",
+  "reuse_decision_sha256": "68778860b8f6833afc2e1e27f8561428905c059346c44af623d43d08772e5561",
+  "statistical_reuse_decision": "reviewer_approved",
+  "official_license_verified": false,
+  "cc_by_verified": false,
+  "map_rights_reviewed": true,
+  "display_scope": "Original judgment persons and examination counts only; no rates or temporal comparisons"
+}

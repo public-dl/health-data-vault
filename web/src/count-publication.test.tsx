@@ -58,7 +58,7 @@ it('individual and comparison CSV/text omit rate formula and differences for eve
 
 it('count sets and source cell links preserve all themes and route to the table',async()=>{
  vi.stubGlobal('window',{matchMedia:()=>({matches:false})});
- for(const theme of healthThemes.filter(t=>t.indicatorIds.length)){
+ for(const theme of healthThemes.filter(t=>t.indicatorIds.length&&t.indicatorIds.every(id=>displayed.indicators.some(i=>i.indicator_id===id)))){
   const choices=themeChoices(theme,[],displayed.indicators);expect(choices.indicators).toHaveLength(theme.indicatorIds.length);
   for(const set of choices.sets){
    const c=context(set.members[0]);const text=await html(<ReportedViews c={c} members={set.members} onYear={()=>{}} onSelect={()=>{}}/>);

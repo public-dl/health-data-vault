@@ -40,7 +40,7 @@ export const isCountPublication=(rows:Observation[])=>rows.length>0&&rows.every(
 export const format = (value:number|null|undefined) => value == null ? '欠損' : value.toLocaleString('ja-JP');
 export const formatValue = (value:number|null|undefined,unit:string) => value == null ? '欠損' : unit === '%' ? value.toLocaleString('ja-JP',{minimumFractionDigits:1,maximumFractionDigits:1}) : format(value);
 export function displayData(data:Payload, measure:'count'|'rate'):Payload {
- if(data.schema_version==='detailed-examination-1'){validateExaminationPayload(data);return data;}
+ if(['detailed-examination-1','other-examination-1'].includes(data.schema_version)){validateExaminationPayload(data);return data;}
  if(data.schema_version==='reported-annual-6'){
   if(data.indicators.some(i=>!i.capabilities?.count_only||i.rate||i.capabilities.recipient_rate||i.capabilities.map_mode!=='none'||i.capabilities.distribution)
    ||data.records.some(r=>['derived_rate','derivation','rate','percentage','recipient_percentage'].some(k=>k in r)))throw new Error('人数公開契約に割合を含めることはできません');
@@ -101,13 +101,14 @@ export async function loadData():Promise<{payload:Payload;review:boolean;release
 
 export type TableCell={row:number;column:number;coordinate:string;value:number|null;value_state:string;original_value:unknown;cached_value:unknown;source_data_type:string;number_format:string;formula:string|null;display_text:string;visualization:{indicator_id:string;region:string;section?:'table'}|null};
 export type PublishedTable={source:{observation_fiscal_year:number;publication_fiscal_year:number;source_url:string;annual_page_url:string;sha256:string;retrieved_at:string;original_filename:string};source_sheet:string;header_rows:number;row_count:number;column_count:number;rows:{index:number;level:string;cells:TableCell[]}[]};
-export type SiteExtension={detailed_rates?:Payload;reported?:Payload;annual:Payload;published_tables:PublishedTable[]};
+export type SiteExtension={other_rates?:Payload;detailed_rates?:Payload;reported?:Payload;annual:Payload;published_tables:PublishedTable[]};
 function unpack(value:Payload & SiteExtension & {analysis?:Payload},review:boolean,release:string){
  if(value.schema_version==='site-1'){
   if(value.analysis?.schema_version!=='public-3'||value.annual?.schema_version!=='annual-1'||!Array.isArray(value.published_tables))throw new Error('未対応の単年度表示契約');
   if(value.reported && !['reported-annual-1','reported-annual-2','reported-annual-3','reported-annual-4','reported-annual-5','reported-annual-6'].includes(value.reported.schema_version))throw new Error('未対応の報告人数契約');
+  if(value.other_rates)validateExaminationPayload(value.other_rates);
   if(value.detailed_rates)validateExaminationPayload(value.detailed_rates);
-  return {payload:value.analysis,extensions:{detailed_rates:value.detailed_rates,annual:value.annual,reported:value.reported,published_tables:value.published_tables},review,release};
+  return {payload:value.analysis,extensions:{other_rates:value.other_rates,detailed_rates:value.detailed_rates,annual:value.annual,reported:value.reported,published_tables:value.published_tables},review,release};
  }
  return {payload:value,review,release};
 }

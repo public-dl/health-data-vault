@@ -17,7 +17,7 @@ export const healthThemes:HealthTheme[]=[
  {id:'liver',accentColor:'#A8674B',order:4,label:'肝機能',description:'肝機能',icon:'liver',groupIds:[],indicatorIds:['liver'],status:'available'},
  {id:'renal-urinary',accentColor:'#287FC3',order:6,label:'腎・尿路系',description:'尿蛋白・尿潜血・クレアチニン',icon:'drop',groupIds:[],indicatorIds:['renal_urinary_people','urine_protein','urine_blood','creatinine'],status:'available'},
  {id:'detailed',accentColor:'#7B64C8',order:7,label:'詳細な健診項目',description:'貧血検査・心電図検査・眼底検査',icon:'heart',groupIds:[],indicatorIds:['anemia','ecg','fundus'],status:'available'},
- {id:'other',accentColor:'#667788',order:8,label:'その他の健診項目',description:'血清尿酸・血清総蛋白',icon:'more',groupIds:[],indicatorIds:[],status:'planned'},
+ {id:'other',accentColor:'#667788',order:8,label:'その他の健診項目',description:'血清尿酸・血清総蛋白',icon:'more',groupIds:[],indicatorIds:['uric_acid','total_protein'],status:'available'},
 ].sort((a,b)=>a.order-b.order) as HealthTheme[];
 export type VisualizationType='composition'|'category_distribution'|'continuous';
 export const groupPresentation:Record<string,{visualizationType:VisualizationType;overviewLabel:string}>={
@@ -39,7 +39,7 @@ export function themeChoices(theme:HealthTheme,groups:IndicatorGroup[],catalog:I
 export function resolveThemeSelection(requestedTheme:string|null,requestedIndicator:string|null,fallback:string,groups:IndicatorGroup[],catalog:Indicator[],themes=healthThemes){
  const available=themes.map(theme=>({theme,choices:themeChoices(theme,groups,catalog)})).filter(x=>x.choices.ids.length);
  // A valid legacy indicator link takes precedence over a missing/stale theme.
- const alias:Record<string,string>={anemia_tests:'anemia',ecg_tests:'ecg',fundus_tests:'fundus'};
+ const alias:Record<string,string>={anemia_tests:'anemia',ecg_tests:'ecg',fundus_tests:'fundus',uric_acid_tests:'uric_acid',total_protein_tests:'total_protein'};
  requestedIndicator=alias[requestedIndicator??'']??requestedIndicator;
  const match=available.find(x=>x.choices.ids.includes(requestedIndicator??''));
  if(match)return {themeId:match.theme.id,indicatorId:requestedIndicator!};

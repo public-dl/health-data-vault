@@ -1,9 +1,9 @@
 {
   "status": "approved",
-  "release_id": "36d764c21393fad5a4b93dab5efe74cd1373e274d4f9f38bde5e8cc0fe339d9c",
-  "data_sha256": "36d764c21393fad5a4b93dab5efe74cd1373e274d4f9f38bde5e8cc0fe339d9c",
+  "release_id": "620f9e0441f735a5ef4dabe0a2800649e49d6851efde85a6e03b9c55b5ef94ad",
+  "data_sha256": "620f9e0441f735a5ef4dabe0a2800649e49d6851efde85a6e03b9c55b5ef94ad",
   "reviewer": "岸克也",
-  "approved_at": "2026-11-07T06:18:25.484252+00:00",
+  "approved_at": "2026-11-08T01:42:25.305961+00:00",
   "validation": {
     "reported_records": 3036,
     "errors": 0,
@@ -78,6 +78,9 @@
     },
     "detailed_rates": {
       "records": 396
+    },
+    "other_rates": {
+      "records": 264
     }
   },
   "data_rights_reviewed": true,

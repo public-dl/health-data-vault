@@ -1,0 +1,18 @@
+{
+  "release_id": "620f9e0441f735a5ef4dabe0a2800649e49d6851efde85a6e03b9c55b5ef94ad",
+  "base_release_id": "36d764c21393fad5a4b93dab5efe74cd1373e274d4f9f38bde5e8cc0fe339d9c",
+  "recorded_at": "2026-11-08T01:42:24.408107+00:00",
+  "reviewer": "岸克也",
+  "authorization": "Explicit user approval to publish the reviewed other examinations candidate",
+  "detailed_contract": "detailed-examination-rates-v1",
+  "raw_sources_unchanged": true,
+  "map_unchanged": true,
+  "reuse_decision_file": "reuse-decision.json",
+  "reuse_decision_sha256": "68778860b8f6833afc2e1e27f8561428905c059346c44af623d43d08772e5561",
+  "statistical_reuse_decision": "reviewer_approved",
+  "official_license_verified": false,
+  "cc_by_verified": false,
+  "map_rights_reviewed": true,
+  "display_scope": "Serum uric acid and serum total protein judgment persons, examination counts, examination-specific percentages; no temporal comparisons",
+  "other_contract": "other-examination-rates-v1"
+}

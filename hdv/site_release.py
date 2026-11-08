@@ -194,7 +194,7 @@ def construct(root, base_id, include_reported=False, reported_rates=False, inclu
         table_cells=sum(t['row_count']*t['column_count'] for t in tables))
 
 
-def build(root, base_id, include_renal=False, count_only=False, health_centers=False, derived_zero=False, annual_facts=False, include_detailed=False, detailed_rates=False):
+def build(root, base_id, include_renal=False, count_only=False, health_centers=False, derived_zero=False, annual_facts=False, include_detailed=False, detailed_rates=False, include_other=False):
     require(not detailed_rates or include_detailed, 'examination rates require detailed counts')
     require(not annual_facts or derived_zero, "annual facts requires derived zero")
     require(not derived_zero or health_centers, "derived zero requires health centers")
@@ -219,6 +219,13 @@ def build(root, base_id, include_renal=False, count_only=False, health_centers=F
         payload = extend(payload, root)
         report['detailed_rates'] = dict(records=len(payload['detailed_rates']['records']),
             states={state:sum(r['examination_rate']['state']==state for r in payload['detailed_rates']['records']) for state in ('valid','zero_denominator','missing')})
+    if include_other:
+        require(count_only, 'other examinations require count-only foundation')
+        from .other import extend
+        from .other_rates import extend as rates
+        records, _ = verified_records(root, payload['analysis']['input_run_id'])
+        payload = rates(extend(payload, records), root)
+        report['other_rates'] = dict(records=len(payload['other_rates']['records']), states={state:sum(r['examination_rate']['state']==state for r in payload['other_rates']['records']) for state in ('valid','zero_denominator','missing')})
     content = encoded(payload); id = digest(content)
     directory = Path(root)/'site/candidates'/id
     with locked(Path(root)/'site'):
@@ -233,6 +240,12 @@ def inspect(root, id):
     raw = (checked_path(root, 'site/candidates/'+id)/'data.json').read_bytes()
     require(digest(raw)==id, 'Site hash mismatch')
     payload = json.loads(raw)
+    has_other = 'other_extension' in payload
+    require(has_other == ('other_rate_extension' in payload), 'incomplete other extension')
+    if has_other:
+        from .other_rates import without_extension as without_rates
+        from .other import without_extension
+        payload = without_extension(without_rates(payload))
     has_detailed_rates = 'detailed_rate_extension' in payload
     if has_detailed_rates:
         from .detailed_rates import without_extension
@@ -271,6 +284,13 @@ def inspect(root, id):
         expected = extend(expected, root)
         payload = json.loads(raw)
         report['detailed_rates'] = dict(records=len(expected['detailed_rates']['records']))
+    if has_other:
+        from .other import extend
+        from .other_rates import extend as rates
+        records, _ = verified_records(root, expected['analysis']['input_run_id'])
+        expected = rates(extend(expected, records), root)
+        payload = json.loads(raw)
+        report['other_rates'] = dict(records=len(expected['other_rates']['records']))
     require(payload==expected, 'Site rebuild mismatch')
     return payload, report
 
@@ -308,6 +328,7 @@ def main():
     p.add_argument('command',choices=['build','validate','approve'])
     p.add_argument('--data-dir',type=Path,default=Path('data'))
     p.add_argument('--analysis-release'); p.add_argument('--release-id')
+    p.add_argument('--include-other', action='store_true', help='Build audited other examination candidate only')
     p.add_argument('--detailed-rates', action='store_true', help='Detailed examination denominator percentages; requires include-detailed')
     p.add_argument('--include-detailed', action='store_true', help='Build detailed examination counts; requires count-only')
     p.add_argument('--count-only', action='store_true', help='Build the versioned count-only publication; requires renal coverage')
@@ -318,7 +339,7 @@ def main():
     p.add_argument('--reviewer',default=''); p.add_argument('--confirm-hash',default='')
     p.add_argument('--data-rights-reviewed',action='store_true'); p.add_argument('--map-rights-reviewed',action='store_true')
     a=p.parse_args()
-    if a.command=='build': result=build(a.data_dir,a.analysis_release,include_renal=a.include_renal, count_only=a.count_only, health_centers=a.health_centers, derived_zero=a.derived_zero, annual_facts=a.annual_facts, include_detailed=a.include_detailed, detailed_rates=a.detailed_rates)
+    if a.command=='build': result=build(a.data_dir,a.analysis_release,include_renal=a.include_renal, count_only=a.count_only, health_centers=a.health_centers, derived_zero=a.derived_zero, annual_facts=a.annual_facts, include_detailed=a.include_detailed, detailed_rates=a.detailed_rates, include_other=a.include_other)
     elif a.command=='validate': result=inspect(a.data_dir,a.release_id)[1]
     else: result=approve(a.data_dir,a.release_id,a.reviewer,a.confirm_hash,a.data_rights_reviewed,a.map_rights_reviewed)
     print(json.dumps(result,ensure_ascii=False,indent=2))

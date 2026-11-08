@@ -39,7 +39,7 @@ export function App({data,review,release,extensions}:{data:Payload;review:boolea
   const defaultGroup=data.schema_version==='public-3'?data.indicator_groups?.find(g=>g.group_id==='metabo'):undefined;
   const defaultIndicator=defaultGroup?'group:'+defaultGroup.group_id:data.indicators[0].indicator_id;
   const defaultMeasure=defaultGroup||data.indicators[0].rate?'rate':'count';
-  const catalog=[...data.indicators,...(extensions?.annual.indicators??[]),...(extensions?.reported?.indicators??[]).filter(i=>!extensions?.detailed_rates||!i.source_count_contract),...(extensions?.detailed_rates?.indicators??[])].map(presentationIndicator);
+  const catalog=[...data.indicators,...(extensions?.annual.indicators??[]),...(extensions?.reported?.indicators??[]).filter(i=>!((extensions?.detailed_rates&&i.source_count_contract?.startsWith('detailed-'))||(extensions?.other_rates&&i.source_count_contract?.startsWith('other-')))),...(extensions?.detailed_rates?.indicators??[]),...(extensions?.other_rates?.indicators??[])].map(presentationIndicator);
   const groups=[...(data.indicator_groups??[]),...(extensions?.annual.indicator_groups??[])].map(presentationGroup).sort((a,b)=>['metabo','doctor_judgment','guidance'].indexOf(a.group_id)-['metabo','doctor_judgment','guidance'].indexOf(b.group_id));
   const requested=new URLSearchParams(location.search);
   const requestedIndicator=requested.get('indicator');
@@ -52,8 +52,9 @@ export function App({data,review,release,extensions}:{data:Payload;review:boolea
   const annualSelected=!!extensions&&(indicatorId==='group:doctor_judgment'||extensions.annual.indicators.some(i=>i.indicator_id===indicatorId));
   const selectedSet=reportedSets.find(s=>s.id===indicatorId);
   const reportedSelected=!!selectedSet||!!extensions?.reported?.indicators.some(i=>i.indicator_id===indicatorId);
-  const detailedSelected=!!extensions?.detailed_rates?.indicators.some(i=>i.indicator_id===indicatorId);
-  const activeData=detailedSelected?extensions!.detailed_rates!:reportedSelected?extensions!.reported!:annualSelected?extensions!.annual:data;
+  const otherSelected=!!extensions?.other_rates?.indicators.some(i=>i.indicator_id===indicatorId);
+  const detailedSelected=otherSelected||!!extensions?.detailed_rates?.indicators.some(i=>i.indicator_id===indicatorId);
+  const activeData=otherSelected?extensions!.other_rates!:detailedSelected?extensions!.detailed_rates!:reportedSelected?extensions!.reported!:annualSelected?extensions!.annual:data;
   const effectiveMeasure=detailedSelected?'count':reportedSelected&&!(selectedSet?activeData.indicators.some(i=>selectedSet.members.includes(i.indicator_id)&&i.rate):activeData.indicators.find(i=>i.indicator_id===indicatorId)?.rate)?'count':measure;
   const displayed=useMemo(()=>displayData(activeData,effectiveMeasure),[activeData,effectiveMeasure]);
   const themeId=resolveThemeSelection(null,indicatorId,defaultIndicator,groups,catalog).themeId;

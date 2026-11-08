@@ -1,3 +1,4 @@
+import {appUrl} from './app-url';
 import React,{useRef,useState} from 'react';
 import {PublicHeader,PublicFooter} from './public-shell';
 import {indexable} from './seo';
@@ -44,9 +45,9 @@ export function Contact(){
       <p hidden><label>入力しないでください<input type="checkbox" name="botcheck" tabIndex={-1} autoComplete="off"/></label></p>
       <label>お名前（任意）<input name="name" autoComplete="name" maxLength={100}/></label>
       <label>メールアドレス（必須）<input name="email" type="email" required autoComplete="email" maxLength={254}/></label>
-      <label>お問い合わせ種別<select name="category">{['データについて','表示について','掲載内容について','その他'].map(s=><option key={s}>{s}</option>)}</select></label>
+      <label>お問い合わせ種別（任意）<select name="category">{['データについて','表示について','掲載内容について','その他'].map(s=><option key={s}>{s}</option>)}</select></label>
       <label>お問い合わせ内容（必須）<textarea name="message" required rows={7} maxLength={5000}/></label>
-      <p>ご入力いただいた情報は、お問い合わせへの対応のために使用します。</p>
+      <p>入力した情報は、外部サービスWeb3Formsに送信され、お問い合わせへの対応に利用します。送信前に<a href={appUrl('/privacy/')}>運営者・プライバシー</a>をご確認ください。</p>
       {!enabled&&<p>この確認環境では送信できません。</p>}
       <button type="submit" disabled={!enabled||state==='sending'}>{state==='sending'?'送信中…':'送信する'}</button>
       <p role="status">{state==='success'?'お問い合わせを受け付けました。':state==='error'?'送信できませんでした。時間をおいて再度お試しください。':''}</p>

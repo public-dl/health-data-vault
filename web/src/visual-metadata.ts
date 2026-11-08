@@ -1,3 +1,4 @@
+import {publicText} from './public-copy';
 import type {Indicator,IndicatorGroup} from './model';
 import {recipientMapScales} from './map-scale';
 import {metaboMapScales} from './metabo-map-scales';
@@ -48,6 +49,7 @@ Object.assign(indicatorColorAliases,{
  hba1c:groupVisuals.guidance.none,
 });
 export function presentationIndicator(indicator:Indicator):Indicator {
+ indicator={...indicator,description:publicText(indicator.description??''),...Object.fromEntries(['source_notice','data_notes','set_notice'].filter(k=>typeof (indicator as any)[k]==='string').map(k=>[k,publicText((indicator as any)[k])]))};
  const metabo=metaboMapScales[indicator.indicator_id];
  if(metabo&&indicator.capabilities?.map_mode!=='none')indicator={...indicator,map_scale:metabo};
  if(indicator.capabilities?.map_mode!=='none'&&!indicator.map_scale&&recipientMapScales[indicator.indicator_id])indicator={...indicator,map_scale:recipientMapScales[indicator.indicator_id]};

@@ -34,7 +34,7 @@ it('renders one reference chart per lipid with fixed zero-based axes, independen
  expect(html.match(/data-chart="independent-bars"/g)).toHaveLength(2);
  expect(html.match(/data-export-surface="graph-card"/g)).toHaveLength(8);
  for(const id of ids)expect(html).toContain(`data-y-domain="0,${chartMax[id]}"`);
- expect(html).toContain('comparability: pending');expect(html).toContain('医学的な基準範囲ではありません');
+ expect(html).toContain('年度間で同じ定義・範囲として比較できるか確認中');expect(html).toContain('医学的な基準範囲ではありません');
  expect(html).not.toMatch(/SHA-256|data-export-private|composition-chart/);
 });
 

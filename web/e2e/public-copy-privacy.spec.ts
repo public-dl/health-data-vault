@@ -1,0 +1,13 @@
+import {test,expect,site} from './fixtures';
+test('initial population notice is visible without opening an accordion',async({page})=>{
+ await page.goto(site);await expect(page.locator('.results-theme-heading')).toBeVisible();const note=page.locator('.analysis-intro .population-note');await expect(note).toBeVisible();for(const text of ['市町村国保','40～74歳','費用決済データ','法定報告','県民全体'])await expect(note).toContainText(text);await expect(page.locator('#about-data')).not.toHaveAttribute('open','');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:test.info().outputPath('population-notice.png')});
+});
+test('visible public theme copy and provenance avoid internal status codes',async({page})=>{
+ test.setTimeout(120000);const themes=[['overall','group:doctor_judgment'],['blood-pressure','bp_guidance'],['lipids','lipid_people'],['liver','liver'],['glucose','glucose_people'],['renal-urinary','renal_urinary_people'],['detailed','anemia'],['other','uric_acid']];const forbidden=/\bpending\b|comparability|承認済みrelease|公開契約|P1[（(]|P7[（(]/;
+ for(const [theme,id] of themes){await page.goto(site+`?theme=${theme}&indicator=${id}&year=2023&region=hc-15-sanjo&measure=count`);await expect(page.locator('#overview [data-export-surface]').first()).toBeVisible();expect(await page.locator('body').innerText()).not.toMatch(forbidden);
+ const button=page.getByRole('button',{name:/このデータの諸元・出典を確認|分子・分母の出典を確認/}).first();await button.click();const modal=page.locator('dialog[open]');await expect(modal).toBeVisible();expect(await modal.innerText()).not.toMatch(forbidden);await modal.getByRole('button',{name:/閉じる/}).first().click();}
+});
+test('privacy is linked and loads without statistical data or form submission',async({page})=>{
+ const paths:string[]=[];let submits=0;page.on('request',r=>{if(r.url().includes('/public-data/'))paths.push(r.url());if(r.url().includes('api.web3forms.com'))submits++});await page.goto(site+'privacy/');await expect(page.getByRole('heading',{name:'運営者・プライバシー',exact:true})).toBeVisible();for(const text of ['public-dl（Health Data Vault運営）','G-QJCHVX2XEW','Web3Forms'])await expect(page.locator('.privacy-page')).toContainText(text);expect(paths).toEqual([]);expect(submits).toBe(0);await page.screenshot({path:test.info().outputPath('privacy-page.png')});await expect(page.locator('footer a[href$="privacy/"]')).toBeVisible();
+ await page.goto(site+'contact/');await expect(page.getByText('お問い合わせ種別（任意）',{exact:false})).toBeVisible();await expect(page.locator('form a[href$="privacy/"]')).toBeVisible();await expect(page.locator('form')).toContainText('Web3Forms');expect(submits).toBe(0);
+});

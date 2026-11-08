@@ -49,7 +49,7 @@ it('uses common surfaces and annual tables, never a composition or temporal grap
  expect(html.match(/<th scope="row">/g)).toHaveLength(10);
  expect(html).toContain('category-year-table');expect(html).toContain('data-export-surface="summary-card"');
  expect(html).not.toMatch(/hundred-svg|composition-total|構成合計100%|脂質：全区分/);
- expect(html).toContain('comparability: pending');expect(html.match(/data-chart="annual"/g)).toHaveLength(5);
+ expect(html).toContain('年度間で同じ定義・範囲として比較できるか確認中');expect(html.match(/data-chart="annual"/g)).toHaveLength(5);
 });
 it('retains rate origin in count and rate CSV, allows only same-year regional arithmetic',async()=>{
  const c=fixture(),rows=c.data.records.filter(r=>r.indicator_id==='lipid_people');

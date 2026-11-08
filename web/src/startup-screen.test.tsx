@@ -15,7 +15,7 @@ it('renders navigation and an accessible data-free shell before a release arrive
 });
 it('preserves a readable failure state without replacing rejected data',()=>{
  const html=renderToStaticMarkup(<StartupScreen error="公開データのハッシュが一致しません"/>);
- expect(html).toContain('role="alert"');expect(html).toContain('未検証・未承認');
+ expect(html).toContain('role="alert"');expect(html).toContain('確認できないデータ');
  expect(html).toContain('健康テーマ');expect(html).not.toContain('data-export-surface');
 });
 it('keeps theme subtitles concise without modifying indicator memberships',()=>{

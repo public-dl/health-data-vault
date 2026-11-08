@@ -27,6 +27,9 @@ async function start(){
  if(route==='/contact'){
   const {Contact}=await import('./contact');root.render(<Contact/>);return;
  }
+ if(route==='/privacy'){
+  const {Privacy}=await import('./privacy');root.render(<><PublicHeader review={review}/><Privacy/><PublicFooter review={review}/></>);return;
+ }
  if(route==='/learn'){
   const {Learn}=await import('./learn');root.render(<><PublicHeader review={review}/><Learn review={review}/><PublicFooter review={review}/></>);return;
  }

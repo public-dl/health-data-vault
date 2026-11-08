@@ -52,7 +52,7 @@ it('count-only items have no rate rows, maps, distribution or composition export
   expect(html).toContain('data-export-surface="table-card"');expect(html).toContain('0人');
   expect(html).not.toContain('data-export-surface="map-card"');expect(html).not.toContain('data-chart=');
   expect(html).not.toContain('data-metric="rate"');expect(html).not.toContain('100人ピクトグラム');
-  expect(html).toContain('割合の公開契約が未承認');expect(html).toContain('割合による地域分布は現在公開していません');
+  expect(html).toContain('割合による地域比較の条件を確認できていない');expect(html).toContain('割合による地域分布は現在公開していません');
  }
 });
 it('AD uses percentage maps even with count selected, retains zero, excludes county, and does not connect years',async()=>{

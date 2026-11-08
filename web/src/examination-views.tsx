@@ -1,3 +1,4 @@
+import {comparisonText} from './public-copy';
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ExportSurface} from './export-surface';
 import {Actions,MapPanel,nameFor,svgText,type Context} from './panels';
@@ -10,7 +11,7 @@ import './examination.css';
 
 function SourceDialog({c,rows,close}:{c:Context;rows:Observation[];close:()=>void}){
  const ref=useRef<HTMLDialogElement>(null);useEffect(()=>{ref.current?.showModal()},[]);
- return <dialog ref={ref} aria-label="検査の分子・分母の出典" className="examination-source" onCancel={close}><button autoFocus onClick={close}>出典を閉じる</button><h2>検査の分子・分母と計算式</h2><p>{examinationNotice}</p><RegionSourceNote data={c.data} rows={rows}/>{rows.map(r=>{const q=r.examination_rate!;return <section key={r.record_id}><h3>{r.geography_name}・{r.observation_fiscal_year}年度</h3><p>判定区分（保健指導以上を再掲）：{count(q.numerator_value,'人')}（{r.source_sheet} {q.numerator_cell}）</p><p>実施件数：{count(q.denominator_value,'件')}（{r.source_sheet} {q.denominator_cell}）</p><p>{examinationLabel}：{ratio(r)}</p><p>計算式：判定人数 ÷ 実施件数 ×100。表示は小数第1位、計算値は丸めず保持。</p><p>県概要の公式式：{q.official_evidence.overview_sheet} {q.official_evidence.rate_cell} {q.official_evidence.formula}</p><p>刊行年度：{r.publication_fiscal_year}年度／比較状態：{r.comparability_status}</p><a href={r.source_url} target="_blank" rel="noreferrer">公式Excel</a><p>取得日時：{r.retrieved_at}</p><code>{r.source_sha256}</code></section>})}</dialog>;
+ return <dialog ref={ref} aria-label="検査の分子・分母の出典" className="examination-source" onCancel={close}><button autoFocus onClick={close}>出典を閉じる</button><h2>検査の分子・分母と計算式</h2><p>{examinationNotice}</p><RegionSourceNote data={c.data} rows={rows}/>{rows.map(r=>{const q=r.examination_rate!;return <section key={r.record_id}><h3>{r.geography_name}・{r.observation_fiscal_year}年度</h3><p>判定区分（保健指導以上を再掲）：{count(q.numerator_value,'人')}（{r.source_sheet} {q.numerator_cell}）</p><p>実施件数：{count(q.denominator_value,'件')}（{r.source_sheet} {q.denominator_cell}）</p><p>{examinationLabel}：{ratio(r)}</p><p>計算式：判定人数 ÷ 実施件数 ×100。表示は小数第1位、計算値は丸めず保持。</p><p>県概要の公式式：{q.official_evidence.overview_sheet} {q.official_evidence.rate_cell} {q.official_evidence.formula}</p><p>刊行年度：{r.publication_fiscal_year}年度／年度間の比較：{comparisonText(r.comparability_status)}</p><a href={r.source_url} target="_blank" rel="noreferrer">公式Excel</a><p>取得日時：{r.retrieved_at}</p><code>{r.source_sha256}</code></section>})}</dialog>;
 }
 function SourceButton({rows,open}:{rows:Observation[];open:(r:Observation[])=>void}){return <button className="examination-source-button" onClick={()=>open(rows)}>分子・分母の出典を確認</button>}
 function FactCard({c,rows,code,open,table=false}:{c:Context;rows:Observation[];code:string;open:(r:Observation[])=>void;table?:boolean}){

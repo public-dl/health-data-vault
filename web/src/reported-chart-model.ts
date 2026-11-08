@@ -1,7 +1,7 @@
 import {csv,type Observation,type Indicator} from './model';
 import {reportedRate} from './reported-model';
 
-export const chartPending='年度ごとの実績値を参考表示しています。年度間の比較可能性は現在確認中です（comparability: pending）。';
+export const chartPending='年度ごとの実績値を参考表示しています。年度間で同じ定義・範囲として比較できるか確認中のため、増減比較はできません。';
 export const chartMax:Record<string,number>={bp_referral:50,bp_guidance:40,lipid_people:80,triglycerides:50,hdl:15,ldl:70,total_cholesterol:60};
 /** Display annual facts only. This does not grant temporal comparison permission. */
 export function chartRecords(records:Observation[],id:string):Observation[]{

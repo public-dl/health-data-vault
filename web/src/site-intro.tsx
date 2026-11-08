@@ -1,3 +1,4 @@
+import {populationSummary,populationLimit} from './public-copy';
 import React from 'react';
 import type {Payload} from './model';
 // Source-specific editorial metadata, audited against docs/data_inventory.md §2 (T).
@@ -14,7 +15,7 @@ export function introMetadata(data:Payload){
 }
 export function SiteIntro({data}:{data:Payload}){
  const m=introMetadata(data);
- return <><section className="hero photo-hero"><img className="hero-photo" src={import.meta.env.BASE_URL+'images/hero-professional-800.webp'} srcSet={`${import.meta.env.BASE_URL}images/hero-professional-480.webp 480w, ${import.meta.env.BASE_URL}images/hero-professional-800.webp 668w`} sizes="(max-width:700px) 45vw, 480px" width="668" height="765" alt="" fetchPriority="high"/><div className="hero-copy"><span className="eyebrow">HEALTH DATA VAULT / PUBLIC HEALTH ARCHIVE</span><h1>特定健診の結果を、<br/><span className="hero-phrase">地域で比べる。時間で見る。</span></h1><p>新潟県と{m.municipalities}市町村の特定健診結果を、<br/>地図・表・グラフでわかりやすく可視化します。</p></div></section>
+ return <><section className="hero photo-hero"><img className="hero-photo" src={import.meta.env.BASE_URL+'images/hero-professional-800.webp'} srcSet={`${import.meta.env.BASE_URL}images/hero-professional-480.webp 480w, ${import.meta.env.BASE_URL}images/hero-professional-800.webp 668w`} sizes="(max-width:700px) 45vw, 480px" width="668" height="765" alt="" fetchPriority="high"/><div className="hero-copy"><span className="eyebrow">HEALTH DATA VAULT / PUBLIC HEALTH ARCHIVE</span><h1>特定健診の結果を、<br/><span className="hero-phrase">地域で比べる。時間で見る。</span></h1><p>新潟県と{m.municipalities}市町村の特定健診結果を、<br/>地図・表・グラフでわかりやすく可視化します。</p></div></section><aside className="population-note" aria-label="集計対象と範囲"><strong>{populationSummary}</strong><br/>{populationLimit}</aside>
  <details id="about-data" className="site-about"><summary>ⓘ このサイトとデータについて <small>（できること・できないこと・データの諸元）</small></summary>
  <section className="site-intro" aria-label="このサイトとデータについて"><article><h2>このサイトでできること</h2><p>新潟県と{m.municipalities}市町村の特定健診結果を、地域・年度・判定区分で比較できます。</p><p>県計と市町村、市町村どうしの構成や経年変化を地図・表・グラフで確認できます。医師の判断は各年度の個別表示のみで、年度間比較は確認中です。</p></article>
  <article><h2>このサイトでできないこと</h2><p>{sourceDescription.limitation}</p><p>表示割合は受診者を分母とする判定区分の構成割合です。<strong>特定健診受診率や、地域住民全体の有病率ではありません。</strong></p><details><summary>データの適用範囲</summary><p>原資料に存在しない性別・年齢別データ、受診率等を本サイト独自に推計・補完して表示することはありません。年齢・性別構成を調整した比較ではなく、健康状態の良し悪しや施策の効果を示しません。</p></details></article>

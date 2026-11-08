@@ -52,3 +52,12 @@
  .analysis-sidebar .health-theme-menu[data-open=false] .theme-options{display:none}
  .analysis-sidebar .health-theme-menu[data-open=true] .theme-options{margin-top:8px;max-height:45dvh;overflow-y:auto}
 }
+
+/* Compact theme heading, sharing the navigation theme accent. */
+.results-theme-heading{margin:0 0 16px;padding:8px 18px;border-left:4px solid var(--theme-accent);border-radius:6px;background:color-mix(in srgb,var(--theme-accent) 10%,white);color:var(--ink,#17243b);font-size:18px;font-weight:700;line-height:1.5}
+
+/* Desktop filters remain directly available in the sidebar. */
+@media(min-width:1200px){body:has(.analysis-layout) .context-bar button{display:none}}
+
+/* Narrow screens open the filters from the header, never from the main content. */
+@media(max-width:1199px){.site-header nav .conditions-trigger{position:static;margin:0;padding:7px 10px;min-height:36px;font-size:13px;white-space:nowrap;border-radius:6px}}

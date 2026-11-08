@@ -43,7 +43,7 @@ export async function open(page:Page){
   await expect(page.getByRole('combobox',{name:'データを選ぶ',exact:true,includeHidden:true})).toBeAttached();
 }
 export async function controls(page:Page,action:()=>Promise<void>){
-  const trigger=page.getByRole('button',{name:'条件を変更',exact:true});
+  const trigger=page.getByRole('button',{name:'表示条件',exact:true});
   const mobile=await trigger.isVisible();
   if(mobile)await trigger.click();
   await action();

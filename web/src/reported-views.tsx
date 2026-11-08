@@ -22,11 +22,11 @@ export function reportedMapContext(c:Context):Context|null {
 }
 
 /** Restrict shared panels/exports to one year; ratios are verified release values. */
-export function reportedContext(c:Context,annualValues=false):Context {
+export function reportedContext(c:Context,annualValues=false,indicatorIds?:string[]):Context {
  const ratios=['reported-annual-2','reported-annual-3','reported-annual-4','reported-annual-5','reported-annual-6'].includes(c.data.schema_version);
  const mixed=['reported-annual-4','reported-annual-5','reported-annual-6'].includes(c.data.schema_version);
  if(!isReportedSchema(c.data.schema_version)||(!mixed&&c.indicator.visualization_type!==(ratios?'single_judgment_rate':'reported_count'))||(!ratios&&c.indicator.rate))throw new Error('単独判定の表示契約が不正です');
- const records=c.data.records.filter(r=>annualValues||r.observation_fiscal_year===c.year).map(r=>{
+ const records=c.data.records.filter(r=>(!indicatorIds||indicatorIds.includes(r.indicator_id))&&(annualValues||r.observation_fiscal_year===c.year)).map(r=>{
   const denominator=c.data.denominator_records?.find(d=>d.record_id===r.denominator_record_id);
   if(!r.annual_display_allowed||r.comparison_allowed||!(r.comparability_status==='pending'||r.source_count_contract==='detailed-healthcheck-counts-v1'&&r.indicator_id==='ecg'&&r.comparability_status==='incompatible')||!denominator||denominator.geography_code!==r.geography_code||denominator.observation_fiscal_year!==r.observation_fiscal_year)throw new Error('原典との対応を確認できません');
   const rate=reportedRate(r);
@@ -100,4 +100,10 @@ export function ReportedViews({c,members,onSelect,onYear}:{c:Context;members?:st
  <ComparisonActions c={{...tableContext,reportedMembers:members}} kind="table" layout={layout}/>
  <div className={`comparison-panels ${c.regions.length>1?layout:'single'}`}>{c.regions.map(code=>members?<ReportedSetTable key={code} c={tableContext} code={code} members={members}/>:<TablePanel key={code} c={tableContext} code={code}/>)}</div></DeferredSection>
  <DeferredSection id="graph">{heading('04','グラフで見る')}{countOnly?<p className="annual-notice">{countGraphNotice}<a href="#table">年度別の掲載値は「表で見る」で確認できます。</a></p>:<React.Suspense fallback={<p role="status">グラフを読み込んでいます</p>}><ReportedCharts c={c}/></React.Suspense>}</DeferredSection></>;
+}
+
+/** Prepare only the selected display series inside the theme error boundary. */
+export function PreparedReportedViews(props:React.ComponentProps<typeof ReportedViews>){
+ const c=reportedContext(props.c,true,props.members??[props.c.indicator.indicator_id]);
+ return <ReportedViews {...props} c={c}/>;
 }

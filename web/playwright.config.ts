@@ -6,6 +6,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0, forbidOnly: !!process.env.CI,
   reporter: [['list'], ['html', {open: 'never'}]],
   use: {baseURL: 'https://public-dl.github.io/health-data-vault/',
+    launchOptions:process.env.HDV_E2E_EXECUTABLE_PATH?{executablePath:process.env.HDV_E2E_EXECUTABLE_PATH}:undefined,
     trace: 'retain-on-failure', screenshot: 'only-on-failure', video: 'retain-on-failure'},
   projects: [
     {name: 'desktop', use: {...devices['Desktop Chrome'], viewport: {width:1920,height:1080}}},

@@ -7,7 +7,7 @@ const fit=async(page:Page)=>expect(await page.evaluate(()=>document.documentElem
 
 test('skip link focuses the main landmark and desktop controls have normal accessible semantics',async({page})=>{
  for(const path of ['', 'learn/','tables/','contact/','privacy/']){
-  await page.goto(site+path);await expect(page.locator('#main-content')).toBeVisible();if(!path)await expect(page.locator('.results-theme-heading')).toBeVisible();
+  await page.goto(site+path);await expect(page.locator('#main-content')).toBeVisible();if(!path)await expect(page.locator('.results-theme-heading')).toBeVisible();else await expect(page.locator(({'learn/':'.learn-page','tables/':'.published-table','contact/':'.contact-page form','privacy/':'.privacy-page'} as Record<string,string>)[path])).toBeVisible();
   const skip=page.getByRole('link',{name:'本文へ移動'});await skip.focus();await expect(skip).toBeInViewport();await page.keyboard.press('Enter');await expect(page.locator('#main-content')).toBeFocused();
  }
  await page.setViewportSize({width:1440,height:1000});await page.goto(site);await expect(page.locator('.results-theme-heading')).toBeVisible();

@@ -1,3 +1,4 @@
+import {createDelivery} from './scripts/delivery';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {StartupScreen} from './src/startup-screen';
@@ -116,10 +117,13 @@ function head(path: string) {
   );
 }
 
+const delivery=process.env.VITEST?null:createDelivery('public');
+
 export default defineConfig({
   base: viteBase,
 
   define: {
+    __HDV_DELIVERY__: JSON.stringify(delivery?.plan??null),
     __HDV_ORIGIN__: JSON.stringify(siteUrl),
     __HDV_PRODUCTION__: JSON.stringify(production),
     // Enable only after GA4 Enhanced Measurement has been disabled in the data stream.
@@ -142,6 +146,7 @@ export default defineConfig({
 
       closeBundle() {
         if (process.env.VITEST) return;
+        delivery?.write('dist/public-data/delivery');
 
         const base = readFileSync(
           'dist/index.html',

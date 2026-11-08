@@ -72,7 +72,7 @@ export function App({data,review,release,extensions}:{data:Payload;review:boolea
   useEffect(()=>{const url=new URL(location.href);url.searchParams.set('theme',themeId);url.searchParams.set('indicator',indicatorId);url.searchParams.set('year',String(year));url.searchParams.set('region',regions[0]);if(regions[1])url.searchParams.set('region2',regions[1]);else url.searchParams.delete('region2');url.searchParams.set('measure',effectiveMeasure);history.replaceState(null,'',url);},[themeId,indicatorId,year,regions,effectiveMeasure]);
   const timeline=(label:string)=><YearTimeline years={data.years} year={year} playing={playing} onYear={y=>{setPlaying(false);setYear(y);}} onToggle={()=>setPlaying(p=>!p)} label={label}/>;
   const choose=(code:string)=>{if(code!==regions[0])setRegions([regions[0],code]);setPlaying(false);setSource(null);};
-  return <><PublicHeader review={review}/>
+  return <><PublicHeader review={review} analysis/>
     {review&&<div className="review-banner">未承認・ローカル確認用 <span>公開版は切り替わっていません。実データによる実装レビューです。</span></div>}
     <ContextBar sectionUnits={detailedSelected?{map:'割合（％）',table:'人・件・％',graph:'割合（％）'}:indicator.capabilities?.map_mode==='rate'?{map:'割合（%）',table:'割合（%）・人数（人）',graph:'割合（%）'}:undefined} item={selectedSet?.label??(group?group.name+'：全区分':indicator.name)} unit={detailedSelected?'判定人数・実施件数・割合':effectiveMeasure==='rate'?'割合（%）':indicator.unit==='件'?'実施件数（件）':'人数（人）'} year={year} regions={regions.map(code=>data.geographies.find(g=>g.code===code)?.name??code)} hasOverview={hasOverview||reportedSelected} hasGraph={!annualSelected} overviewLabel={reportedSelected?indicator.overview_label:undefined}/>
     <main className="analysis-layout"><div className="analysis-intro"><SiteIntro data={{...data,indicator_groups:groups}}/></div>
@@ -89,6 +89,6 @@ export function App({data,review,release,extensions}:{data:Payload;review:boolea
     <DeferredSection id="graph"><div className="section-heading"><span className="number">{sections.find(s=>s.id==='graph')!.number}</span><div><span className="eyebrow">CHANGE OVER TIME</span><h2>{sectionDefinitions.graph}</h2></div><p>{`${data.years[0]}〜${data.years.at(-1)}年度`} · {measureLabel(c)}</p></div>{group?(group.allowed_views.some(v=>v==='composition'||v==='category_trend')?<GroupGraph key={group.group_id} c={c} group={group}/>:<p>このグループのグラフ表示は許可されていません。</p>):<GraphPanel key={regions.join('|')} c={c}/>}</DeferredSection>
     </>}
     <section className="quality"><h2>数字の背景も、一緒に。</h2><p>出典・対象年度・定義を保持し、原本の意味を変えずに表示しています。欠損を0で補完せず、比較できない指標・年度は接続しません。</p><details><summary>データの制約と検証情報</summary>{data.warnings.map(w=><p key={w}>{w}</p>)}<p>説明文は検証値から作成する定型文です。生成AIによる診断や推測は行っていません。</p><p>地理データと統計の再利用条件は、公開承認時に確認します。</p></details></section>
-    </ThemeBoundary></div></main><PublicFooter review={review}/>
+    </ThemeBoundary></div></main><PublicFooter review={review} analysis/>
     {review&&<React.Suspense fallback={null}><ExportReview enabled={review}/></React.Suspense>}<div role="status" aria-live="polite" className={message?'toast':'sr-only'}>{message}</div>{source&&<SourceModal c={c} rows={source} onClose={()=>setSource(null)}/>}</>;
 }

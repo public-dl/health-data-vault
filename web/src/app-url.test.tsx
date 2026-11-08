@@ -31,3 +31,9 @@ it('indexes only the production host and base, never review variants',()=>{
  expect(indexable(site,'production','https://public-dl.github.io','','/')).toBe(false);
  expect(indexable(site,'branch-deploy','https://public-dl.github.io','','/health-data-vault/')).toBe(false);
 });
+
+it('uses document fragments for analysis navigation and full route links elsewhere',()=>{
+ const analysis=renderToStaticMarkup(<><PublicHeader analysis/><PublicFooter analysis/></>);
+ for(const fragment of ['map','table','about-data'])expect(analysis).toContain('href="#'+fragment+'"');
+ const other=renderToStaticMarkup(<><PublicHeader/><PublicFooter/></>);expect(other).not.toContain('href="#map"');expect(other).toContain('#about-data');
+});

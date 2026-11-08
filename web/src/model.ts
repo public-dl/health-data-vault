@@ -1,3 +1,4 @@
+import {deliveryPlan,readDelivery} from './delivery';
 import {validateExaminationPayload} from './examination-model';
 import {appUrl} from './app-url';
 import type {MapScale} from './map-scale';
@@ -77,7 +78,7 @@ export function tableText(rows:Observation[],name:string):string {
   if(isCountPublication(rows))return ['地域\t指標\t実績年度\t掲載値\t単位\t値状態\t出典',...rows.map(r=>[r.geography_name,name,r.observation_fiscal_year,r.value??'',r.unit,r.value_state,r.source_url].map(safeCell).join('\t'))].join('\n');
   return ['地域\t指標\t実績年度\t値\t単位\t値状態\t出典\t報告人数\t受診者数\t計算式',...rows.map(r=>[r.geography_name,name,r.observation_fiscal_year,r.value ?? '',r.unit,r.value_state,r.source_url,(r.derivation??r.derived_rate)?.numerator_value??r.value,(r.derivation??r.derived_rate)?.denominator_value??r.denominator?.value,(r.derivation??r.derived_rate)?.formula].map(safeCell).join('\t'))].join('\n');
 }
-export async function loadData():Promise<{payload:Payload;review:boolean;release:string;extensions?:SiteExtension}> {
+export async function loadData(mode:'dashboard'|'tables'='dashboard'):Promise<{payload:Payload;review:boolean;release:string;extensions?:SiteExtension}> {
 
   const get = async (path:string,cache:RequestCache='no-store')=>{
     const r=await fetch(appUrl(path),{cache});
@@ -91,6 +92,12 @@ export async function loadData():Promise<{payload:Payload;review:boolean;release
   }
   const approval=await (await get('/public-data/current.json')).json();
   if(approval.status!=='approved' || !/^[a-f0-9]{64}$/.test(approval.release_id) || approval.release_id!==approval.data_sha256 || !approval.reviewer) throw new Error('公開承認を確認できません');
+  const plan=deliveryPlan();
+  if(plan&&plan.sourceRelease===approval.release_id){
+    const content=await readDelivery(plan,mode);
+    if(mode==='tables')return {payload:{} as Payload,extensions:{annual:{} as Payload,published_tables:content as PublishedTable[]},review:false,release:approval.release_id};
+    return unpack(content as Payload & SiteExtension,false,approval.release_id);
+  }
   const raw=await (await get(`/public-data/releases/${approval.release_id}.json`,'default')).arrayBuffer();
   const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',raw)),b=>b.toString(16).padStart(2,'0')).join('');
   if(hash!==approval.data_sha256)throw new Error('公開データのハッシュが一致しません');

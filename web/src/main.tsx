@@ -30,7 +30,7 @@ async function start(){
  if(route==='/learn'){
   const {Learn}=await import('./learn');root.render(<><PublicHeader review={review}/><Learn review={review}/><PublicFooter review={review}/></>);return;
  }
- const data=import('./model').then(m=>m.loadData());
+ const data=import('./model').then(m=>m.loadData(route==='/tables'?'tables':'dashboard'));
  if(route==='/tables'){
   const [{PublishedTables},loaded]=await Promise.all([import('./source-table'),data]);
   root.render(<><PublicHeader review={loaded.review}/>{loaded.extensions?<PublishedTables tables={loaded.extensions.published_tables} review={loaded.review} release={loaded.release}/>:<main><h1>公表数表はこのreleaseに収録されていません</h1></main>}<PublicFooter review={loaded.review}/></>);return;

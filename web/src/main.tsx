@@ -14,6 +14,7 @@ import './desktop-density.css';
 import './analysis-sidebar.css';
 import './presentation.css';
 import './wide-screen-density.css';
+import './accessibility.css';
 
 declare const __HDV_PRODUCTION__: boolean;
 declare const __HDV_ANALYTICS_ENABLED__: boolean;
@@ -36,7 +37,7 @@ async function start(){
  const data=import('./model').then(m=>m.loadData(route==='/tables'?'tables':'dashboard'));
  if(route==='/tables'){
   const [{PublishedTables},loaded]=await Promise.all([import('./source-table'),data]);
-  root.render(<><PublicHeader review={loaded.review}/>{loaded.extensions?<PublishedTables tables={loaded.extensions.published_tables} review={loaded.review} release={loaded.release}/>:<main><h1>公表数表はこのreleaseに収録されていません</h1></main>}<PublicFooter review={loaded.review}/></>);return;
+  root.render(<><PublicHeader review={loaded.review}/>{loaded.extensions?<PublishedTables tables={loaded.extensions.published_tables} review={loaded.review} release={loaded.release}/>:<main id="main-content" tabIndex={-1}><h1>公表数表はこのreleaseに収録されていません</h1></main>}<PublicFooter review={loaded.review}/></>);return;
  }
  const [{App},loaded]=await Promise.all([import('./dashboard'),data]);
  root.render(<App data={loaded.payload} review={loaded.review} release={loaded.release} extensions={loaded.extensions}/>);

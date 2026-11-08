@@ -1,0 +1,33 @@
+/* Keep supporting text legible independently of compact desktop layouts. */
+body :is(.footnote,.definition,.tag,.status,.eyebrow,.actions button,.source-link,.timeline button,.timeline small,.insight small,.quality p,.quality details,.theme-options small,.theme-options em,.graph-value-source small,.examination-state-note,.examination-chart p,.examination-source-button,.map-summary span,.map-summary small,.mobile-legend,.mobile-legend small,.category-value small,.supporting-count small,.region-difference,.source-cell-details,.table-period,.integrated-measure-note){font-size:14px!important;line-height:1.65}
+body :is(dialog p,dialog dl,.provenance th,.provenance td,code,.examination-table th,.examination-table td,.published-table thead th){font-size:14px!important}
+body .analysis-sidebar .theme-options small{font-size:14px!important}
+body :is(.value-source small,.composition-total small,.data-table small,.panel-heading small,.scope-note,.data-notes small,.filters label,.theme-heading>small){font-size:14px!important;line-height:1.65}
+.site-header nav{font-size:14px}
+.definition{overflow-wrap:anywhere}.definition>span:last-child{float:none;display:block;margin-top:6px}
+.actions,.panel-heading,.section-heading{flex-wrap:wrap}
+.table-period,.integrated-measure-note{margin:12px 18px;padding:10px 12px;border-left:3px solid #365f8b;background:#eef5fc;color:#204364;overflow-wrap:anywhere}
+.selected-year-label{display:block;font-size:14px;color:#184e85;font-weight:700}
+.examination-table{table-layout:fixed}
+.examination-table th,.examination-table td{white-space:normal;overflow-wrap:anywhere}
+.examination-table th:first-child{min-width:200px}
+.data-table .selected-year,.category-year-table .selected-year{background:#e7f1fc;box-shadow:inset 2px 0 #426e9c,inset -2px 0 #426e9c}
+.skip-link{position:fixed;left:12px;top:8px;z-index:1000;padding:12px 18px;background:#fff;color:#123b68;border:3px solid #174c84;border-radius:6px;transform:translateY(-150%)}
+.skip-link:focus{transform:translateY(0)}
+#main-content:focus{outline:3px solid #246dcc;outline-offset:-3px}
+.conditions-inline{display:contents}
+button,a,input,select,textarea{touch-action:manipulation}
+.actions button,.timeline button,.source-link,.examination-source-button,.site-header nav a{min-height:44px}
+.site-header nav a{display:inline-flex;align-items:center}
+.zoom button,.conditions-dialog button,.year-tabs button{min-height:44px}.zoom button{min-width:44px}
+.series-controls label{display:inline-flex;align-items:center;gap:6px;min-height:44px}
+.map-legend-chip,.map-gradient-bar{border:1px solid #4c627b!important}
+.map-legend p{font-size:14px;line-height:1.7}
+.no-script{max-width:850px;margin:40px auto;padding:24px;font-size:16px;line-height:1.8;color:#173d64}
+@media(max-width:700px){
+ .timeline{flex-wrap:wrap}.timeline input{min-width:140px;min-height:44px}
+ .table-period,.integrated-measure-note{margin:10px 0}
+ .site-header nav{gap:8px 14px!important}
+ dialog:not(.conditions-dialog){box-sizing:border-box;max-width:calc(100vw - 20px);padding:16px}
+ .provenance td,.provenance th{min-width:140px}
+}

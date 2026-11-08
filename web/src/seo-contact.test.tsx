@@ -23,3 +23,13 @@ it('does not send a filled honeypot',async()=>{
   const fetcher=vi.fn();vi.stubGlobal('fetch',fetcher);
   await expect(sendContact({} as HTMLFormElement)).rejects.toThrow();expect(fetcher).not.toHaveBeenCalled();
 });
+it('aborts a stalled contact request after 30 seconds and releases the timeout on failure',async()=>{
+ vi.useFakeTimers();
+ try{
+  vi.stubGlobal('FormData',class{get(key:string){return key==='botcheck'?null:'test';}});
+  const fetcher=vi.fn((_url,options)=>new Promise((_resolve,reject)=>options.signal.addEventListener('abort',()=>reject(new Error('timeout')))));
+  vi.stubGlobal('fetch',fetcher);const result=expect(sendContact({} as HTMLFormElement)).rejects.toThrow('timeout');
+  await vi.advanceTimersByTimeAsync(29999);expect(fetcher.mock.calls[0][1].signal.aborted).toBe(false);
+  await vi.advanceTimersByTimeAsync(1);await result;expect(fetcher.mock.calls[0][1].signal.aborted).toBe(true);expect(vi.getTimerCount()).toBe(0);
+ }finally{vi.useRealTimers();}
+});

@@ -16,7 +16,7 @@ describe('prefecture metabo_case temporal table regression',()=>{
    expect(columns).toHaveLength(model.columns.length+1);
    expect(columns[0]).toContain('24%');
    expect(new Set(columns.slice(1)).size).toBe(1);
-   for(const y of model.columns)expect(html).toContain(`${y}年度<small>公表 ${y+1}年度</small>`);
+   for(const y of model.columns)expect(html).toContain(`${y}年度${y===year?'<span class="selected-year-label">選択中</span>':''}<small>公表 ${y+1}年度</small>`);
   }
  });
  it('builds metric rows and fiscal-year columns with all expected values',()=>{

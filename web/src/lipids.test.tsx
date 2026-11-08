@@ -1,3 +1,4 @@
+import {accessibleMapPalette} from './map-palette';
 import {it,expect,vi,afterEach} from 'vitest';
 import React from 'react';
 import {renderToStaticMarkup,renderToReadableStream} from 'react-dom/server';
@@ -22,7 +23,7 @@ it('retains categorical map behavior when continuous metadata is absent',async()
    const records=c.data.records.map(r=>({...r,geography_level:r.geography_code==='15202'?'municipality':'prefecture_total',value:r.indicator_id===id&&r.geography_code==='15202'?value:r.value}));
    const html=renderToStaticMarkup(<MapPanel c={{...c,indicator,palette,data:{...c.data,records}}} region="15" onSelect={()=>{}}/>);
    const path=html.match(/<path[^>]*data-geography="15202"[^>]*>/)![0];
-   if(index<0)expect(path).toContain('fill="url(#');else expect(path).toContain(`fill="${palette[index]}"`);
+   if(index<0)expect(path).toContain('fill="url(#');else expect(path).toContain(`fill="${accessibleMapPalette(palette)[index]}"`);
   }
  }
 });

@@ -30,14 +30,18 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npx vitest run src/full-value-audit.test.tsx src/accessibility.test.tsx src/seo-contact.test.tsx
+        env:
+          HDV_AUDIT_REPORT: full-value-audit.json
       - run: npx tsc -p e2e/tsconfig.json
-      - run: npx playwright test e2e/themes.spec.ts e2e/navigation-delivery.spec.ts e2e/public-copy-privacy.spec.ts e2e/examination-states.spec.ts e2e/condition-history.spec.ts
+      - run: npx playwright test e2e/themes.spec.ts e2e/navigation-delivery.spec.ts e2e/public-copy-privacy.spec.ts e2e/examination-states.spec.ts e2e/condition-history.spec.ts e2e/usability.spec.ts
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: theme-smoke-results
           path: |
+            web/full-value-audit.json
             web/playwright-report/
             web/test-results/
           retention-days: 14

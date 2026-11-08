@@ -21,12 +21,15 @@ export async function sendContact(form:HTMLFormElement){
     category:String(fields.get('category')??''),message:String(fields.get('message')??''),
     botcheck:false,
   };
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
+  try{
   const response=await fetch(contactConfig.endpoint,{
-    method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+    method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json',Accept:'application/json'},
     referrerPolicy:'no-referrer',body:JSON.stringify(body),
   });
   const result=await response.json();
   if(!response.ok||result?.success!==true)throw new Error('submit failed');
+  }finally{clearTimeout(timer);}
 }
 
 export function Contact(){
@@ -34,7 +37,7 @@ export function Contact(){
   const submitting=useRef(false);
   const review=new URLSearchParams(location.search).has('review');
   const enabled=indexable(__HDV_ORIGIN__,__HDV_PRODUCTION__?'production':'',location.origin,location.search,location.pathname);
-  return <><PublicHeader review={review}/><main className="contact-page">
+  return <><PublicHeader review={review}/><main id="main-content" tabIndex={-1} className="contact-page">
     <h1>お問い合わせ</h1><p>Health Data Vaultに関するご意見・お問い合わせをお送りいただけます。</p>
     <form method="POST" action={contactConfig.endpoint} onSubmit={async e=>{
       e.preventDefault();if(!enabled||submitting.current)return;

@@ -11,6 +11,7 @@ export default defineConfig({
   projects: [
     {name: 'desktop', use: {...devices['Desktop Chrome'], viewport: {width:1920,height:1080}}},
     {name: 'iphone', use: {...devices['iPhone 13'], defaultBrowserType:'chromium'}},
+    {name:'webkit-iphone',testMatch:'**/usability.spec.ts',use:{...devices['iPhone 13'],browserName:'webkit',launchOptions:{}}},
   ],
   webServer: {command: 'node e2e/serve.mjs', url: 'http://127.0.0.1:4399/health-data-vault/',
     reuseExistingServer:false, timeout:120000},

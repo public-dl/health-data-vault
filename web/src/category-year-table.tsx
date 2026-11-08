@@ -9,6 +9,6 @@ export function CategoryValue({value,unit,count,color,status,onSource,label}:{va
 export function CategoryYearTable({years,selectedYear,publications,caption,children}:{years:number[];selectedYear:number;publications:(number|undefined)[];caption:React.ReactNode;children:React.ReactNode}) {
  return <table className="data-table category-year-table" style={{minWidth:130+years.length*140}}>
  <caption>{caption}<small>選択年度までの最大5年（収録済み年度のみ）</small></caption>
- <thead><tr><th scope="col">区分</th>{years.map((year,j)=><th scope="col" key={year} className={year===selectedYear?'selected-year':''}>{year}年度<small>公表 {publications[j]??'未確認'}年度</small></th>)}</tr></thead>
+ <thead><tr><th scope="col">区分</th>{years.map((year,j)=><th scope="col" key={year} className={year===selectedYear?'selected-year':''}>{year}年度{year===selectedYear&&<span className="selected-year-label">選択中</span>}<small>公表 {publications[j]??'未確認'}年度</small></th>)}</tr></thead>
  <tbody>{children}</tbody></table>;
 }

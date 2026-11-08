@@ -4,7 +4,7 @@ import {tableText} from './model';
 import {regionalComposition} from './regional-composition';
 export function annualTableText(rows:Observation[],group:IndicatorGroup):string {
  const lines=rows.map(r=>tableText([r],`${group.name}：${group.categories.find(c=>c.indicator_id===r.indicator_id)?.label??r.indicator_id}`).split('\n'));
- return [lines[0]?.[0]+'\t年度間比較',...lines.map(line=>line[1]+'\tpending（各年度を個別表示）')].join('\n');
+ return [lines[0]?.[0]+'\t年度間比較',...lines.map(line=>line[1]+'\t確認中（年度をまたいだ比較はできません）')].join('\n');
 }
 /** Separate capability: never promote pending records to reuse temporal views. */
 export function annualComposition(data:Payload,group:IndicatorGroup,code:string,year:number) {

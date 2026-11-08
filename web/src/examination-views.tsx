@@ -1,3 +1,5 @@
+import {useModalFocus} from './modal-focus';
+import {TablePeriod} from './table-period';
 import {comparisonText} from './public-copy';
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ExportSurface} from './export-surface';
@@ -10,20 +12,20 @@ import {examinationCountText as count,examinationRateText as ratio,examinationLa
 import './examination.css';
 
 function SourceDialog({c,rows,close}:{c:Context;rows:Observation[];close:()=>void}){
- const ref=useRef<HTMLDialogElement>(null);useEffect(()=>{ref.current?.showModal()},[]);
- return <dialog ref={ref} aria-label="検査の分子・分母の出典" className="examination-source" onCancel={close}><button autoFocus onClick={close}>出典を閉じる</button><h2>検査の分子・分母と計算式</h2><p>{examinationNotice}</p><RegionSourceNote data={c.data} rows={rows}/>{rows.map(r=>{const q=r.examination_rate!;return <section key={r.record_id}><h3>{r.geography_name}・{r.observation_fiscal_year}年度</h3><p>判定区分（保健指導以上を再掲）：{count(q.numerator_value,'人')}（{r.source_sheet} {q.numerator_cell}）</p><p>実施件数：{count(q.denominator_value,'件')}（{r.source_sheet} {q.denominator_cell}）</p><p>{examinationLabel}：{ratio(r)}</p><p>計算式：判定人数 ÷ 実施件数 ×100。表示は小数第1位、計算値は丸めず保持。</p><p>県概要の公式式：{q.official_evidence.overview_sheet} {q.official_evidence.rate_cell} {q.official_evidence.formula}</p><p>刊行年度：{r.publication_fiscal_year}年度／年度間の比較：{comparisonText(r.comparability_status)}</p><a href={r.source_url} target="_blank" rel="noreferrer">公式Excel</a><p>取得日時：{r.retrieved_at}</p><code>{r.source_sha256}</code></section>})}</dialog>;
+ const ref=useModalFocus();
+ return <dialog ref={ref} aria-label="検査の分子・分母の出典" className="examination-source" onCancel={e=>{e.preventDefault();close();}}><button autoFocus onClick={close}>出典を閉じる</button><h2>検査の分子・分母と計算式</h2><p>{examinationNotice}</p><RegionSourceNote data={c.data} rows={rows}/>{rows.map(r=>{const q=r.examination_rate!;return <section key={r.record_id}><h3>{r.geography_name}・{r.observation_fiscal_year}年度</h3><p>判定区分（保健指導以上を再掲）：{count(q.numerator_value,'人')}（{r.source_sheet} {q.numerator_cell}）</p><p>実施件数：{count(q.denominator_value,'件')}（{r.source_sheet} {q.denominator_cell}）</p><p>{examinationLabel}：{ratio(r)}</p><p>計算式：判定人数 ÷ 実施件数 ×100。表示は小数第1位、計算値は丸めず保持。</p><p>県概要の公式式：{q.official_evidence.overview_sheet} {q.official_evidence.rate_cell} {q.official_evidence.formula}</p><p>刊行年度：{r.publication_fiscal_year}年度／年度間の比較：{comparisonText(r.comparability_status)}</p><a href={r.source_url} target="_blank" rel="noreferrer">公式Excel</a><p>取得日時：{r.retrieved_at}</p><code>{r.source_sha256}</code></section>})}</dialog>;
 }
 function SourceButton({rows,open}:{rows:Observation[];open:(r:Observation[])=>void}){return <button className="examination-source-button" onClick={()=>open(rows)}>分子・分母の出典を確認</button>}
-function FactCard({c,rows,code,open,table=false}:{c:Context;rows:Observation[];code:string;open:(r:Observation[])=>void;table?:boolean}){
+export function FactCard({c,rows,code,open,table=false}:{c:Context;rows:Observation[];code:string;open:(r:Observation[])=>void;table?:boolean}){
  const ref=useRef<SVGSVGElement>(null),selected=rows.find(r=>r.observation_fiscal_year===c.year)!;
  const lines=table?rows.flatMap(r=>[r.observation_fiscal_year+'年度',count(r.value,'人'),count(r.examination_rate!.denominator_value,'件'),ratio(r)]):[c.year+'年度',count(selected.value,'人'),count(selected.examination_rate!.denominator_value,'件'),ratio(selected)];
  return <ExportSurface kind={table?'table-card':'summary-card'} className="panel examination-facts"><div className="panel-heading"><h3>{nameFor(c,code)}{!table&&'・'+c.year+'年度'}</h3><Actions c={c} svg={ref} rows={rows} title={c.indicator.name+'_'+nameFor(c,code)} table csvText={examinationCsv(rows,c.release)}/></div>
- {table?<div className="table-scroll"><table className="data-table examination-table"><caption>{c.indicator.name}：人数・件数・割合</caption><thead><tr><th>項目</th>{rows.map(r=><th key={r.record_id}>{r.observation_fiscal_year}年度</th>)}</tr></thead><tbody>
- <tr><th>判定区分（保健指導以上を再掲）</th>{rows.map(r=><td key={r.record_id}>{count(r.value,'人')}</td>)}</tr>
- <tr><th>実施件数</th>{rows.map(r=><td key={r.record_id}>{count(r.examination_rate!.denominator_value,'件')}</td>)}</tr>
- <tr data-examination-metric="percentage"><th>{examinationLabel}（％）</th>{rows.map(r=><td key={r.record_id}>{ratio(r)}</td>)}</tr>
- <tr><th>刊行年度</th>{rows.map(r=><td key={r.record_id}>{r.publication_fiscal_year}年度</td>)}</tr>
- </tbody></table></div>:<dl className="examination-values"><div><dt>判定区分（保健指導以上を再掲）</dt><dd>{count(selected.value,'人')}</dd></div><div><dt>実施件数</dt><dd>{count(selected.examination_rate!.denominator_value,'件')}</dd></div><div><dt>{examinationLabel}</dt><dd data-examination-rate>{ratio(selected)}</dd></div></dl>}
+ {table?<><TablePeriod years={rows.map(r=>r.observation_fiscal_year)} selected={c.year}/><div className="table-scroll"><table className="data-table examination-table"><caption>{c.indicator.name}：人数・件数・割合</caption><thead><tr><th>項目</th>{rows.map(r=><th key={r.record_id} className={r.observation_fiscal_year===c.year?"selected-year":""}>{r.observation_fiscal_year}年度{r.observation_fiscal_year===c.year&&<span className="selected-year-label">選択中</span>}</th>)}</tr></thead><tbody>
+ <tr><th>判定区分（保健指導以上を再掲）</th>{rows.map(r=><td key={r.record_id} className={r.observation_fiscal_year===c.year?"selected-year":""}>{count(r.value,'人')}</td>)}</tr>
+ <tr><th>実施件数</th>{rows.map(r=><td key={r.record_id} className={r.observation_fiscal_year===c.year?"selected-year":""}>{count(r.examination_rate!.denominator_value,'件')}</td>)}</tr>
+ <tr data-examination-metric="percentage"><th>{examinationLabel}（％）</th>{rows.map(r=><td key={r.record_id} className={r.observation_fiscal_year===c.year?"selected-year":""}>{ratio(r)}</td>)}</tr>
+ <tr><th>刊行年度</th>{rows.map(r=><td key={r.record_id} className={r.observation_fiscal_year===c.year?"selected-year":""}>{r.publication_fiscal_year}年度</td>)}</tr>
+ </tbody></table></div></>:<dl className="examination-values"><div><dt>判定区分（保健指導以上を再掲）</dt><dd>{count(selected.value,'人')}</dd></div><div><dt>実施件数</dt><dd>{count(selected.examination_rate!.denominator_value,'件')}</dd></div><div><dt>{examinationLabel}</dt><dd data-examination-rate>{ratio(selected)}</dd></div></dl>}
  <svg ref={ref} className="export-only" viewBox={`0 0 940 ${100+lines.length*36}`} aria-hidden="true"><rect width="940" height={100+lines.length*36} fill="white"/><text x="24" y="35" {...svgText}>{c.indicator.name}／{nameFor(c,code)}／判定人数・実施件数・割合</text>{lines.map((s,i)=><text key={i} x="24" y={80+i*36} {...svgText}>{s}</text>)}</svg>
  <p className="examination-state-note">{examinationStateNote}</p><SourceButton rows={rows} open={open}/></ExportSurface>;
 }

@@ -81,7 +81,7 @@ it('isolates all panels, table and comparison exports to selected year while ret
  expect(c.data.records.every(r=>r.observation_fiscal_year===year&&r.denominator?.value===100&&!r.derived_rate)).toBe(true);
  expect(temporalTable(c.data.records.filter(r=>r.geography_code==='15'&&r.indicator_id==='bp_guidance'),year,'count').columns).toEqual([year]);
  const input={...c,indicatorId:c.indicator.indicator_id};
- const out=comparisonTable(input);expect(out.years).toEqual([year]);expect(out.tsv).toContain('20 / 100');expect(out.tsv).toContain('pending');
+ const out=comparisonTable(input);expect(out.years).toEqual([year]);expect(out.tsv).toContain('20 / 100');expect(out.tsv).toContain('確認中');expect(out.tsv).not.toMatch(/pending|comparability|承認済みrelease/);
  const csv=comparisonCsv(input);expect(csv).toContain('test-release');expect(csv).toContain('B6');expect(csv).toContain('P6');expect(csv).not.toContain('人数合計一致');
  expect(connect(c.data.records[0],c.data.records[1])).toBe(false);
  }

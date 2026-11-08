@@ -72,7 +72,7 @@ function ReportedOverview({c,code}:{c:Context;code:string}) {
 
 }
 
-export function ReportedViews({c,members,onSelect,onYear}:{c:Context;members?:string[];onSelect:(code:string)=>void;onYear:(year:number)=>void}) {
+export function ReportedViews({c,members,onSelect,onYear}:{c:Context;members?:string[];onSelect:(code:string)=>void;onYear:(year:number,gesture?:string)=>void}) {
  const [layout,setLayout]=useState<Layout>('side');
  const countOnly=c.indicator.capabilities?.count_only===true;
  const years=[...new Set(c.data.denominator_records?.map(r=>r.observation_fiscal_year)??[])].sort();

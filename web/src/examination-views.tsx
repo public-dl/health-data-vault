@@ -52,8 +52,9 @@ function Distribution({c,rows,open}:{c:Context;rows:Observation[];open:(r:Observ
 }
 
 const temporalNotice=(c:Context)=>c.data.schema_version==='other-examination-1'?examinationTemporalNotice.split('心電図')[0]:examinationTemporalNotice;
-export function ExaminationViews({c,onSelect,onYear}:{c:Context;onSelect:(s:string)=>void;onYear:(n:number)=>void}){
+export function ExaminationViews({c,onSelect,onYear}:{c:Context;onSelect:(s:string)=>void;onYear:(n:number,gesture?:string)=>void}){
  useMemo(()=>validateExaminationPayload(c.data),[c.data]);const [source,setSource]=useState<Observation[]|null>(null);
+ useEffect(()=>setSource(null),[c.year]);
  const all=c.data.records.filter(r=>r.indicator_id===c.indicator.indicator_id),current=all.filter(r=>r.observation_fiscal_year===c.year),history=all.filter(r=>r.observation_fiscal_year<=c.year);
  const context={...c,source:setSource};const mapContext:Context={...context,measure:'rate',palette:c.indicator.palette,indicator:{...c.indicator,unit:'%',rate:{label:examinationLabel+'（％）',map_breaks:[],intervals:{'2021_2022':'pending','2022_2023':c.indicator.indicator_id==='ecg'?'incompatible':'pending'}}},
   data:{...c.data,records:current.map(r=>({...r,value:r.examination_rate!.value,unit:'%'}))},source:rows=>setSource(all.filter(r=>rows.some(x=>x.record_id===r.record_id)))};

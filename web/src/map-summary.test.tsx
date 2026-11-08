@@ -12,5 +12,7 @@ it('preserves zero and missing, and follows count/year record changes',()=>{
  const render=(record?:Observation)=>renderToStaticMarkup(<MapSummary record={record} measure="count"/>);
  expect(render({value:0,derived_rate:{numerator_value:0,denominator_value:100}} as Observation)).toContain('0 / 100');
  expect(render({value:4022,derived_rate:{numerator_value:4022,denominator_value:116311}} as Observation)).toContain('4,022 / 116,311');
- expect(render()).toContain('欠損 / 欠損');expect(render()).not.toContain('0人');
+ expect(render()).toContain('未収録 / 未収録');expect(render()).not.toContain('0人');
 });
+
+it('labels known original blanks separately from absent records',()=>{const record={value:null,value_state:'blank',denominator:{value:null,value_state:'blank'}} as Observation;const html=renderToStaticMarkup(<MapSummary record={record} measure="count"/>);expect(html).toContain('欠損（原表空欄）');expect(html).not.toContain('0人');});

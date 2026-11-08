@@ -6,7 +6,7 @@ import {YearTimeline} from './year-timeline';
 import {municipalityDistribution} from './reported-chart-model';
 import {RegionSourceNote} from './region-hierarchy';
 import type {Observation} from './model';
-import {examinationCountText as count,examinationRateText as ratio,examinationLabel,examinationNotice,examinationTemporalNotice,examinationCsv,validateExaminationPayload} from './examination-model';
+import {examinationCountText as count,examinationRateText as ratio,examinationLabel,examinationNotice,examinationTemporalNotice,examinationCsv,validateExaminationPayload,examinationStateCounts,examinationStateNote} from './examination-model';
 import './examination.css';
 
 function SourceDialog({c,rows,close}:{c:Context;rows:Observation[];close:()=>void}){
@@ -25,7 +25,7 @@ function FactCard({c,rows,code,open,table=false}:{c:Context;rows:Observation[];c
  <tr><th>刊行年度</th>{rows.map(r=><td key={r.record_id}>{r.publication_fiscal_year}年度</td>)}</tr>
  </tbody></table></div>:<dl className="examination-values"><div><dt>判定区分（保健指導以上を再掲）</dt><dd>{count(selected.value,'人')}</dd></div><div><dt>実施件数</dt><dd>{count(selected.examination_rate!.denominator_value,'件')}</dd></div><div><dt>{examinationLabel}</dt><dd data-examination-rate>{ratio(selected)}</dd></div></dl>}
  <svg ref={ref} className="export-only" viewBox={`0 0 940 ${100+lines.length*36}`} aria-hidden="true"><rect width="940" height={100+lines.length*36} fill="white"/><text x="24" y="35" {...svgText}>{c.indicator.name}／{nameFor(c,code)}／判定人数・実施件数・割合</text>{lines.map((s,i)=><text key={i} x="24" y={80+i*36} {...svgText}>{s}</text>)}</svg>
- <SourceButton rows={rows} open={open}/></ExportSurface>;
+ <p className="examination-state-note">{examinationStateNote}</p><SourceButton rows={rows} open={open}/></ExportSurface>;
 }
 function AnnualPoints({c,rows,open}:{c:Context;rows:Observation[];open:(r:Observation[])=>void}){
  const ref=useRef<SVGSVGElement>(null),years=c.data.years.filter(y=>y<=c.year),max=c.indicator.map_scale!.max;
@@ -35,20 +35,20 @@ function AnnualPoints({c,rows,open}:{c:Context;rows:Observation[];open:(r:Observ
  {[0,max/2,max].map(v=><g key={v}><line x1="70" x2="750" y1={y(v)} y2={y(v)} stroke="#dbe5ef"/><text x="55" y={y(v)+5} textAnchor="end">{v}％</text></g>)}
  {years.map(yr=><text key={yr} x={x(yr)} y="275" textAnchor="middle">{yr}年度</text>)}
  {ecg&&years.includes(2022)&&years.includes(2023)&&<g data-examination-break="2022_2023"><line x1={(x(2022)+x(2023))/2} x2={(x(2022)+x(2023))/2} y1="35" y2="250" stroke="#b64a55" strokeDasharray="5 5"/><text x={(x(2022)+x(2023))/2} y="25" textAnchor="middle">判定基準変更・比較不可</text></g>}
- {rows.map(r=>r.examination_rate!.value==null?<text key={r.record_id} x={x(r.observation_fiscal_year)} y="305" textAnchor="middle" fontSize="12">{r.examination_rate!.state==='zero_denominator'?'算出不可':'欠損'}</text>:<g key={r.record_id}><circle data-examination-point cx={x(r.observation_fiscal_year)} cy={y(r.examination_rate!.value!)} r="6" fill={c.indicator.color} tabIndex={0}><title>{`${r.geography_name} ${r.observation_fiscal_year}年度 ${ratio(r)}：${count(r.value,'人')}／${count(r.examination_rate!.denominator_value,'件')}`}</title></circle><text x={x(r.observation_fiscal_year)} y={y(r.examination_rate!.value!)-13} textAnchor="middle">{ratio(r)}</text></g>)}
+ {rows.map(r=>r.examination_rate!.value==null?<text key={r.record_id} x={x(r.observation_fiscal_year)} y="305" textAnchor="middle" fontSize="12">{ratio(r)}</text>:<g key={r.record_id}><circle data-examination-point cx={x(r.observation_fiscal_year)} cy={y(r.examination_rate!.value!)} r="6" fill={c.indicator.color} tabIndex={0}><title>{`${r.geography_name} ${r.observation_fiscal_year}年度 ${ratio(r)}：${count(r.value,'人')}／${count(r.examination_rate!.denominator_value,'件')}`}</title></circle><text x={x(r.observation_fiscal_year)} y={y(r.examination_rate!.value!)-13} textAnchor="middle">{ratio(r)}</text></g>)}
  </svg><SourceButton rows={rows} open={open}/></ExportSurface>;
 }
 function Distribution({c,rows,open}:{c:Context;rows:Observation[];open:(r:Observation[])=>void}){
  const ref=useRef<SVGSVGElement>(null),max=c.indicator.map_scale!.max;
- const mapped=rows.map(r=>({...r,value:r.examination_rate!.value}));const dist=municipalityDistribution(mapped,c.year);
+ const mapped=rows.map(r=>({...r,value:r.examination_rate!.value}));const dist=municipalityDistribution(mapped,c.year),states=examinationStateCounts(rows,c.year);
  const x=(v:number)=>80+v/max*650;
  const references=rows.filter(r=>r.geography_level==='prefecture_total'||c.regions.includes(r.geography_code));
- return <ExportSurface kind="graph-card" className="panel examination-chart"><div className="panel-heading"><h3>{c.year}年度・市町村の分布</h3><Actions c={c} svg={ref} rows={rows} title={c.indicator.name+'_市町村分布'} table csvText={examinationCsv(rows,c.release)}/></div><p>{examinationLabel}。有効{dist.count}／{dist.total}市町村。県計・保健所計は分布の母集団に含めません。</p><svg ref={ref} viewBox={`0 0 820 ${230+references.length*35}`} role="img" aria-label={c.indicator.name+' 同年度の市町村分布'} data-chart="examination-distribution">
+ return <ExportSurface kind="graph-card" className="panel examination-chart"><div className="panel-heading"><h3>{c.year}年度・市町村の分布</h3><Actions c={c} svg={ref} rows={rows} title={c.indicator.name+'_市町村分布'} table csvText={examinationCsv(rows,c.release)}/></div><p>{examinationLabel}。有効{dist.count}／{dist.total}市町村。県計・保健所計は分布の母集団に含めません。</p><p className="examination-state-summary" aria-label="市町村のデータ状態">欠損（原表空欄）：{states.missing}市町村 ／ 算出不可（実施件数0）：{states.zeroDenominator}市町村 ／ 有効値のうち真の0：{states.trueZero}市町村。</p><svg ref={ref} viewBox={`0 0 820 ${230+references.length*35}`} role="img" aria-label={c.indicator.name+' 同年度の市町村分布'} data-chart="examination-distribution">
  {[0,max/2,max].map(v=><g key={v}><line x1={x(v)} x2={x(v)} y1="35" y2="170" stroke="#dbe5ef"/><text x={x(v)} y="200" textAnchor="middle">{v}％</text></g>)}
  {dist.values[0]!=null&&<g stroke="#7B64C8" fill="none"><line x1={x(dist.values[0]!)} x2={x(dist.values[4]!)} y1="70" y2="70"/><rect x={x(dist.values[1]!)} y="50" width={Math.max(.5,x(dist.values[3]!)-x(dist.values[1]!))} height="40" fill="#eee8f8"/><line x1={x(dist.values[2]!)} x2={x(dist.values[2]!)} y1="50" y2="90"/></g>}
  {dist.rows.filter(r=>r.value!=null).map((r,i)=><circle key={r.record_id} data-municipality-dot={r.geography_code} cx={x(r.value!)} cy={125+(i%3-1)*6} r="4" fill={c.indicator.color} fillOpacity=".5"><title>{r.geography_name+' '+ratio(r)}</title></circle>)}
  {references.map((r,i)=><g key={r.record_id}><text x="30" y={235+i*35}>{r.geography_name+'：'+ratio(r)}</text>{r.examination_rate!.value!=null&&<path d={`M${x(r.examination_rate!.value!)} 146l5 6-5 6-5-6z`} fill={r.geography_level==='prefecture_total'?'#273e69':'#d87328'}/>}</g>)}
- </svg><p>箱は第1四分位点～第3四分位点、中央線は中央値、横線は最小～最大。点は市町村です。小さい実施件数では割合が変動しやすいため、人数・件数も併せて確認してください。</p><SourceButton rows={rows} open={open}/></ExportSurface>;
+ </svg><p>箱は第1四分位点～第3四分位点、中央線は中央値、横線は最小～最大。点は市町村です。小さい実施件数では割合が変動しやすいため、人数・件数も併せて確認してください。</p><p className="examination-state-note">{examinationStateNote}</p><SourceButton rows={rows} open={open}/></ExportSurface>;
 }
 
 const temporalNotice=(c:Context)=>c.data.schema_version==='other-examination-1'?examinationTemporalNotice.split('心電図')[0]:examinationTemporalNotice;

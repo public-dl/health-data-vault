@@ -31,9 +31,20 @@ export function validateExaminationPayload(data:Payload){
  if(data.records.length!==data.geographies.length*data.years.length*specs.length||denominators.size!==data.records.length)fail();
  return true;
 }
+export const examinationStateLabels={missing:'欠損（原表空欄）',zero_denominator:'算出不可（実施件数0）',zero:'真の0'} as const;
+export const examinationStateNote='欠損（原表空欄）は、判定人数または実施件数が空欄のため割合を表示できない状態です。算出不可（実施件数0）は、原表の両方の数値があり、分母が0の状態です。真の0は、実施件数が正で判定人数が0の割合で、有効な数値に含めます。';
+export function examinationStateCounts(rows:Observation[],year:number){
+ const selected=rows.filter(r=>r.observation_fiscal_year===year&&r.geography_level==='municipality');
+ if(new Set(selected.map(r=>r.geography_code)).size!==selected.length)throw Error('市町村の状態集計に重複があります');
+ const counts={valid:0,missing:0,zeroDenominator:0,trueZero:0,total:selected.length};
+ for(const r of selected){const q=r.examination_rate;if(!q)throw Error('割合の状態を確認できません');
+  if(q.state==='valid'){counts.valid++;if(q.value===0)counts.trueZero++;}
+  else if(q.state==='missing')counts.missing++;else if(q.state==='zero_denominator')counts.zeroDenominator++;else throw Error('未知の割合状態');
+ }return counts;
+}
 export function examinationRateText(r:Observation|undefined){
  const rate=r?.examination_rate;
- return !rate||rate.state==='missing'?'欠損（原表空欄）':rate.state==='zero_denominator'?'算出不可（実施件数0）':rate.value!.toLocaleString('ja-JP',{minimumFractionDigits:1,maximumFractionDigits:1})+'％';
+ return !rate||rate.state==='missing'?examinationStateLabels.missing:rate.state==='zero_denominator'?examinationStateLabels.zero_denominator:rate.value!.toLocaleString('ja-JP',{minimumFractionDigits:1,maximumFractionDigits:1})+'％'+(rate.value===0?'（真の0）':'');
 }
 export const examinationCountText=(value:number|null|undefined,unit:string)=>value==null?'欠損（原表空欄）':value.toLocaleString('ja-JP')+unit;
 export function examinationCsv(rows:Observation[],release=''){

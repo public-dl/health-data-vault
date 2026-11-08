@@ -16,7 +16,7 @@ it('uses seven fixed ranges and continuous colors, independent of year or geogra
   expect(new Set(Array.from({length:101},(_,i)=>color(scale.min+(scale.max-scale.min)*i/100))).size).toBeGreaterThan(90);
   expect(mapFill(scale.min+1,palette,[1,2,3,4],scale)).toBe(color(scale.min+1));
   const html=renderToStaticMarkup(<MapLegend title="割合" breaks={[20,25,30,35]} palette={palette} scale={scale}/>);
-  expect(html).toContain('linear-gradient');expect(html).not.toContain('未満');expect(html).toContain(`${scale.max}%`);expect(html).toContain('欠損・数値なし');
+  expect(html).toContain('linear-gradient');expect(html).not.toContain('未満');expect(html).toContain(`${scale.max}%`);expect(html).toContain('欠損（原表空欄）');
  }
 });
 it('leaves non-metabo category metadata and coloring unchanged',()=>{

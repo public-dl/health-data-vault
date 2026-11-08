@@ -36,7 +36,7 @@ it('validates specific examination units and rejects recipient denominators, wro
 });
 it('distinguishes zero denominators, missing counts and valid numeric zero in labels, map summaries and CSV',()=>{
  const c=fixture('total_protein');const get=(id:string,geo:string)=>c.data.records.find(r=>r.indicator_id===id&&r.geography_code===geo)!;
- expect(examinationRateText(get('total_protein','A'))).toContain('算出不可');expect(examinationRateText(get('total_protein','B'))).toContain('欠損');expect(examinationRateText(get('uric_acid','A'))).toBe('0.0％');
+ expect(examinationRateText(get('total_protein','A'))).toContain('算出不可');expect(examinationRateText(get('total_protein','B'))).toContain('欠損');expect(examinationRateText(get('uric_acid','A'))).toBe('0.0％（真の0）');
  expect(mapRecordText(get('total_protein','A'),'%')).toContain('算出不可');const csv=examinationCsv([get('total_protein','A'),get('total_protein','B')]);expect(csv).toContain('zero_denominator');expect(csv).toContain('missing');expect(csv).toContain('denominator_cell');
 });
 it('excludes county and preserves invalid municipality rates outside the distribution',()=>{

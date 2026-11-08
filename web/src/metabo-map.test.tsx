@@ -22,7 +22,7 @@ for(const [id,s] of Object.entries(metaboMapScales)){
   expect(mapRangeLabel(s.min,s)).toBe('');expect(mapRangeLabel(s.max,s)).toBe('');
   expect(color(null)).toBeNull();expect(color(NaN)).toBeNull();expect(color(0)).not.toBeNull();expect(mapRangeLabel(null,s)).toBe('');
   const html=renderToStaticMarkup(<MapLegend title="割合" breaks={[5,10,20,40]} palette={p} scale={s}/>);
-  s.ticks.forEach(v=>expect(html).toContain(v+'%'));p.forEach(v=>expect(html).toContain(v));expect(html).not.toContain('未満');expect(html).toContain('欠損・数値なし');
+  s.ticks.forEach(v=>expect(html).toContain(v+'%'));p.forEach(v=>expect(html).toContain(v));expect(html).not.toContain('未満');expect(html).toContain('欠損（原表空欄）');
  });
 }
 it('uses the same policy through single/group paths for all 528 actual values without mutating release',()=>{
@@ -51,7 +51,7 @@ it('renders out-of-range labels separately from missing and real zero',()=>{
   const c={data,indicator,measure:'rate',year:2023,regions:['15'],source:()=>{},notify:()=>{}} as unknown as Context;
   const html=renderToStaticMarkup(<MapPanel c={c} region="15" onSelect={()=>{}} showNotes={false}/>);
   expect(html).toContain('表示範囲より低い');expect(html).toContain('表示範囲より高い');expect(html).toContain('url(#');
-  expect(html).toContain('0.0%');expect(html).toContain('欠損・数値なし');
+  expect(html).toContain('0.0%');expect(html).toContain('欠損（原表空欄）');
  } finally {Object.assign(globalThis,{window:previous});}
 });
 

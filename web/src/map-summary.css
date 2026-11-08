@@ -20,3 +20,8 @@
 .map-shell .map-export-title{display:none}
 @container(max-width:850px){.map-card{--map-heading-size:23px}}
 @container(max-width:400px){.map-card{--map-heading-size:21px}.map-inner-title{padding:10px 12px 0}}
+
+/* Keep explicit missing/zero-denominator labels inside narrow summary columns. */
+.map-summary:is([data-examination-state],[data-value-state="blank"],[data-value-state="unavailable"]) strong{white-space:normal;overflow-wrap:anywhere}
+
+.map-summary .map-state-detail{display:inline;font-size:14px;font-weight:600;white-space:nowrap}

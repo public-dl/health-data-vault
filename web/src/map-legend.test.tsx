@@ -11,7 +11,7 @@ it('uses identical legend markup for theme-specific breaks and keeps missing sep
   expect((html.match(/<li>/g)||[]).length).toBe(6);
   expect(html).toContain(`0〜${breaks[0]}未満`);
   expect(html).toContain(`${breaks[3]}以上`);
-  expect(html).toContain('欠損・数値なし');
+  expect(html).toContain('欠損（原表空欄）');
   expect(html).not.toContain('<svg');
  }
 });

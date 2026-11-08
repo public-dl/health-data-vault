@@ -3,11 +3,11 @@ import {format} from './model';
 import {mapGradient,type MapScale} from './map-scale';
 
 /** Shared HTML legend: typography is independent of the SVG map's scale. */
-export function MapLegend({title,breaks,palette,scale}:{title:string;breaks:number[];palette:string[];scale?:MapScale}) {
+export function MapLegend({title,breaks,palette,scale,examination=false}:{examination?:boolean;title:string;breaks:number[];palette:string[];scale?:MapScale}) {
  return <aside className="map-legend" data-legend-mode={scale?'continuous':'categorical'} aria-label="地図凡例"><strong className="map-legend-title">{title}</strong>
  {scale&&<div className="map-continuous-legend"><div className="map-gradient-bar" style={{background:mapGradient(palette,scale)}}/><div className="map-gradient-ticks">{(scale.ticks??[scale.min,(scale.min+scale.max)/2,scale.max]).map(v=><span key={v}>{format(v)}%</span>)}</div></div>}
  <ul>
   {!scale&&palette.map((color,i)=><li key={i}><i className="map-legend-chip" style={{background:color}}/><span>{i===0?'0':format(breaks[i-1])}{i===breaks.length?'以上':'〜'+format(breaks[i])+'未満'}</span></li>)}
-  <li><i className="map-legend-chip map-legend-missing"/><span>欠損・数値なし</span></li>
- </ul></aside>;
+  <li><i className="map-legend-chip map-legend-missing"/><span>{examination?'欠損（原表空欄）／算出不可（実施件数0）':'欠損（原表空欄）'}</span></li>
+ </ul>{examination&&<p className="examination-state-note">斜線の地域は、選択・フォーカスすると具体的な状態を確認できます。0％（真の0）は数値として色付けします。</p>}</aside>;
 }

@@ -35,7 +35,7 @@ it('validates specific examination units and rejects recipient denominators, wro
 });
 it('distinguishes zero denominators, missing counts and valid numeric zero in labels, map summaries and CSV',()=>{
  const c=fixture('fundus');const get=(id:string,geo:string)=>c.data.records.find(r=>r.indicator_id===id&&r.geography_code===geo)!;
- expect(examinationRateText(get('fundus','A'))).toContain('算出不可');expect(examinationRateText(get('fundus','B'))).toContain('欠損');expect(examinationRateText(get('anemia','A'))).toBe('0.0％');
+ expect(examinationRateText(get('fundus','A'))).toContain('算出不可');expect(examinationRateText(get('fundus','B'))).toContain('欠損');expect(examinationRateText(get('anemia','A'))).toBe('0.0％（真の0）');
  expect(mapRecordText(get('fundus','A'),'%')).toContain('算出不可');const csv=examinationCsv([get('fundus','A'),get('fundus','B')]);expect(csv).toContain('zero_denominator');expect(csv).toContain('missing');expect(csv).toContain('denominator_cell');
 });
 it('excludes county and preserves invalid municipality rates outside the distribution',()=>{
